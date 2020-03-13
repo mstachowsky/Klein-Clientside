@@ -49,28 +49,64 @@ Eventually Klein will transition to a WYSIWYG web editor.  Until that happens, b
 
 In this syntax, anything shown in square brackets [like this] is optional.  The square brackets are ommitted in the text.
 
-### The !Book directive
+All directives must come at the start of a line at the moment.  Nested directives are not yet implemented.
+
+### The `!Book` directive
 
 Every book file must begin with the line !Book [bookName]
 
 The string [bookName] is the name of your book, and may be any valid text string, including spaces.  It is displayed at the top of each page.
 
-### The !Page and !endPage directives
+Each book can contain only a single `!Book` directive, or the JSON will not parse correctly.
 
-Each page in your book begins with a !Page directive and ends with a !endPage directive.
+### The `!Page` and `!endPage` directives
 
-The !Page directive has an optional page name, like this:  `!Page [optional page name]`.  This name is what gets displayed on the page's selection button.  If it is left blank then the button defaults to the text "Page N", where N is the page number.
+Each page in your book begins with a `!Page` directive and ends with a `!endPage` directive.
 
-Currently, if you have multiple pages, you must include the !Page directive on the line immediately following an !endPage directive, without any whitespace.  This is being tracked as a todo and will be removed as a requirement in the future.
+The `!Page` directive has an optional page name, like this:  `!Page [optional page name]`.  This name is what gets displayed on the page's selection button.  If it is left blank then the button defaults to the text "Page N", where N is the page number.
+
+Currently, if you have multiple pages, you must include the `!Page` directive on the line immediately following an `!endPage` or a `!Book1` directive, without any whitespace.  This is being tracked as a todo and will be removed as a requirement in the future.
 
 ### The !img and !video directives
 
-### The !checkpoint and !endCheckpoint directives
+These two directives must be on their own line.  The syntax is:
+
+`!img imgSrc.extension width height id`
+
+or
+
+`!video videoSrc.extension width height id`
+
+`imgSrc.extension` is the image source (similar for `videoSrc.extension`).  It is identical to what is used in HTML and can include a directory path.  It is not given in quotes.
+
+`width` and `height` are width and height in pixels.  Height is required at the moment for legacy reasons, but will be made optional in the future.  
+
+`id` is an ID string.  It must be present at the moment but again will be made optional in the future.
+
+### The `!checkpoint` and `!endCheckpoint` directives
+
+A checkpoint is a green box that contains other directives.  Upon encountering the `!checkpoint` directive, the parser will create a `<div>` and add anything between the `!checkpoint` and `!endCheckpoint` directives to that div.  The checkpoint environment is a place to make it easy to call attention to a step in a lab or a question that the students must answer.
 
 ### the !item directive
 
+Klein currently does not support nested lists, but it does allow for single-layer unordered lists.  Each item in a list must be on the same line as an `!item` directive, like this:
+
+`!item this is the first list item`
+
+Currently you cannot place anything other than text in an `!item`.  That is a todo for future versions.
+
 ### The !brk directive
+
+`!brk` includes a `<br>` in the HTML.
 
 ### The !code directive
 
+`!code` at the beginning of a line of text will render that text in courier new font with a grey background, to distinguish code from regular text
+
 ### The `#` headers
+
+Currently there are four levels of headers that are allowed, and they follow the Markdown convention.  A single `#` renders as `<h1>`, `##` renders as `<h2>`, and a `###` renders as `<h3>`.
+
+### Any other lines are intepreted as text
+
+Any other lines that do not begin with a directive are interpreted as pure HTML text and are inserted into `<span>` elements.
