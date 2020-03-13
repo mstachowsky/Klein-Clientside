@@ -47,6 +47,30 @@ It is possible to use Klein Clientside without a server.  The only difference is
 
 Eventually Klein will transition to a WYSIWYG web editor.  Until that happens, books are written in a custom document format with a .md extension.  The syntax is described below, and a sample file, `sampleBook.md`, is available for you to view it in action.
 
+In this syntax, anything shown in square brackets [like this] is optional.  The square brackets are ommitted in the text.
+
 ### The !Book directive
 
 Every book file must begin with the line !Book [bookName]
+
+The string [bookName] is the name of your book, and may be any valid text string, including spaces.  It is displayed at the top of each page.
+
+### The !Page and !endPage directives
+
+Each page in your book begins with a !Page directive and ends with a !endPage directive.
+
+The !Page directive has an optional page name, like this:  `!Page [optional page name]`.  This name is what gets displayed on the page's selection button.  If it is left blank then the button defaults to the text "Page N", where N is the page number.
+
+Currently, if you have multiple pages, you must include the !Page directive on the line immediately following an !endPage directive, without any whitespace.  This is being tracked as a todo and will be removed as a requirement in the future.
+
+### The !img and !video directives
+
+### The !checkpoint and !endCheckpoint directives
+
+### the !item directive
+
+### The !brk directive
+
+### The !code directive
+
+### The `#` headers
