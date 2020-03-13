@@ -35,8 +35,18 @@ Klein is currently set up to use the following folder structure:
     - Inside of each book folder should be:
       - A folder that holds the HTML file and any resources.  I've called this folder `res`.
 
-As long as your folders are set up like that and you are basing your HTML files on the GeneralKlein.html file, then 
+As long as your folders are set up like that and you are basing your HTML files on the GeneralKlein.html file, then:
+
+Place a copy of the `GeneralKlein.html` file into one of the `res` folders, then modify line 35 in that file to point to the URL of your .bk file.  Once you navigate to the page Klein will parse your book and display it.
 
 ### What to do if you don't have a server
 
 It is possible to use Klein Clientside without a server.  The only difference is that the HTML file you are using cannot make a JSON request to the server to get the .bk file.  
+
+## Overview of the scripting language
+
+Eventually Klein will transition to a WYSIWYG web editor.  Until that happens, books are written in a custom document format with a .md extension.  The syntax is described below, and a sample file, `sampleBook.md`, is available for you to view it in action.
+
+### The !Book directive
+
+Every book file must begin with the line !Book [bookName]
