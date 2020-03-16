@@ -70,6 +70,10 @@ function changePage(elem){
 		else
 			pageArray[i].style.display="none"
 	}
+	
+	//Now scroll to the top
+	document.body.scrollTop = 0; //Safari compatibility
+	document.documentElement.scrollTop = 0; //Everything else
 }
 
 
@@ -157,6 +161,7 @@ function parseBookFromJSON(inputBook)
 		}
 		)
 		var newPage = document.createElement("DIV");
+		var pageStack = [];
 		newPage.setAttribute("class","PAGE");
 		newPage.setAttribute("id","pg"+i);
 		contentRoot.appendChild(newPage);
@@ -170,15 +175,22 @@ function parseBookFromJSON(inputBook)
 			}
 			else if(cmp.type == "CHECKPOINT")
 			{
-				cmp.options = {class:"checkpoint"};
-				newPage.appendChild(makeNewHTML(cmp))
+				var checkDiv = {tag:"div",options:{id:"check"+j+"Page"+i,class:"checkpoint"},content:""};
+				var curPage = makeNewHTML(checkDiv);
+				console.log(newPage)
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
 			}
 			else if(cmp.type == "ENDCHECK")
 			{
 				cmp.options = {class:"endcheckpoint",id:" "}
 				cmp.tag="h2";
-				cmp.content="End of Checkpoint";
+				cmp.content="   ";
 				newPage.appendChild(makeNewHTML(cmp))
+				
+				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+				console.log(newPage)
 			}
 			else if(cmp.type==="answerBox")
 			{
