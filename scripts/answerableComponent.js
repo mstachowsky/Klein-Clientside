@@ -37,40 +37,46 @@ class answer{
 	//currently just boilerplate checkAnswer function.  Eventually will involve server calls.  It is the client-side controller
 	checkAnswer()
 	{
-		//obtain the data string components
-		var comps = this.dataString.split(":");
-		//this will be updated later and totally replaced if we go server-side
-		if(comps[0] == "numeric")
+		if(this.AnsString != "")
 		{
-			var idealAns = Number(comps[1]);
-			var tolerance = 0;
-			if(comps[2] !== "absolute")
-				tolerance = Number(comps[2]);
-			var studentAns = Number(this.AnsString);
-			if(Math.abs(studentAns-idealAns) <= tolerance)
+			//obtain the data string components
+			var comps = this.dataString.split(":");
+			//this will be updated later and totally replaced if we go server-side
+			if(comps[0] == "numeric")
 			{
-				this.isCorrect = true;
-				return true;
+				var idealAns = Number(comps[1]);
+				var tolerance = 0;
+				if(comps[2] !== "absolute")
+					tolerance = Number(comps[2]);
+				var studentAns = Number(this.AnsString);
+				if(Math.abs(studentAns-idealAns) <= tolerance)
+				{
+					this.isCorrect = true;
+					return true;
+				}
+				else
+				{
+					this.isCorrect = false;
+					return false;
+				}
 			}
-			else
-			{
-				this.isCorrect = false;
-				return false;
+			else{
+				if(this.AnsString === this.dataString)
+				{
+					this.isCorrect=true;
+					return true;
+				}
+				else
+				{
+					this.isCorrect=false;
+					return false;
+				}
 			}
 		}
-		else{
-			if(this.AnsString === this.dataString)
-			{
-				this.isCorrect=true;
-				return true;
-			}
-			else
-			{
-				this.isCorrect=false;
-				return false;
-			}
-		}
+		else
+			return false;
 	}
+	
 }
 
 class answerBox extends answer{
