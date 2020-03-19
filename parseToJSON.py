@@ -42,6 +42,30 @@ firstLine = False;
 
 idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
 pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
+
+'''
+    This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
+'''
+def replaceEnclosing(line,delims,innerTag):
+    lineAr = line.split(delims);
+    if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
+        ind = line.find(delims) #if this is zero, then we need to adjust
+        bldNum = 0
+        if(ind != 0):
+            bldNum = 1;
+        line = ""
+        for strng in lineAr:
+            if(strng != ''):
+                if(bldNum % 2 == 0):
+                    line = line + "<"+innerTag+">" + strng + "</"+innerTag + ">"
+                else:
+                    line = line + strng
+                bldNum = bldNum+1
+    else:
+        if(line.find(delims) != -1): #handle the case where the entire line is bolded
+            line = "<"+innerTag+">" + line + "</"+innerTag+">"
+    return line
+
 for line in f:
 
     #remove leading and trailing whitespace
@@ -58,47 +82,10 @@ for line in f:
     #handle bolding and italics
     #This could really be a function...
     #Bolding first
-    lineAr = line.split("**");
-    if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
-        ind = line.find("**") #if this is zero, then we need to adjust
-        bldNum = 0
-        if(ind != 0):
-            bldNum = 1;
-        line = ""
-        for strng in lineAr:
-            if(strng != ''):
-                print(lineAr)
-                if(bldNum % 2 == 0):
-                    print(strng)
-                    line = line + "<b>" + strng + "</b>"
-                else:
-                    line = line + strng
-                bldNum = bldNum+1
-    else:
-        if(line.find("**") != -1): #handle the case where the entire line is bolded
-            line = "<b>" + line + "</b>"
-            
-    #Now italics
-    lineAr = line.split("*"); #all double ** are gone at this point
-    if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
-        ind = line.find("*") #if this is zero, then we need to adjust
-        bldNum = 0
-        if(ind != 0):
-            bldNum = 1;
-        line = ""
-        for strng in lineAr:
-            if(strng != ''):
-                print(lineAr)
-                if(bldNum % 2 == 0):
-                    print(strng)
-                    line = line + "<i>" + strng + "</i>"
-                else:
-                    line = line + strng
-                bldNum = bldNum+1
-    else:
-        if(line.find("*") != -1): #handle the case where the entire line is bolded
-            line = "<i>" + line + "</i>"
-
+    line = replaceEnclosing(line,"**","b")
+    #now italics
+    line = replaceEnclosing(line,"*","i")
+    
     if line.startswith("!Book"):
         line = line.replace('!Book','').strip()
        
