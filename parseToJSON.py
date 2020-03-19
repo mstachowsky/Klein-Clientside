@@ -30,6 +30,7 @@ outFile = open(fName+'.bk','w')
 JSONString = ""
 inCheckpoint = False;
 inPage = False;
+firstLine = False;
 idNum = 0; #everything gets an ID, whether it wants one or not
 pageNum = 0;
 for line in f:
@@ -56,6 +57,7 @@ for line in f:
         if(line == ""):
             line = "Page" + str(pageNum)
         JSONString+="{\"name\":\"" + line + "\",\"components\":["
+        firstLine = True;
     elif line.startswith("!endPage"):
         inPage = False;
         #it just looks better to add an extra few blank lines at the bottom of the page
@@ -104,15 +106,16 @@ for line in f:
             idNum = idNum+1
         else:
             #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
-            
-            #if the line, after stripping, is empty, add a break
-            if(line.strip() == ""):
-                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
-                
+            if firstLine == False:
+                #if the line, after stripping, is empty, add a break
+                if(line.strip() == ""):
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
+                    
+                else:
+                    JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                    idNum = idNum+1
             else:
-                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                idNum = idNum+1
-
+                firstLine = False;
 
 #Now, we added an extra comma at the end of the page, so we need to remove it
 JSONString = JSONString[:-1]
