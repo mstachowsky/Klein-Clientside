@@ -4,10 +4,10 @@ import os
 import sys
 import time
 
+#time is just here because I'm curious
 startTime = time.time();
-#Here is where we parse the file.  NEEDS TO BE MORE GENERIC
-#fName = os.getcwd()+'\FEMM\\femm'#'\ENGG4280_IMC\\ENGG4280_IMC'
-fName = os.getcwd()+sys.argv[1]#'\ENGG4280_IMC\\ENGG4280_IMC_dev'
+#Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
+fName = os.getcwd()+sys.argv[1]
 f = open(fName+'.md','r')
 outFile = open(fName+'.bk','w')
 
@@ -28,11 +28,20 @@ outFile = open(fName+'.bk','w')
     {bookName:name,pages:[{name:pageName,components:[]}]}
 '''
 JSONString = ""
+
+#There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
+#of whether we are inside or outside of one.
+#The checkpoint environment is easy - everything inside gets a special style applied
 inCheckpoint = False;
+
+#The Page environment is trickier.  We need to ensure that we don't write any components
+#outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
+#that we don't write the name of the page out once we start it, hence why there are two flags.
 inPage = False;
 firstLine = False;
-idNum = 0; #everything gets an ID, whether it wants one or not
-pageNum = 0;
+
+idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
+pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
 for line in f:
 
     #remove leading and trailing whitespace
@@ -45,6 +54,50 @@ for line in f:
     line = line.replace(';','&#59')
     line = line.replace(']','&#93')
     line = line.replace('[','&#91')
+    
+    #handle bolding and italics
+    #This could really be a function...
+    #Bolding first
+    lineAr = line.split("**");
+    if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
+        ind = line.find("**") #if this is zero, then we need to adjust
+        bldNum = 0
+        if(ind != 0):
+            bldNum = 1;
+        line = ""
+        for strng in lineAr:
+            if(strng != ''):
+                print(lineAr)
+                if(bldNum % 2 == 0):
+                    print(strng)
+                    line = line + "<b>" + strng + "</b>"
+                else:
+                    line = line + strng
+                bldNum = bldNum+1
+    else:
+        if(line.find("**") != -1): #handle the case where the entire line is bolded
+            line = "<b>" + line + "</b>"
+            
+    #Now italics
+    lineAr = line.split("*"); #all double ** are gone at this point
+    if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
+        ind = line.find("*") #if this is zero, then we need to adjust
+        bldNum = 0
+        if(ind != 0):
+            bldNum = 1;
+        line = ""
+        for strng in lineAr:
+            if(strng != ''):
+                print(lineAr)
+                if(bldNum % 2 == 0):
+                    print(strng)
+                    line = line + "<i>" + strng + "</i>"
+                else:
+                    line = line + strng
+                bldNum = bldNum+1
+    else:
+        if(line.find("*") != -1): #handle the case where the entire line is bolded
+            line = "<i>" + line + "</i>"
 
     if line.startswith("!Book"):
         line = line.replace('!Book','').strip()
