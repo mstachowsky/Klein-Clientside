@@ -111,4 +111,6 @@ Currently there are four levels of headers that are allowed, and they follow the
 
 Any other lines that do not begin with a directive are interpreted as pure HTML text and are inserted into `<span>` elements.
 
-Within any text line, you may bold or italicize (or both) using standard Markdown syntax.  Double asterisks `**` will bold, single will italicize, and triple will bold/italic.
+Within any text line, you may bold or italicize (or both) using standard Markdown syntax.  Double asterisks `**` will bold, single will italicize, and triple will bold/italic.  Asterisks must enclose (that is, they must come in pairs!).  This looks like this:
+
+`This is **bold** and this is *italic* and this is ***both***`
