@@ -1,9 +1,10 @@
 /*
-	Clien viewer, V0.3
+	Clien viewer, V0.4
 	
 	Changelog: 
 	
 		V0.3: completely removed Mithril
+		V0.4: Added support for nested lists
 */
 
 /*
@@ -177,7 +178,6 @@ function parseBookFromJSON(inputBook)
 			{
 				var checkDiv = {tag:"div",options:{id:"check"+j+"Page"+i,class:"checkpoint"},content:""};
 				var curPage = makeNewHTML(checkDiv);
-				console.log(newPage)
 				newPage.appendChild(curPage);
 				pageStack.push(newPage);
 				newPage = curPage;
@@ -190,7 +190,26 @@ function parseBookFromJSON(inputBook)
 				newPage.appendChild(makeNewHTML(cmp))
 				
 				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
-				console.log(newPage)
+			}
+			else if(cmp.type == "UL")
+			{
+				var listDiv = {tag:"ul",options:{id:"list"+j+"Page"+i},content:""};
+				var curPage = makeNewHTML(listDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+			}
+			else if(cmp.type == "OL")
+			{
+				var listDiv = {tag:"ol",options:{id:"list"+j+"Page"+i},content:""};
+				var curPage = makeNewHTML(listDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+			}
+			else if(cmp.type == "ENDLIST")
+			{
+				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
 			}
 			else if(cmp.type==="answerBox")
 			{
