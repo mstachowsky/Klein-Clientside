@@ -46,7 +46,7 @@ pageNum = 0; #every page gets a name, whether it wants one or not.  They are ass
 '''
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
-def replaceEnclosing(line,delims,innerTag):
+def replaceEnclosing(line,delims,beginTag,endTag):
     lineAr = line.split(delims);
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
@@ -57,13 +57,13 @@ def replaceEnclosing(line,delims,innerTag):
         for strng in lineAr:
             if(strng != ''):
                 if(bldNum % 2 == 0):
-                    line = line + "<"+innerTag+">" + strng + "</"+innerTag + ">"
+                    line = line + beginTag + strng + endTag
                 else:
                     line = line + strng
                 bldNum = bldNum+1
     else:
         if(line.find(delims) != -1): #handle the case where the entire line is bolded
-            line = "<"+innerTag+">" + line + "</"+innerTag+">"
+            line = beginTag + line + endTag
     return line
 
 for line in f:
@@ -79,12 +79,13 @@ for line in f:
     line = line.replace(']','&#93')
     line = line.replace('[','&#91')
     
-    #handle bolding and italics
-    #This could really be a function...
+    #handle inline tags
     #Bolding first
-    line = replaceEnclosing(line,"**","b")
+    line = replaceEnclosing(line,"**","<b>","</b>")
     #now italics
-    line = replaceEnclosing(line,"*","i")
+    line = replaceEnclosing(line,"*","<i>","</i>")
+    #now code, using Discord-like syntax
+    line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
     
     if line.startswith("!Book"):
         line = line.replace('!Book','').strip()
