@@ -87,13 +87,32 @@ or
 
 A checkpoint is a green box that contains other directives.  Upon encountering the `!checkpoint` directive, the parser will create a `<div>` and add anything between the `!checkpoint` and `!endCheckpoint` directives to that div.  The checkpoint environment is a place to make it easy to call attention to a step in a lab or a question that the students must answer.
 
-### the !item directive
+### The list environment directive
 
-Klein currently does not support nested lists, but it does allow for single-layer unordered lists.  Each item in a list must be on the same line as an `!item` directive, like this:
+Entering the list environment requires either the `!list` or `!oList` (for ordered lists) directive.  Each list must be ended with an `!endList` directive, regardless of whether it is ordered or unordered.  Each item in a list must be on the same line as an `!item` directive.  So a list with one item that is unordered would be:
 
+`!list`
 `!item this is the first list item`
+`!endList`
 
 Currently you cannot place anything other than text in an `!item`.  That is a todo for future versions.
+
+In order to support nesting, you just need to start a new `!list` or `!oList` instead of an item.  It looks like this:
+
+```
+    !list
+        !item this is level 1
+        !list
+            !item this is level 2 inside of the first list
+        !endList
+        !oList
+            !item this is a nested oList
+                !list
+                    !item this is a nested unordered list inside of an oList
+                !endList
+        !endList
+   !endList
+```
 
 ### The !brk directive
 
