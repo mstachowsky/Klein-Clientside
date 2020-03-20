@@ -141,6 +141,15 @@ for line in f:
         elif line.startswith("!item"):
             line = line.replace("!item","").strip()
             JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+        elif line.startswith("!list"):
+            line = line.replace("!list","").strip()
+            JSONString+="{\"type\":\"UL\"},"
+        elif line.startswith("!oList"): #ordered list
+            line = line.replace("!oList","").strip()
+            JSONString+="{\"type\":\"OL\"},"
+        elif line.startswith("!endList"):
+            line = line.replace("!endList","").strip()
+            JSONString+="{\"type\":\"ENDLIST\"},"
         elif line.startswith("!code"):
             line=line.replace("!code","").strip();
             JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
