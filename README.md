@@ -109,6 +109,7 @@ In order to support nesting, you just need to start a new `!list` or `!oList` in
             !item this is a nested oList
                 !list
                     !item this is a nested unordered list inside of an oList
+                    !item Honestly, though, it's sort of ugly to do this, but that's your choice
                 !endList
         !endList
    !endList
