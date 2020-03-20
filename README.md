@@ -49,7 +49,7 @@ Eventually Klein will transition to a WYSIWYG web editor.  Until that happens, b
 
 In this syntax, anything shown in square brackets [like this] is optional.  The square brackets are ommitted in the text.
 
-All directives must come at the start of a line at the moment.  Nested directives are not yet implemented.
+All directives must come at the start of a line at the moment.  Some nesting is implemented, especially for lists of text content and checkpoints.
 
 ### The `!Book` directive
 
