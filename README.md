@@ -127,6 +127,20 @@ In order to support nesting, you just need to start a new `!list` or `!oList` in
 
 Currently there are four levels of headers that are allowed, and they follow the Markdown convention.  A single `#` renders as `<h1>`, `##` renders as `<h2>`, and a `###` renders as `<h3>`.
 
+### The `!link` directive
+
+Currently only block-level links are allowed (TODO: in-line links).  A link is added using the `!link` directive.  The syntax is:
+
+`!link address inner text as a string with separated values ID`
+
+The address should be a full web address (https:////www. etc).  The inner text is the hyperlink text itself.  It can be any text that is valid HTML.  The last entry must be the ID, separated from the rest by spaces.  An example:
+
+`!link https://www.google.ca This is a link to google googleOID`
+
+This will render as the html:
+
+`<a href = https://www.google.ca target="_blank" id="googleOID">This is a link to google <\a>`
+
 ### Any other lines are intepreted as text
 
 Any other lines that do not begin with a directive are interpreted as pure HTML text and are inserted into `<span>` elements.
