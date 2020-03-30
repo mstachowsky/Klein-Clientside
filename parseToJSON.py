@@ -154,6 +154,13 @@ for line in f:
             line=line.replace("!code","").strip();
             JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
             idNum = idNum+1
+        elif line.startswith("!link"):
+            line = line.replace("!link","").strip();
+            lineAr = line.split()
+            linkText = ""
+            for ln in lineAr[1:len(lineAr)-1]:
+                linkText = linkText+" "+ln
+            JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
         else:
             #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
             if firstLine == False:
