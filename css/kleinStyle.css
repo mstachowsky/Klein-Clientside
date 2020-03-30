@@ -70,6 +70,13 @@ span {
 	z-index: 10;
 }
 
+.link {
+	font-size: 1.5em;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	z-index: 10;
+}
+
 p {
 	display:block;
 }
