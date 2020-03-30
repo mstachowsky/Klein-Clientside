@@ -129,7 +129,7 @@ Currently there are four levels of headers that are allowed, and they follow the
 
 ### The `!link` directive
 
-Currently only block-level links are allowed (TODO: in-line links).  A link is added using the `!link` directive.  The syntax is:
+Currently only block-level links are allowed (TODO: in-line links).  A link is added using the `!link` directive.  Links always open in a new, blank tab. The syntax is:
 
 `!link address inner text as a string with separated values ID`
 
