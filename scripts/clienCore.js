@@ -126,6 +126,11 @@ function makeNewHTML(htmlNode)
 	newHtml.setAttribute('id',htmlNode.options.id);
 	if(htmlNode.options.class)
 		newHtml.setAttribute("class",htmlNode.options.class);
+	if(htmlNode.options.href) //this means it is a link
+	{
+		newHtml.setAttribute("href",htmlNode.options.href);
+		newHtml.setAttribute("target","_blank"); //new tab
+	}
 	newHtml.innerHTML = htmlNode.content;
 	return newHtml;
 }
@@ -210,6 +215,11 @@ function parseBookFromJSON(inputBook)
 			else if(cmp.type == "ENDLIST")
 			{
 				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+			}
+			else if(cmp.type == "LINK")
+			{
+				var linkDiv = {tag:"a",options:{id:cmp.id,href:cmp.addr},content:cmp.text};
+				newPage.appendChild(makeNewHTML(linkDiv));
 			}
 			else if(cmp.type==="answerBox")
 			{
