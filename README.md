@@ -67,6 +67,26 @@ The `!Page` directive has an optional page name, like this:  `!Page [optional pa
 
 Currently, if you have multiple pages, you must include the `!Page` directive on the line immediately following an `!endPage` or a `!Book1` directive, without any whitespace.  This is being tracked as a todo and will be removed as a requirement in the future.
 
+### Answer boxes: the `!ans` directive
+
+Answer boxes are currently only available as text or numeric input boxes.  Multiple choice and other options are TODO.  There are two ways to create an answer box: either as a text or a numeric box.
+
+Text answer boxes match the answer string directly.  The syntax is:
+
+`!ans textToMatch id`
+
+To create a numeric answer box, you specify the answer with a colon separated string.  The string always begins with "numeric", then the numeric nominal answer, then either the string "absolute" or a tolerance on the nominal answer.  It looks like this:
+
+`!ans numeric:2:absolute id`
+
+This will be an answer box essentially identical to `!ans 2 id`.  It matches the number "2" exactly, and will mark anything else wrong.
+
+`!ans numeric:2:0.1 id`
+
+This will be an answer box that matches any number between 1.9 and 2.1, inclusive.  In general, it is `!ans numeric:nominal:tolderance id`.  The algorithm used is:
+
+`if(Math.Abs(answerBoxValue-nominal) <= tolerance)` then it is marked correct, otherwise it is marked wrong.
+
 ### The !img and !video directives
 
 These two directives must be on their own line.  The syntax is:
