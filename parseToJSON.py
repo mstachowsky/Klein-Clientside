@@ -65,7 +65,25 @@ def replaceEnclosing(line,delims,beginTag,endTag):
         if(line.find(delims) != -1): #handle the case where the entire line is bolded
             line = beginTag + line + endTag
     return line
-
+    
+def inlineLink(line):
+    startString = "&#91&#91&#91"
+    endString = "&#93&#93&#93"
+    while(line.find(startString) != -1):
+        #get the start location
+        indxOfLink = line.find(startString);
+        #get the ending bracket
+        indxOfEnd = line.find(endString);
+        #extract the link text: address:::text
+        linkText = line[indxOfLink+len(startString):indxOfEnd];
+        print(linkText)
+        linkAr = linkText.split(":::");
+        linkAddr = linkAr[0];
+        linkContent = linkAr[1];
+        link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
+        line = line.replace(startString+linkText+endString,link)
+    return line
+    
 for line in f:
 
     #remove leading and trailing whitespace
@@ -78,7 +96,7 @@ for line in f:
     line = line.replace(';','&#59')
     line = line.replace(']','&#93')
     line = line.replace('[','&#91')
-    
+   
     #handle inline tags
     #Bolding first
     line = replaceEnclosing(line,"**","<b>","</b>")
@@ -86,6 +104,8 @@ for line in f:
     line = replaceEnclosing(line,"*","<i>","</i>")
     #now code, using Discord-like syntax
     line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
+    #now inline links
+    line = inlineLink(line);
     
     if line.startswith("!Book"):
         line = line.replace('!Book','').strip()
