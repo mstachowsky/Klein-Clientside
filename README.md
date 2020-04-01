@@ -149,7 +149,7 @@ Currently there are four levels of headers that are allowed, and they follow the
 
 ### The `!link` directive
 
-Currently only block-level links are allowed (TODO: in-line links).  A link is added using the `!link` directive.  Links always open in a new, blank tab. The syntax is:
+A link directive creates a block level link.  See below ("Markdown Syntax") for how to create an inline link.  A link is added using the `!link` directive.  Links always open in a new, blank tab. The syntax is:
 
 `!link address inner text as a string with separated values ID`
 
@@ -174,3 +174,5 @@ Within any text line, you may use some standard Markdown syntax for inline enclo
 `This is **bold** and this is *italic* and this is ***both***`
 
 - Three backticks (\`) will enclose inline code.  This puts the code directly into the line.  This can be used instead of the !code directive if you wish.
+
+- Inline links are enclosed with three square brackets `[[[` and end with three closing square brackets `]]]`.  An inline link is broken into two components: the address and the text.  The two components are separated by three colons: `:::`.  An inline link therefore looks like this: `This is text [[[https://ww.google.ca:::this is a link to google]]] and this is more text```.
