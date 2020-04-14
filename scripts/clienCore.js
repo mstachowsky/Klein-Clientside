@@ -1,10 +1,11 @@
 /*
-	Clien viewer, V0.4
+	Clien viewer, V0.5
 	
 	Changelog: 
 	
 		V0.3: completely removed Mithril
 		V0.4: Added support for nested lists
+		v0.5: Added next/back buttons
 */
 
 /*
@@ -57,6 +58,8 @@ function wait(ms){
 /*
 	The onclick for the page select buttons
 */
+var curPage = 0;
+var totPages = 0;
 function changePage(elem){
 	//force a deep copy
 	//data.currentPage = JSON.parse(JSON.stringify(data.pages[elem.id]))
@@ -67,6 +70,7 @@ function changePage(elem){
 		if(Number(id)===elem.id)
 		{
 			pageArray[i].style.display = 'block';
+			curPage = id; //This is for the next/back buttons
 		}			
 		else
 			pageArray[i].style.display="none"
@@ -77,6 +81,22 @@ function changePage(elem){
 	document.documentElement.scrollTop = 0; //Everything else
 }
 
+function nextPage()
+{
+	if(curPage < totPages-1)
+	{
+		curPage++;
+		changePage({id:curPage});
+	}
+}
+function backPage()
+{
+	if(curPage > 0)
+	{
+		curPage--;
+		changePage({id:curPage});
+	}
+}
 
 /*
 	makes and returns a new button
@@ -115,6 +135,20 @@ function makeNewPage(){
 	{
 		selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[i]));
 	}
+	
+	//now we need to add the next/back buttons
+	var nextBtn = document.createElement("BUTTON");
+	nextBtn.onclick = nextPage;
+	nextBtn.setAttribute("id","NEXT");
+	nextBtn.innerHTML = "Next >>";
+	selectRoot.appendChild(nextBtn);
+	
+	var backBtn = document.createElement("BUTTON");
+	backBtn.onclick = backPage;
+	backBtn.setAttribute("id","BACK");
+	backBtn.innerHTML = "<< Previous";
+	selectRoot.appendChild(backBtn);
+		
 	//finally make the first page show up
 	changePage({id:0});
 
@@ -154,6 +188,7 @@ function makeNewMedia(mediaNode,type)
 function parseBookFromJSON(inputBook)
 {	
 	var contentRoot = document.getElementById('contentPlace');
+	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
 	for (var i = 0; i < inputBook.pages.length; i++)
 	{
 		
@@ -218,7 +253,7 @@ function parseBookFromJSON(inputBook)
 			}
 			else if(cmp.type == "LINK")
 			{
-				var linkDiv = {tag:"a",options:{id:cmp.id,href:cmp.addr},content:cmp.text};
+				var linkDiv = {tag:"a",options:{id:cmp.id,href:cmp.addr,class:"link"},content:cmp.text};
 				newPage.appendChild(makeNewHTML(linkDiv));
 			}
 			else if(cmp.type==="answerBox")
