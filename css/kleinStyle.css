@@ -2,7 +2,7 @@
 :root{
 	--sidebar-width: 200px;
 	--button-height: 45px;
-	--header-font-size: 38px;
+	--header-font-size: 25px;
 	--button-font-size: 16px;
 	--border-grey: BDC3C7;
 }
@@ -11,13 +11,13 @@
 .header{
 	position: fixed;
 	width: 100%;
-	height: var(--button-height);
+	min-height: var(--button-height);
 	z-index: 2;
 	top: 0;
 	border-style: solid none solid none;
 	border-color: var(--border-grey);
 	background-color: #FFF; /* Black */
-	font-family: "Arial", sans-serif;
+	/*font-family: "Verdana", sans-serif;*/
 	font-size: var(--header-font-size);
 	color: #626567;
 }
@@ -48,12 +48,13 @@
 .code {
 	display:block;
 	font-family: "Courier New", monospace;
+	font-size: 0.85em;
 	background-color: #F5F5F5;
 }
 
 .inlineCode {
 	font-family: "Courier New", monospace;
-	font-size: 1em;
+	font-size: 0.85em;
 	background-color: #F5F5F5;
 }
 
