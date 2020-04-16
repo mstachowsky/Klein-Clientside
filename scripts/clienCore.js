@@ -6,6 +6,7 @@
 		V0.3: completely removed Mithril
 		V0.4: Added support for nested lists
 		v0.5: Added next/back buttons
+			- 0.5.1 fix for header not showing special characters properly
 */
 
 /*
@@ -275,7 +276,8 @@ function parseBookFromJSON(inputBook)
 	
 	//mount the book's title, which should never change throughout an assignment
 	var headerRoot = document.getElementById("header");
-	headerRoot.appendChild(document.createTextNode(inputBook.bookName));
+	var headDiv = {tag:"span",options:{id:cmp.id},content:inputBook.bookName};
+	headerRoot.appendChild(makeNewHTML(headDiv));
 
 	//finally, create the first page
 	makeNewPage();
