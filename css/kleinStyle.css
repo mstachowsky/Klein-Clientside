@@ -98,6 +98,10 @@ p {
   font-size: var(--button-font-size);
 }
 
+.activeButton {
+	background-color: skyblue !important;
+}
+
 .btn-group button:not(:last-child) {
   border-bottom: none; /* Prevent double borders */
 }
