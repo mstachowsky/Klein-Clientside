@@ -7,6 +7,7 @@
 		V0.4: Added support for nested lists
 		v0.5: Added next/back buttons
 			- 0.5.1 fix for header not showing special characters properly
+			- 0.5.2 Added highlight to the active button
 */
 
 /*
@@ -80,6 +81,17 @@ function changePage(elem){
 	//Now scroll to the top
 	document.body.scrollTop = 0; //Safari compatibility
 	document.documentElement.scrollTop = 0; //Everything else
+		
+	//finally highlight the button whose page it is
+	var btnArray = document.getElementById('selectRow').getElementsByTagName("BUTTON");
+	for(var i = 0; i < btnArray.length; i++)
+	{
+		btnArray[i].classList.remove("activeButton");
+		if(btnArray[i].getAttribute("id") === "pageBTN"+elem.id)
+		{
+			btnArray[i].classList.add("activeButton");
+		}
+	}
 }
 
 function nextPage()
