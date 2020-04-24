@@ -86,10 +86,16 @@ function changePage(elem){
 	var btnArray = document.getElementById('selectRow').getElementsByTagName("BUTTON");
 	for(var i = 0; i < btnArray.length; i++)
 	{
+		//This is slightly sketchy, as it leaves an empty "class" attribute but it works
 		btnArray[i].classList.remove("activeButton");
 		if(btnArray[i].getAttribute("id") === "pageBTN"+elem.id)
 		{
+			btnArray[i].classList.remove("inactiveButton");
 			btnArray[i].classList.add("activeButton");
+		}
+		else
+		{
+			btnArray[i].classList.add("inactiveButton");
 		}
 	}
 }
