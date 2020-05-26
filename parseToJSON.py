@@ -4,8 +4,10 @@ import os
 import sys
 import time
 
-#time is just here because I'm curious
+#time is just here because I'm curious how long this program takes to run
 startTime = time.time();
+
+
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
 fName = os.getcwd()+sys.argv[1]
 f = open(fName+'.md','r')
@@ -31,6 +33,8 @@ JSONString = ""
 
 #There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
 #of whether we are inside or outside of one.
+
+
 #The checkpoint environment is easy - everything inside gets a special style applied
 inCheckpoint = False;
 
@@ -65,7 +69,14 @@ def replaceEnclosing(line,delims,beginTag,endTag):
         if(line.find(delims) != -1): #handle the case where the entire line is bolded
             line = beginTag + line + endTag
     return line
+
+'''
+    This function replaces inline links with HTML links.  I can't think of an easier way to do this.
     
+    Basically, this function has to be called after special characters are replaced.
+    
+    Links in the markdown are enclosed by three square brackets [[[like this]]].  After special character replacement, these become &#91 and &#93.  So we extract the link text from between those two substrings, create an HTML link, and replace the whole thing with that HTML.  Then we continue doing that until there are no more inline links on this line.
+'''    
 def inlineLink(line):
     startString = "&#91&#91&#91"
     endString = "&#93&#93&#93"
@@ -76,7 +87,6 @@ def inlineLink(line):
         indxOfEnd = line.find(endString);
         #extract the link text: address:::text
         linkText = line[indxOfLink+len(startString):indxOfEnd];
-        print(linkText)
         linkAr = linkText.split(":::");
         linkAddr = linkAr[0];
         linkContent = linkAr[1];
@@ -90,8 +100,9 @@ for line in f:
     line = line.strip()
     
     #escape the backslashes and other special characters
+    line = line.replace('\*','&#42') #asterisks in math
     line = line.replace('\\','\\\\')
-    line = line.replace('"','\\"') 
+    line = line.replace('"','\\"')
     line = line.replace('\'','&#39')
     line = line.replace(';','&#59')
     line = line.replace(']','&#93')
