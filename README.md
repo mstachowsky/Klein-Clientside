@@ -7,6 +7,10 @@ Klein-Clientside is a client-side web framework for authoring and displaying ins
 
 Klein clientside is currently not able to store user data or grades, and as such is currently useful for lab manuals and practice but not for graded assignments.
 
+### The book file
+
+You write your own books you use a basic text editor.  The file is a markdown file with modified syntax (see below), so it would be a \*.md file.  Once you've written the file, you use the JSON parser (see below)  to parse it into a "book", or \*.bk, file.  Klein fetches the book file and any resources, such as images and videos, on page load.
+
 ## Klein's Components
 
 Klein consists of two components: a python script for converting the content and a Javascript/css/html web front-end for displaying the content.
