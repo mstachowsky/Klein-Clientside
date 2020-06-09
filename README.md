@@ -25,7 +25,26 @@ This will create or overwrite the file BOOK1.bk and place it into the BOOK1 fold
 
 You can then either point the web front-end directly to that bk file, or move it to a more convenient location on your server.  See below for instructions if you do not have a server and are just opening webpages directly.
 
-### The HTML Framework
+### The HTML Framework: V0.6 and up
+
+Klein is currently set up to use the following folder structure:
+
+- a root directory, which we'll call [Root].  [Root] must contain the file 'kleinCore.html' and the following sub-directories:
+  - a `script` directory inside of root.  This must contain `clienCore.js` and `answerableComponent.js` at a minimum
+  - a `css` directory that contains `kleinStyle.css'
+  
+To load a book you require two parameters in the URL to kleinCore.html.  It is called like this:
+
+[url to your server]/kleinCore.html?book=[path to book relative to root]&resURL=[path to resource folder relative to root]/
+
+Note that "/" at the end is required (see issues page).  For example, if I have a "books" directory in [Root], and inside of that is a folder "book1", which contains "book1.bk".  Say also that I have a folder called "res" in the "book1" folder, which holds all of the image and video files.  Then I would use the following url:
+
+[url to your server]/kleinCore.html?book=books/book1/book1.bk&resURL=books/book1/res/
+
+### The HTML Framework: Pre-V0.6
+
+**NOTE** This section is depracated.  All future Klein projects should use the V0.6 and above, 'kleinCore.js' framework.  The older (pre-0.6) js file is named 'clienCore.js' to emphasize the difference and to prevent breaking pre-0.6 books.  0.5.2 will be phased out after December 2020.
+
 Klein is currently set up to use the following folder structure:
 
 - a root directory, which we'll call [Root]
