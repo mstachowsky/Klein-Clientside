@@ -3,8 +3,6 @@
 
 <title>[insert cool name]</title>
 <head>
-
-<!--<link href="style-my-tooltips.css" rel="stylesheet" type="text/css" />-->
 	<style type="text/css">
 
 		button {
@@ -70,6 +68,10 @@
 			margin-top: 20px;
 			border: 1px solid black;
 			float: center;
+		}
+
+		.button_btn {
+
 		}
 
 		#input_console {
@@ -139,7 +141,7 @@
 		.pageblock {
 			margin-top: 10px;
 			border: 2px solid black;
-			
+
 		}
 
 		.editor {
@@ -245,18 +247,19 @@
 	<script src="./addedJS/jquery-3.3.0.js"></script>
 	<script src="./addedJS/jquery.style-my-tooltips.js"></script>
 
-	<script>
+<script>
 		(function($){
-		$(document).ready(function(){
-		$("[title]").style_my_tooltips({
-		tip_follows_cursor:true,
-		tip_delay_time:0,
-		tip_fade_speed:0,
-		attribute:"title"
+			$(document).ready(function(){
+			$("[title]").style_my_tooltips({
+			tip_follows_cursor:true,
+			tip_delay_time:0,
+			tip_fade_speed:0,
+			attribute:"title"
+			});
 		});
-		});
-		})(jQuery);
-	</script>
+    }
+)(jQuery);
+</script>
 
 	</head>
 
@@ -271,7 +274,7 @@
 			<div id="input_console">
 			</div>
 			<div id="button_box">
-				<button onclick="appendInput()">Add Box!</button>
+				<button rel="add new element" onclick="appendInput()">Add Box!</button>
 				<button onclick="printToBox()">Print!</button>
 				<button onclick="clearLastInput()">Clear Last Input.</button>
 				<button onclick="clearAllInput()">Clear All Input.</button>

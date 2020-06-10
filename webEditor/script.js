@@ -50,7 +50,7 @@ function printToBox() {
         temp_body = outputs[i].innerHTML;
         tempStr += "!Page ";
         if ( !isNullOrWhiteSpace(temp_title) ) {
-            tempStr+= "[" + temp_title + "]" + '\n'; 
+            tempStr+= temp_title + '\n'; 
             console.log(temp_title);
         } else { tempStr += '\n'; console.log("Page " + i + "."); }
 
@@ -131,17 +131,19 @@ function parseText(str) {
         ["</h2>",'\n'],
         ["<h3>","### "],
         ["</h3>",'\n'],
-        ["<br>", "!brk"],
-        ["<ul>", "!list"],
-        ["</ul>", "!endList"],
-        ["<ol>", "!oList"],
-        ["</ol>","!endList"],
-        ["<li>", "!item"],
+        ["<br>", "!brk\n"],
+        ["<ul>", "!list\n"],
+        ["</ul>", "!endList \n"],
+        ["<ol>", "!oList \n"],
+        ["</ol>","!endList \n"],
+        ["<li>", "!item "],
         ["</li>", '\n'],
-        ["</div><div>", '\n'],
-        ["<div>", '\n'],
-        ["</div>", '\n'],
-        ['\n\n', '\n']
+        ["</div><div>", "!brk\n"],
+        ["<div>", ""],
+        ["</div>", "!brk\n"],
+        ["!brk!brk","!brk"],
+        ['\n\n', '\n'],
+        ["&nbsp;", " "]
     ];
     for (let i = 0; i < replacements.length; i++) {
         while ( newStr.search(replacements[i][0]) != -1 ) {
@@ -380,9 +382,3 @@ function activateClick() {
    
 });
 }
-
-
-
-
-
-
