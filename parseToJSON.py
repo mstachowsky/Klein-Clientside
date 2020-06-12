@@ -9,9 +9,18 @@ startTime = time.time();
 
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
-fName = os.getcwd()+sys.argv[1]
-f = open(fName+'.md','r')
-outFile = open(fName+'.bk','w')
+#fName = os.getcwd()+sys.argv[1]
+#f = open(fName+'.md','r')
+#outFile = open(fName+'.bk','w')
+
+path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower'
+f = open(path +'.md', 'r')
+outFile = open(path +'.bk','w')
+
+
+
+
+
 
 #all we do is build a huge JSON string.  You'll notice below that there are a bunch of open braces and the like.  It's just to create
 #the appropriate JSON.  You should probably just follow along with the output file to better understand it, but here is the gist:
@@ -93,15 +102,41 @@ def inlineLink(line):
         link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
         line = line.replace(startString+linkText+endString,link)
     return line
-    
-for line in f:
 
+
+#recursive function for backslash esacpe characters 
+def backslashEsc(line, index):
+    location = line.find('\\', index) #if this trys to find from an index outside of the string returns -1
+    index = location 
+    if location != -1:
+        #the last character of the string seems to get cut off 
+        line = line + ' '
+        if line[location:location+2] == '\*':
+            line = line[0:location] + '&#42' + line[location+2:-1]
+        elif line[location:location+1] == '\\':
+            line = line[0:location] + '\\\\' + line[location+1:-1]
+        return backslashEsc(line,index+3) 
+    elif location == -1:
+        return line
+
+def testing(line):
+    yes = line.find('frac')
+    if(yes !=-1):
+        print(yes)
+    return 
+        
+for line in f:
     #remove leading and trailing whitespace
     line = line.strip()
     
+    
+    testing(line)
+    
     #escape the backslashes and other special characters
-    line = line.replace('\*','&#42') #asterisks in math
-    line = line.replace('\\','\\\\')
+    line = backslashEsc(line,0)
+#    line = line.replace('\*','&#42') #asterisks in math
+#    line = line.replace('\\','\\\\')
+    
     line = line.replace('"','\\"')
     line = line.replace('\'','&#39')
     line = line.replace(';','&#59')
