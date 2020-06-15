@@ -261,6 +261,6 @@ JSONString+= "]}"
 
 endTime = time.time();
 if myStack:
-    print('Error: Tag mismatch --' + str(myStack))
+    print('Error: Tag mismatch --' + str(myStack.pop()))
 
 print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds');
