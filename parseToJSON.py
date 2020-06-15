@@ -7,13 +7,20 @@ import time
 #time is just here because I'm curious how long this program takes to run
 startTime = time.time();
 
+#stack for closing tags 
+myStack = []
+#list based stack, to push use append(x), to pop use pop(), to peek, use myStack[-1]
+openingTags = ['!Page',   '!checkpoint',  '!oList',  '!list']
+closingTags = ['!endPage','!endCheckpoint','!endList','!endList',]
+
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
 #fName = os.getcwd()+sys.argv[1]
 #f = open(fName+'.md','r')
 #outFile = open(fName+'.bk','w')
 
-path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower'
+#path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower'
+path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower'
 f = open(path +'.md', 'r')
 outFile = open(path +'.bk','w')
 
@@ -119,18 +126,26 @@ def backslashEsc(line, index):
     elif location == -1:
         return line
 
-def testing(line):
-    yes = line.find('frac')
-    if(yes !=-1):
-        print(yes)
-    return 
+def tagMatching(line, myStack, openingTags, closingTags):
+    tag = line.split(' ', 1)[0]
+    
+    if openingTags.count(tag):
+        myStack.append(tag)
+    elif closingTags.count(tag):
+        peek = myStack[-1]
+        index = closingTags.index(tag,0,-1)
+        if peek == openingTags[index] or peek ==openingTags[index+1]:
+            myStack.pop()
+    return
+        
+
+    
         
 for line in f:
     #remove leading and trailing whitespace
     line = line.strip()
-    
-    
-    testing(line)
+  
+    tagMatching(line, myStack, openingTags, closingTags)
     
     #escape the backslashes and other special characters
     line = backslashEsc(line,0)
@@ -245,4 +260,7 @@ JSONString = JSONString[:-1]
 JSONString+= "]}"
 
 endTime = time.time();
+if myStack:
+    print('Error: Tag mismatch --' + str(myStack))
+
 print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds');
