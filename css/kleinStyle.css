@@ -26,7 +26,7 @@
 .sidebar {
   height: 100%; /* Full-height: remove this if you want "auto" height */
   width: var(--sidebar-width); /* Set the width of the sidebar */
-  position: absolute; /* Fixed Sidebar (stay in place on scroll) */
+  position: absolute; /* Fixed Sidebar (stay in place on scroll), position relative to heading*/
   z-index: 1; /* Stay on top */
   top: auto ; /* Stay at the top */
   left: 0;
