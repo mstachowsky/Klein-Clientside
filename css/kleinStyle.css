@@ -9,7 +9,7 @@
 
 /*The header*/
 .header{
-	position: fixed;
+	position: static;
 	width: 100%;
 	min-height: var(--button-height);
 	z-index: 2;
@@ -19,16 +19,16 @@
 	background-color: #FFF; /* Black */
 	/*font-family: "Verdana", sans-serif;*/
 	font-size: var(--header-font-size);
-	color: #626567;
+  color: #626567;
 }
 
 /* The sidebar menu */
 .sidebar {
   height: 100%; /* Full-height: remove this if you want "auto" height */
   width: var(--sidebar-width); /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  position: absolute; /* Fixed Sidebar (stay in place on scroll), position relative to heading*/
   z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
+  top: auto ; /* Stay at the top */
   left: 0;
   background-color: #ECECEC;
   overflow-x: hidden; /* Disable horizontal scroll */
@@ -36,13 +36,15 @@
   margin-top: 30px;
   border-style: none solid none none;
   border-color: var(--border-grey);
+  float: left;
 }
 
 /* Style page content */
 .main {
   margin-left: var(--sidebar-width); /* Same as the width of the sidebar */
-  margin-top: 50px;
+  margin-top: 0px;
   padding: 0px 10px;
+  float: right;
 }
 
 .code {
