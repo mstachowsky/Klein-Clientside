@@ -19,8 +19,9 @@ closingTags = ['!endPage','!endCheckpoint','!endList','!endList',]
 #f = open(fName+'.md','r')
 #outFile = open(fName+'.bk','w')
 
-path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower'
-#path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower'
+#path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower' #for laptop
+#path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
+path = 'BOOKS\\Lab_2_ArduinoPower'
 f = open(path +'.md', 'r')
 outFile = open(path +'.bk','w')
 
@@ -121,9 +122,11 @@ def tagMatching(line, myStack, openingTags, closingTags):
         if peek == openingTags[index] or peek ==openingTags[index+1]:
             myStack.pop()
     return
-        
 
-def parse(f, JSONString):
+idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
+pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
+
+def parse(f, JSONString, idNum, pageNum):
     
         
     #There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
@@ -139,8 +142,7 @@ def parse(f, JSONString):
     inPage = False;
     firstLine = False;
     
-    idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
-    pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
+    
 
     pageFile = ''
      
@@ -153,13 +155,13 @@ def parse(f, JSONString):
         if line.startswith("!addPage"):
             line = line + ' '
             pageDir = line[9:-1] #takes what ever is after the command 
-            if line.find('.pg'): #.pg will be file extention for pages 
+            if line.find('.pg') != -1: #.pg will be file extention for pages 
                 pageFile = open(pageDir, 'r')
             else:
                 pageFile = open(pageDir + '.pg', 'r')
                 
-            parse(pageFile, JSONString)
-            return
+            JSONString = parse(pageFile, JSONString, idNum, pageNum)
+         
         
         
         
@@ -273,7 +275,7 @@ def parse(f, JSONString):
     return JSONString
 
 
-JSONString = parse(f, JSONString)
+JSONString = parse(f, JSONString, idNum, pageNum)
 
 #Now, we added an extra comma at the end of the page, so we need to remove it
 JSONString = JSONString[:-1]
