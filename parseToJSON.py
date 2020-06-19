@@ -47,22 +47,6 @@ outFile = open(path +'.bk','w')
 '''
 JSONString = ""
 
-#There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
-#of whether we are inside or outside of one.
-
-
-#The checkpoint environment is easy - everything inside gets a special style applied
-inCheckpoint = False;
-
-#The Page environment is trickier.  We need to ensure that we don't write any components
-#outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
-#that we don't write the name of the page out once we start it, hence why there are two flags.
-inPage = False;
-firstLine = False;
-
-idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
-pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
-
 '''
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
@@ -139,121 +123,157 @@ def tagMatching(line, myStack, openingTags, closingTags):
     return
         
 
+def parse(f, JSONString):
     
         
-for line in f:
-    #remove leading and trailing whitespace
-    line = line.strip()
-  
-    tagMatching(line, myStack, openingTags, closingTags)
+    #There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
+    #of whether we are inside or outside of one.
     
-    #escape the backslashes and other special characters
-    line = backslashEsc(line,0)
-#    line = line.replace('\*','&#42') #asterisks in math
-#    line = line.replace('\\','\\\\')
     
-    line = line.replace('"','\\"')
-    line = line.replace('\'','&#39')
-    line = line.replace(';','&#59')
-    line = line.replace(']','&#93')
-    line = line.replace('[','&#91')
-   
-    #handle inline tags
-    #Bolding first
-    line = replaceEnclosing(line,"**","<b>","</b>")
-    #now italics
-    line = replaceEnclosing(line,"*","<i>","</i>")
-    #now code, using Discord-like syntax
-    line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
-    #now inline links
-    line = inlineLink(line);
+    #The checkpoint environment is easy - everything inside gets a special style applied
+    inCheckpoint = False;
     
-    if line.startswith("!Book"):
-        line = line.replace('!Book','').strip()
-       
-        JSONString += "{\"bookName\":\"" + line + "\",\"pages\":["
-    elif line.startswith("!Page"):
-        inPage = True;
-        line = line.replace('!Page','').strip()
-        pageNum = pageNum + 1;
-        if(line == ""):
-            line = "Page" + str(pageNum)
-        JSONString+="{\"name\":\"" + line + "\",\"components\":["
-        firstLine = True;
-    elif line.startswith("!endPage"):
-        inPage = False;
-        #it just looks better to add an extra few blank lines at the bottom of the page
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
-        #Now, we added an extra comma, so we need to remove it
-        JSONString = JSONString[:-1]
-        JSONString+= "]},"
-    if inPage == True:
-        if line.startswith("!checkpoint"):
-            line = line.replace('!checkpoint','').strip()
-            JSONString+="{\"type\":\"CHECKPOINT\",\"tag\":\"h2\",\"options\":{},\"content\":\""+"Checkpoint"+"\"},"
-            inCheckpoint = True
-        elif line.startswith("!endCheckpoint"):
-            JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
-            inCheckpoint = False
-        elif line.startswith("!ans"):
-            line = line.replace("!ans",'').strip()
-            lineAr = line.split()
-            JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
-        elif line.startswith("!video"):
-            line = line.replace("!video","").strip()
-            lineAr = line.split()
-            JSONString += "{\"type\":\"video\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
-        elif line.startswith("!img"):
-            line = line.replace("!img","").strip()
-            lineAr = line.split()
-            JSONString += "{\"type\":\"img\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
-        elif line.startswith("# "):
-            line = line.replace("#","").strip()
-            JSONString+="{\"type\":\"HTML\",\"tag\":\"h1\",\"options\":{},\"content\":\""+line+"\"},"
-        elif line.startswith("## "):
-            line = line.replace("##","").strip()
-            JSONString+="{\"type\":\"HTML\",\"tag\":\"h2\",\"options\":{},\"content\":\""+line+"\"},"
-        elif line.startswith("### "):
-            line = line.replace("###","").strip()
-            JSONString+="{\"type\":\"HTML\",\"tag\":\"h3\",\"options\":{},\"content\":\""+line+"\"},"
-        elif line.startswith("!brk"):
-            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
-        elif line.startswith("!item"):
-            line = line.replace("!item","").strip()
-            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-        elif line.startswith("!list"):
-            line = line.replace("!list","").strip()
-            JSONString+="{\"type\":\"UL\"},"
-        elif line.startswith("!oList"): #ordered list
-            line = line.replace("!oList","").strip()
-            JSONString+="{\"type\":\"OL\"},"
-        elif line.startswith("!endList"):
-            line = line.replace("!endList","").strip()
-            JSONString+="{\"type\":\"ENDLIST\"},"
-        elif line.startswith("!code"):
-            line=line.replace("!code","").strip();
-            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-            idNum = idNum+1
-        elif line.startswith("!link"):
-            line = line.replace("!link","").strip();
-            lineAr = line.split()
-            linkText = ""
-            for ln in lineAr[1:len(lineAr)-1]:
-                linkText = linkText+" "+ln
-            JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
-        else:
-            #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
-            if firstLine == False:
-                #if the line, after stripping, is empty, add a break
-                if(line.strip() == ""):
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
-                    
-                else:
-                    JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                    idNum = idNum+1
+    #The Page environment is trickier.  We need to ensure that we don't write any components
+    #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
+    #that we don't write the name of the page out once we start it, hence why there are two flags.
+    inPage = False;
+    firstLine = False;
+    
+    idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
+    pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
+
+    pageFile = ''
+     
+    for line in f:
+        #remove leading and trailing whitespace
+        line = line.strip()
+      
+        tagMatching(line, myStack, openingTags, closingTags)
+        
+        if line.startswith("!addPage"):
+            line = line + ' '
+            pageDir = line[9:-1] #takes what ever is after the command 
+            if line.find('.pg'): #.pg will be file extention for pages 
+                pageFile = open(pageDir, 'r')
             else:
-                firstLine = False;
+                pageFile = open(pageDir + '.pg', 'r')
+                
+            parse(pageFile, JSONString)
+            return
+        
+        
+        
+        #escape the backslashes and other special characters
+        line = backslashEsc(line,0)
+    #    line = line.replace('\*','&#42') #asterisks in math
+    #    line = line.replace('\\','\\\\')
+        
+        line = line.replace('"','\\"')
+        line = line.replace('\'','&#39')
+        line = line.replace(';','&#59')
+        line = line.replace(']','&#93')
+        line = line.replace('[','&#91')
+       
+        #handle inline tags
+        #Bolding first
+        line = replaceEnclosing(line,"**","<b>","</b>")
+        #now italics
+        line = replaceEnclosing(line,"*","<i>","</i>")
+        #now code, using Discord-like syntax
+        line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
+        #now inline links
+        line = inlineLink(line);
+        
+        if line.startswith("!Book"):
+            line = line.replace('!Book','').strip()
+           
+            JSONString += "{\"bookName\":\"" + line + "\",\"pages\":["
+        elif line.startswith("!Page"):
+            inPage = True;
+            line = line.replace('!Page','').strip()
+            pageNum = pageNum + 1;
+            if(line == ""):
+                line = "Page" + str(pageNum)
+            JSONString+="{\"name\":\"" + line + "\",\"components\":["
+            firstLine = True;
+        elif line.startswith("!endPage"):
+            inPage = False;
+            #it just looks better to add an extra few blank lines at the bottom of the page
+            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
+            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
+            #Now, we added an extra comma, so we need to remove it
+            JSONString = JSONString[:-1]
+            JSONString+= "]},"
+        if inPage == True:
+            if line.startswith("!checkpoint"):
+                line = line.replace('!checkpoint','').strip()
+                JSONString+="{\"type\":\"CHECKPOINT\",\"tag\":\"h2\",\"options\":{},\"content\":\""+"Checkpoint"+"\"},"
+                inCheckpoint = True
+            elif line.startswith("!endCheckpoint"):
+                JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
+                inCheckpoint = False
+            elif line.startswith("!ans"):
+                line = line.replace("!ans",'').strip()
+                lineAr = line.split()
+                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
+            elif line.startswith("!video"):
+                line = line.replace("!video","").strip()
+                lineAr = line.split()
+                JSONString += "{\"type\":\"video\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
+            elif line.startswith("!img"):
+                line = line.replace("!img","").strip()
+                lineAr = line.split()
+                JSONString += "{\"type\":\"img\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
+            elif line.startswith("# "):
+                line = line.replace("#","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"h1\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("## "):
+                line = line.replace("##","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"h2\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("### "):
+                line = line.replace("###","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"h3\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("!brk"):
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
+            elif line.startswith("!item"):
+                line = line.replace("!item","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("!list"):
+                line = line.replace("!list","").strip()
+                JSONString+="{\"type\":\"UL\"},"
+            elif line.startswith("!oList"): #ordered list
+                line = line.replace("!oList","").strip()
+                JSONString+="{\"type\":\"OL\"},"
+            elif line.startswith("!endList"):
+                line = line.replace("!endList","").strip()
+                JSONString+="{\"type\":\"ENDLIST\"},"
+            elif line.startswith("!code"):
+                line=line.replace("!code","").strip();
+                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
+                idNum = idNum+1
+            elif line.startswith("!link"):
+                line = line.replace("!link","").strip();
+                lineAr = line.split()
+                linkText = ""
+                for ln in lineAr[1:len(lineAr)-1]:
+                    linkText = linkText+" "+ln
+                JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
+            else:
+                #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
+                if firstLine == False:
+                    #if the line, after stripping, is empty, add a break
+                    if(line.strip() == ""):
+                        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
+                        
+                    else:
+                        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                        idNum = idNum+1
+                else:
+                    firstLine = False;
+    return JSONString
+
+
+JSONString = parse(f, JSONString)
 
 #Now, we added an extra comma at the end of the page, so we need to remove it
 JSONString = JSONString[:-1]
