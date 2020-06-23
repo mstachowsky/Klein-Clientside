@@ -310,6 +310,26 @@ function parseBookFromJSON(inputBook,resURL="")
 				cmp.src = resURL+cmp.src;
 				newPage.appendChild(makeNewMedia(cmp,"IMG"));
 			}
+////////////////////////////// WIP
+
+
+			else if (cmp.type ==="multipleChoice")
+			{
+
+
+			}
+
+
+
+
+////////////////////////////////
+
+
+
+
+
+
+
 		}
 	}
 	

@@ -102,3 +102,13 @@ class answerBox extends answer{
 }
 }
 
+class multipleChoice extends answer{
+
+	car ansBx = document.createElement("INPUT")
+	ansBx.setAttribute("type", "radio")
+
+
+
+
+
+}

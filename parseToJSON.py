@@ -20,8 +20,8 @@ closingTags = ['!endPage','!endCheckpoint','!endList','!endList',]
 #outFile = open(fName+'.bk','w')
 
 #path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower' #for laptop
-#path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
-path = 'BOOKS\\Lab_2_ArduinoPower'
+path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
+#path = 'BOOKS\\Lab_2_ArduinoPower'
 f = open(path +'.md', 'r')
 outFile = open(path +'.bk','w')
 
@@ -218,6 +218,23 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
                 JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
+                
+########################################### WIP ###############################################################
+            elif line.startswith("!multipleChoice"):
+                line = line.replace("!multipleChoice", '')
+                JSONString += "{\"type\":\"multipleChoice\",\"tag\":\"h2\",\"options\":{},\"content\":\""+"multipleChoice"+"\"},"
+                
+            elif line.startswith("!multipleChoiceEnd"):
+                line = line.replace("!multipleChoiceEnd", '')
+                JSONString += "{\"type\":\"endMultiple\",\"tag\":\"h2\",\"options\":{},\"content\":\""+""+"\"},"
+                
+            elif line.startswith("!option"):
+                line = line.replace("!option", '')
+                JSONString +="{\"type\":\"radio\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"              
+                
+                
+########################################### WIP ###############################################################
+                
             elif line.startswith("!video"):
                 line = line.replace("!video","").strip()
                 lineAr = line.split()
