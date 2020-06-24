@@ -177,7 +177,21 @@ function makeNewPage(){
 
 function makeNewHTML(htmlNode)
 {
-	var newHtml = document.createElement(htmlNode.tag.toUpperCase());
+	if(htmlNode.options.type === "radio")
+	{
+		var newHtml = document.createElement("INPUT");
+		var label = document.createElement('label');
+		var labelContent = document.createElement('label');
+		newHtml.setAttribute("type", "radio");
+		labelContent.setAttribute("for", htmlNode.options.id);
+		labelContent.innerHTML = htmlNode.content;
+	}
+	else 
+	{
+		var newHtml = document.createElement(htmlNode.tag.toUpperCase());
+	}
+
+
 	newHtml.setAttribute('id',htmlNode.options.id);
 	if(htmlNode.options.class)
 		newHtml.setAttribute("class",htmlNode.options.class);
@@ -186,8 +200,27 @@ function makeNewHTML(htmlNode)
 		newHtml.setAttribute("href",htmlNode.options.href);
 		newHtml.setAttribute("target","_blank"); //new tab
 	}
+
+
+	// testing this to set the html type to radio 
+	
+	if(htmlNode.options.name)
+		newHtml.setAttribute("name", htmlNode.options.name);
+	if(htmlNode.options.value)
+		newHtml.setAttribute("value", htmlNode.options.value);
+	
+	
 	newHtml.innerHTML = htmlNode.content;
-	return newHtml;
+	if(htmlNode.options.type === "radio")
+	{
+		label.appendChild(newHtml);
+		label.appendChild(labelContent);
+		return label;
+	}
+	else
+	{
+		return newHtml;
+	}
 }
 
 //makes videos and images
@@ -248,9 +281,9 @@ function parseBookFromJSON(inputBook,resURL="")
 				cmp.options = {class:"endcheckpoint",id:" "}
 				cmp.tag="h2";
 				cmp.content="   ";
-				newPage.appendChild(makeNewHTML(cmp))
+				newPage.appendChild(makeNewHTML(cmp));
 				
-				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+				newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
 			}
 			else if(cmp.type == "BLOCKCODE")
 			{
@@ -262,10 +295,10 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type == "ENDBLOCKCODE")
 			{
-				cmp.options = {class:"endBlockCode",id:" "}
+				cmp.options = {class:"endBlockCode",id:" "};
 				cmp.tag="p";
 				cmp.content="   ";
-				newPage.appendChild(makeNewHTML(cmp))
+				newPage.appendChild(makeNewHTML(cmp));
 				
 				newPage = pageStack.pop();
 			}
@@ -287,7 +320,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type == "ENDLIST")
 			{
-				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+				newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
 			}
 			else if(cmp.type == "LINK")
 			{
@@ -312,13 +345,13 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 ////////////////////////////// WIP
 
-
+			/*
 			else if (cmp.type ==="multipleChoice")
 			{
 
 
 			}
-
+			*/
 
 
 

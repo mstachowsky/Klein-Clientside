@@ -103,12 +103,21 @@ class answerBox extends answer{
 }
 
 class multipleChoice extends answer{
+	constructor(dataString,newID=""){
+		super(dataString,"text");
+		this.ID = newID;
+	}
 
-	car ansBx = document.createElement("INPUT")
-	ansBx.setAttribute("type", "radio")
+	addContent(page){
+
+	var that = this;
+	var ansBx = document.createElement("INPUT");
+	ansBx.setAttribute("type", "radio");
+	ansBx.setAttribute("id",that.ID+"_multipleChoice");
+	ansBx.setAttribute("class","multipleChoice");
 
 
 
-
+	}
 
 }

@@ -10,7 +10,7 @@ startTime = time.time();
 #stack for closing tags 
 myStack = []
 #list based stack, to push use append(x), to pop use pop(), to peek, use myStack[-1]
-openingTags = ['!Page',   '!checkpoint',  '!oList',  '!list']
+openingTags = ['!Page',   '!checkpoint',   '!oList',  '!list']
 closingTags = ['!endPage','!endCheckpoint','!endList','!endList',]
 
 
@@ -222,16 +222,21 @@ def parse(f, JSONString, idNum, pageNum):
 ########################################### WIP ###############################################################
             elif line.startswith("!multipleChoice"):
                 line = line.replace("!multipleChoice", '')
-                JSONString += "{\"type\":\"multipleChoice\",\"tag\":\"h2\",\"options\":{},\"content\":\""+"multipleChoice"+"\"},"
+                numOptions = 0
+                lineAr = line.split()
+                radioName = lineAr[1]
+                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
                 
-            elif line.startswith("!multipleChoiceEnd"):
-                line = line.replace("!multipleChoiceEnd", '')
-                JSONString += "{\"type\":\"endMultiple\",\"tag\":\"h2\",\"options\":{},\"content\":\""+""+"\"},"
+#            elif line.startswith("!multipleChoiceEnd"):
+#                line = line.replace("!multipleChoiceEnd", '')
+#                JSONString += "{\"type\":\"endMultiple\",\"tag\":\"h2\",\"options\":{},\"content\":\""+""+"\"},"
                 
             elif line.startswith("!option"):
                 line = line.replace("!option", '')
-                JSONString +="{\"type\":\"radio\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"              
-                
+                numOptions +=1 
+                JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioName+"\", \"value\":\""+str(numOptions)+"\"},\"content\":\""+line+"\"},"              
+
+                #JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"inlineCode\"},\"content\":\""+line+"\"},"
                 
 ########################################### WIP ###############################################################
                 
@@ -300,6 +305,6 @@ JSONString+= "]}"
 
 endTime = time.time();
 if myStack:
-    print('Error: Tag mismatch --' + str(myStack.pop()))
+    print('Error: Tag mismatch --' + str(myStack))
 
 print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds');
