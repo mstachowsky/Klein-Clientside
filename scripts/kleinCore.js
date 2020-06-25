@@ -39,7 +39,6 @@ function howDidIDo()
 		var yesBx = document.getElementById("AnswerCheck"+answers[i].ID);
 		if(answers[i].checkAnswer())
 		{
-
 			yesBx.innerHTML = " \u2705";
 		}
 		else
@@ -178,7 +177,7 @@ function makeNewPage(){
 function makeNewHTML(htmlNode)
 {
 	if(htmlNode.options.type === "radio")
-	{
+	{ // this is to create the right html format for radio buttons
 		var newHtml = document.createElement("INPUT");
 		var label = document.createElement('label');
 		var labelContent = document.createElement('label');
@@ -200,9 +199,6 @@ function makeNewHTML(htmlNode)
 		newHtml.setAttribute("href",htmlNode.options.href);
 		newHtml.setAttribute("target","_blank"); //new tab
 	}
-
-
-	// testing this to set the html type to radio 
 	
 	if(htmlNode.options.name)
 		newHtml.setAttribute("name", htmlNode.options.name);
@@ -342,27 +338,16 @@ function parseBookFromJSON(inputBook,resURL="")
 			{
 				cmp.src = resURL+cmp.src;
 				newPage.appendChild(makeNewMedia(cmp,"IMG"));
-			}
-////////////////////////////// WIP
-
-			/*
+			}	
 			else if (cmp.type ==="multipleChoice")
 			{
+				var newAns = new multipleChoice(cmp.dataString,cmp.id);
+				answers.push(newAns);
+				newAns.addContent(newPage);
 
+				//cmp.id = name of radio, dataString = correct selection 
 
 			}
-			*/
-
-
-
-////////////////////////////////
-
-
-
-
-
-
-
 		}
 	}
 	

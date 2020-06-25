@@ -26,6 +26,20 @@ class answer{
 		this.inBox = {}; //derived classes change this
 		this.cls = "";
 		//this.ansBox = new answerBox(this);
+
+
+		//this is to distinguish between MC 
+		this.type = "";
+		this.id = "";
+	}
+
+	setType(type)
+	{
+		this.type = type;
+	}
+	setId(id)
+	{
+		this.id = id;
 	}
 	
 	setAnsString(Ans)
@@ -33,7 +47,7 @@ class answer{
 		
 		this.AnsString = Ans;
 	}
-	
+
 	//currently just boilerplate checkAnswer function.  Eventually will involve server calls.  It is the client-side controller
 	checkAnswer()
 	{
@@ -42,6 +56,7 @@ class answer{
 			//obtain the data string components
 			var comps = this.dataString.split(":");
 			//this will be updated later and totally replaced if we go server-side
+			
 			if(comps[0] == "numeric")
 			{
 				var idealAns = Number(comps[1]);
@@ -59,6 +74,21 @@ class answer{
 					this.isCorrect = false;
 					return false;
 				}
+			}
+			
+			if(this.type == "MC")
+			{
+				if(document.getElementById(this.dataString + this.id).checked == true)
+				{
+					this.isCorrect = true;
+					return true;
+				}	
+				else 
+				{
+					this.isCorrect = false;
+					return false; 
+				}
+				
 			}
 			else{
 				if(this.AnsString === this.dataString)
@@ -86,38 +116,35 @@ class answerBox extends answer{
 	}
 	
 	addContent (page) {
-	var that = this;
+		var that = this;
 
-	//add the answer box
-	var ansBx = document.createElement("INPUT");
-	ansBx.setAttribute("type","text");
-	ansBx.setAttribute("id",that.ID+"_answerBox");
-	ansBx.setAttribute("class","answerBox");
-	ansBx.oninput=function(){that.setAnsString(ansBx.value)};
+		//add the answer box
+		var ansBx = document.createElement("INPUT");
+		ansBx.setAttribute("type","text");
+		ansBx.setAttribute("id",that.ID+"_answerBox");
+		ansBx.setAttribute("class","answerBox");
+		ansBx.oninput=function(){that.setAnsString(ansBx.value)};
 
-	page.appendChild(ansBx);
-	//add the check answer feedback character
-	page.appendChild(makeNewHTML({tag:"b",options:{id:"AnswerCheck"+that.ID},content:""}));
+		page.appendChild(ansBx);
+		//add the check answer feedback character
+		page.appendChild(makeNewHTML({tag:"b",options:{id:"AnswerCheck"+that.ID},content:""}));
 
-}
+	}
 }
 
 class multipleChoice extends answer{
 	constructor(dataString,newID=""){
 		super(dataString,"text");
-		this.ID = newID;
+		this.ID = newID; // this is the name of the radio button set
 	}
 
 	addContent(page){
+		var that = this;
+		that.setAnsString(this.dataString+this.id);
+		that.setType("MC");
+		that.setId(this.ID);
 
-	var that = this;
-	var ansBx = document.createElement("INPUT");
-	ansBx.setAttribute("type", "radio");
-	ansBx.setAttribute("id",that.ID+"_multipleChoice");
-	ansBx.setAttribute("class","multipleChoice");
-
-
-
+		//add the check answer feedback character
+		page.appendChild(makeNewHTML({tag:"b",options:{id:"AnswerCheck"+that.ID},content:""}));
 	}
-
 }

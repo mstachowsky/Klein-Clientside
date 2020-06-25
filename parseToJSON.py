@@ -219,26 +219,26 @@ def parse(f, JSONString, idNum, pageNum):
                 lineAr = line.split()
                 JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
                 
-########################################### WIP ###############################################################
             elif line.startswith("!multipleChoice"):
+                radioId = 0
                 line = line.replace("!multipleChoice", '')
-                numOptions = 0
+                numOption = 0
                 lineAr = line.split()
-                radioName = lineAr[1]
-                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
-                
-#            elif line.startswith("!multipleChoiceEnd"):
-#                line = line.replace("!multipleChoiceEnd", '')
-#                JSONString += "{\"type\":\"endMultiple\",\"tag\":\"h2\",\"options\":{},\"content\":\""+""+"\"},"
+                radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
+                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\"},"
+                line = line.replace(radioId, '')
+                line = line.replace(lineAr[0], '')
+                line = line.strip()
+                if line.startswith(":"):
+                    line = line.replace(":", '')
+                    JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                    idNum = idNum+1
                 
             elif line.startswith("!option"):
                 line = line.replace("!option", '')
-                numOptions +=1 
-                JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioName+"\", \"value\":\""+str(numOptions)+"\"},\"content\":\""+line+"\"},"              
-
-                #JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"inlineCode\"},\"content\":\""+line+"\"},"
+                numOption +=1 
+                JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
                 
-########################################### WIP ###############################################################
                 
             elif line.startswith("!video"):
                 line = line.replace("!video","").strip()
