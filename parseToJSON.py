@@ -227,7 +227,7 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
-                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\"},"
+                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
                 
             elif line.startswith("!multipleChoice"):
                 radioId = 0
@@ -235,7 +235,7 @@ def parse(f, JSONString, idNum, pageNum):
                 numOption = 0
                 lineAr = line.split()
                 radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
-                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\"},"
+                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\"},"
                 line = line.replace(radioId, '')
                 line = line.replace(lineAr[0], '')
                 line = line.strip()

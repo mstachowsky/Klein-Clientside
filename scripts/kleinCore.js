@@ -43,13 +43,22 @@ function howDidIDo()
 	for(var i = 0; i < answers.length; i++)
 	{
 		var yesBx = document.getElementById("AnswerCheck"+answers[i].ID);
-		if(answers[i].checkAnswer())
+
+		if(answers[i].pageNum == curPage)
 		{
-			yesBx.innerHTML = " \u2705";
+			if(answers[i].checkAnswer())
+			{
+				yesBx.innerHTML = " \u2705";
+			}
+			else
+			{
+				yesBx.innerHTML = " \u274C";
+				//yesBx.innerHTML = answers[i].pageNum;
+			}
 		}
 		else
 		{
-			yesBx.innerHTML = " \u274C";
+			yesBx.innerHTML = "";
 		}
 	}
 	
@@ -70,6 +79,7 @@ function wait(ms){
 var pageArray = [];
 var curPage = 0;
 var totPages = 0;
+
 function changePage(elem){
 	//force a deep copy
 	//data.currentPage = JSON.parse(JSON.stringify(data.pages[elem.id]))
@@ -340,7 +350,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type==="answerBox")
 			{
-				var newAns = new answerBox(cmp.dataString,cmp.id);
+				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum);
 				answers.push(newAns);
 				newAns.addContent(newPage);
 			}
@@ -356,7 +366,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}	
 			else if (cmp.type ==="multipleChoice")
 			{
-				var newAns = new multipleChoice(cmp.dataString,cmp.id);
+				var newAns = new multipleChoice(cmp.dataString,cmp.id,cmp.pageNum);
 				answers.push(newAns);
 				newAns.addContent(newPage);
 

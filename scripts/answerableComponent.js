@@ -31,6 +31,9 @@ class answer{
 		//this is to distinguish between MC 
 		this.type = "";
 		this.id = "";
+
+		//to tell which page the question is on
+		this.pageNum = 0;
 	}
 
 	setType(type)
@@ -44,7 +47,6 @@ class answer{
 	
 	setAnsString(Ans)
 	{
-		
 		this.AnsString = Ans;
 	}
 
@@ -110,9 +112,10 @@ class answer{
 }
 
 class answerBox extends answer{
-	constructor(dataString,newID=""){
+	constructor(dataString,newID="", page){
 		super(dataString,"text");
 		this.ID = newID;
+		this.pageNum = page -1;
 	}
 	
 	addContent (page) {
@@ -126,6 +129,7 @@ class answerBox extends answer{
 		ansBx.oninput=function(){that.setAnsString(ansBx.value)};
 
 		page.appendChild(ansBx);
+
 		//add the check answer feedback character
 		page.appendChild(makeNewHTML({tag:"b",options:{id:"AnswerCheck"+that.ID},content:""}));
 
@@ -133,9 +137,10 @@ class answerBox extends answer{
 }
 
 class multipleChoice extends answer{
-	constructor(dataString,newID=""){
+	constructor(dataString,newID="", page){
 		super(dataString,"text");
 		this.ID = newID; // this is the name of the radio button set
+		this.pageNum = page -1;
 	}
 
 	addContent(page){
