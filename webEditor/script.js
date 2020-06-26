@@ -43,8 +43,8 @@ function printToBox() {
     console.log("Let the printing commence...");
     console.log(titles[0].value);
     var tempStr = "";
-    tempStr += "!Book [";
-    tempStr += titles[0].value + "]" + '\n';
+    tempStr += "!Book ";
+    tempStr += titles[0].value + '\n';
     for (let i = 0; i < N; i++) {
         temp_title = titles[i+1].value;
         temp_body = outputs[i].innerHTML;
@@ -138,9 +138,9 @@ function parseText(str) {
         ["</ol>","!endList \n"],
         ["<li>", "!item "],
         ["</li>", '\n'],
-        ["</div><div>", "!brk\n"],
+        ["</div><div>", "\n!brk\n"],
         ["<div>", ""],
-        ["</div>", "!brk\n"],
+        ["</div>", "\n!brk\n"],
         ["!brk!brk","!brk"],
         ['\n\n', '\n'],
         ["&nbsp;", " "]
