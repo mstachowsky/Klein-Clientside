@@ -188,8 +188,8 @@ def parse(f, JSONString, idNum, pageNum):
         
         if line.startswith("!Book"):
             line = line.replace('!Book','').strip()
-           
             JSONString += "{\"bookName\":\"" + line + "\",\"pages\":["
+            
         elif line.startswith("!Page"):
             inPage = True;
             line = line.replace('!Page','').strip()
@@ -198,6 +198,7 @@ def parse(f, JSONString, idNum, pageNum):
                 line = "Page" + str(pageNum)
             JSONString+="{\"name\":\"" + line + "\",\"components\":["
             firstLine = True;
+            
         elif line.startswith("!endPage"):
             inPage = False;
             #it just looks better to add an extra few blank lines at the bottom of the page
@@ -206,14 +207,23 @@ def parse(f, JSONString, idNum, pageNum):
             #Now, we added an extra comma, so we need to remove it
             JSONString = JSONString[:-1]
             JSONString+= "]},"
+        elif line.startswith("!randVar"):
+            line = line.replace('!randVar','').strip()
+            lineAr = line.split(":")
+            # by array location: 0 - variable identifier, 1 - min value, 2 - max value 
+            if lineAr[2]:
+                JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"}," 
+    
         if inPage == True:
             if line.startswith("!checkpoint"):
                 line = line.replace('!checkpoint','').strip()
                 JSONString+="{\"type\":\"CHECKPOINT\",\"tag\":\"h2\",\"options\":{},\"content\":\""+"Checkpoint"+"\"},"
                 inCheckpoint = True
+                
             elif line.startswith("!endCheckpoint"):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
+                
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
@@ -232,7 +242,6 @@ def parse(f, JSONString, idNum, pageNum):
                 if line.startswith(":"):
                     line = line.replace(":", '')
                     JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                    idNum = idNum+1
                 
             elif line.startswith("!option"):
                 line = line.replace("!option", '')
@@ -244,37 +253,48 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.replace("!video","").strip()
                 lineAr = line.split()
                 JSONString += "{\"type\":\"video\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
+                
             elif line.startswith("!img"):
                 line = line.replace("!img","").strip()
                 lineAr = line.split()
                 JSONString += "{\"type\":\"img\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
+                
             elif line.startswith("# "):
                 line = line.replace("#","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"h1\",\"options\":{},\"content\":\""+line+"\"},"
+                
             elif line.startswith("## "):
                 line = line.replace("##","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"h2\",\"options\":{},\"content\":\""+line+"\"},"
+                
             elif line.startswith("### "):
                 line = line.replace("###","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"h3\",\"options\":{},\"content\":\""+line+"\"},"
+                
             elif line.startswith("!brk"):
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
+                
             elif line.startswith("!item"):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+                
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
                 JSONString+="{\"type\":\"UL\"},"
+                
             elif line.startswith("!oList"): #ordered list
                 line = line.replace("!oList","").strip()
                 JSONString+="{\"type\":\"OL\"},"
+                
             elif line.startswith("!endList"):
                 line = line.replace("!endList","").strip()
                 JSONString+="{\"type\":\"ENDLIST\"},"
+                
             elif line.startswith("!code"):
                 line=line.replace("!code","").strip();
                 JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
                 idNum = idNum+1
+                
             elif line.startswith("!link"):
                 line = line.replace("!link","").strip();
                 lineAr = line.split()
@@ -282,6 +302,7 @@ def parse(f, JSONString, idNum, pageNum):
                 for ln in lineAr[1:len(lineAr)-1]:
                     linkText = linkText+" "+ln
                 JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
+                
             else:
                 #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
                 if firstLine == False:
