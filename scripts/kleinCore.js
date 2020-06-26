@@ -257,8 +257,6 @@ function parseBookFromJSON(inputBook,resURL="")
 	var contentRoot = document.getElementById('contentPlace');
 	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
 	
-	////////////////////////////////////
-	
 
 	for(var i = 0; i <inputBook.randomVariable.length; i++)
 	{
@@ -268,10 +266,6 @@ function parseBookFromJSON(inputBook,resURL="")
 		randVarValMax.push(rand.variableValMax);
 	}
 	randomize();
-	
-
-
-//////////////////////////////////////////
 
 	for (var i = 0; i < inputBook.pages.length; i++)
 	{
@@ -434,27 +428,6 @@ function randomize()
 	
 }
 
-function randomizeDoc()
-{
-	var treeWalker1 = document.createTreeWalker(document.body);
-	if(randomizedVal)
-	{
-		while (treeWalker1.nextNode())
-		{
-			var node = treeWalker1.currentNode;
-			for(var i =0; i < randomizedVal.length; i++)
-			{
-				if(randomizedVal[i] != "")
-					node.textContent = node.textContent.replace(randVar[i], randomizedVal[i]);
-			}
-  		}
-		
-	}
-
-}
-
-
-///////////////////////////////////
 
 
 function mutate()
