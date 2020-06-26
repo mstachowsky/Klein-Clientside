@@ -67,12 +67,13 @@ function wait(ms){
 /*
 	The onclick for the page select buttons
 */
+var pageArray = [];
 var curPage = 0;
 var totPages = 0;
 function changePage(elem){
 	//force a deep copy
 	//data.currentPage = JSON.parse(JSON.stringify(data.pages[elem.id]))
-	var pageArray = document.getElementsByClassName("PAGE");
+	pageArray = document.getElementsByClassName("PAGE");
 	for(var i = 0; i < pageArray.length; i++)
 	{
 		var id = pageArray[i].getAttribute("id").replace("pg","");
