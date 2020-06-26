@@ -257,6 +257,22 @@ function parseBookFromJSON(inputBook,resURL="")
 	var contentRoot = document.getElementById('contentPlace');
 	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
 	
+	////////////////////////////////////
+	
+
+	for(var i = 0; i <inputBook.randomVariable.length; i++)
+	{
+		var rand = inputBook.randomVariable[i];
+		randVar.push(rand.variable);
+		randVarValMin.push(rand.variableValMin);
+		randVarValMax.push(rand.variableValMax);
+	}
+	randomize();
+	
+
+
+//////////////////////////////////////////
+
 	for (var i = 0; i < inputBook.pages.length; i++)
 	{
 		
@@ -275,16 +291,22 @@ function parseBookFromJSON(inputBook,resURL="")
 		newPage.setAttribute("id","pg"+i);
 		contentRoot.appendChild(newPage);
 		//add content to the page
-		if (inputBook.pages[i].type === "randomVariable")
-		{
-			randVar.push(cmp.variable);
-			randVarValMin.push(cmp.variableValMin);
-			randVarValMax.push(cmp.variableValMax);
 
-		}
 		for(var j = 0; j < inputBook.pages[i].components.length;j++)
 		{
 			var cmp = inputBook.pages[i].components[j];
+			
+			if(cmp.content)
+			{
+				for(var k =0; k < randomizedVal.length; k++)
+				{
+					if(randomizedVal[k] != "")
+					{
+						cmp.content = cmp.content.replace(randVar[k], randomizedVal[k]);
+					}
+				}
+			}
+			
 			if(cmp.type==="HTML")
 			{
 				newPage.appendChild(makeNewHTML(cmp));
@@ -396,7 +418,7 @@ function parseBookFromJSON(inputBook,resURL="")
 */
 ////////////////////////////////////
 
-function randomizeValue()
+function randomize()
 {
 	var min, max;
 	if(randVar && randVarValMax && randVarValMin)
@@ -405,30 +427,32 @@ function randomizeValue()
 		{
 			min = Number(randVarValMin[i]);
 			max = Number(randVarValMax[i]);
-			randomizedVal.push(math.floor(math.random * (max + 1 - min) +min));
+			randomizedVal.push(Math.floor(Math.random() * (max + 1 - min) +min));
 		}
 
 	}
+	
 }
-/*
+
 function randomizeDoc()
 {
-	const treeWalker = document.createTreeWalker(document.body);
+	var treeWalker1 = document.createTreeWalker(document.body);
 	if(randomizedVal)
 	{
-		for(var i =0; i < randomizedVal.length; i++)
+		while (treeWalker1.nextNode())
 		{
-			while (treeWalker.nextNode())
+			var node = treeWalker1.currentNode;
+			for(var i =0; i < randomizedVal.length; i++)
 			{
-				const node = treeWalker.currentNode;
-				if(randVal[i] != "")
-    				node.textContent = node.textContent.replace(randVar[i], randomizedVal[i]);
-  			}
-		}
+				if(randomizedVal[i] != "")
+					node.textContent = node.textContent.replace(randVar[i], randomizedVal[i]);
+			}
+  		}
+		
 	}
 
 }
-*/
+
 
 ///////////////////////////////////
 

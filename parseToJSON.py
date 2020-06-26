@@ -46,7 +46,7 @@ outFile = open(path +'.bk','w')
     
     {bookName:name,pages:[{name:pageName,components:[]}]}
 '''
-JSONString = ""
+JSONString = "{"
 
 '''
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
@@ -186,9 +186,25 @@ def parse(f, JSONString, idNum, pageNum):
         #now inline links
         line = inlineLink(line);
         
-        if line.startswith("!Book"):
+        
+        if line.startswith("!randVar"):
+            JSONString += "\"randomVariable\": ["
+            #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
+        
+        elif line.startswith("!var"):
+            line = line.replace('!var','').strip()
+            lineAr = line.split(":")
+            # by array location: 0 - variable identifier, 1 - min value, 2 - max value 
+            if lineAr[2]:
+                JSONString += "{\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
+        
+        elif line.startswith("!endRandVar"):
+            JSONString = JSONString[0:-1]
+            JSONString += "],"
+            
+        elif line.startswith("!Book"):
             line = line.replace('!Book','').strip()
-            JSONString += "{\"bookName\":\"" + line + "\",\"pages\":["
+            JSONString += "\"bookName\":\"" + line + "\",\"pages\":["
             
         elif line.startswith("!Page"):
             inPage = True;
@@ -207,12 +223,7 @@ def parse(f, JSONString, idNum, pageNum):
             #Now, we added an extra comma, so we need to remove it
             JSONString = JSONString[:-1]
             JSONString+= "]},"
-        elif line.startswith("!randVar"):
-            line = line.replace('!randVar','').strip()
-            lineAr = line.split(":")
-            # by array location: 0 - variable identifier, 1 - min value, 2 - max value 
-            if lineAr[2]:
-                JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"}," 
+     
     
         if inPage == True:
             if line.startswith("!checkpoint"):
