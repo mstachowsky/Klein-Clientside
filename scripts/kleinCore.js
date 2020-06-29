@@ -298,7 +298,7 @@ function parseBookFromJSON(inputBook,resURL="")
 				{
 					if(randomizedVal[k] != "")
 					{
-						cmp.content = cmp.content.replace(randVar[k], randomizedVal[k]);
+						cmp.content = cmp.content.replace(new RegExp(randVar[k], 'g'), randomizedVal[k]);
 					}
 				}
 			}
@@ -309,7 +309,7 @@ function parseBookFromJSON(inputBook,resURL="")
 				{
 					if(randomizedVal[k] != "")
 					{
-						cmp.dataString = cmp.dataString.replace(randVar[k], randomizedVal[k]);
+						cmp.dataString = cmp.dataString.replace(new RegExp(randVar[k], 'g'), randomizedVal[k]);
 					}
 				}
 			}

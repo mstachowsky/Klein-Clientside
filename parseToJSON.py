@@ -142,7 +142,7 @@ def parse(f, JSONString, idNum, pageNum):
     inPage = False;
     firstLine = False;
     
-    
+        
 
     pageFile = ''
      
@@ -238,7 +238,9 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
-                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+lineAr[1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
+                line = line.replace(lineAr[-1], '')
+                line = line.replace('&#42', '*')
+                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
                 
             elif line.startswith("!multipleChoice"):
                 radioId = 0
