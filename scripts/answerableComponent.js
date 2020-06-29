@@ -61,11 +61,20 @@ class answer{
 			
 			if(comps[0] == "numeric")
 			{
-				var idealAns = Number(comps[1]);
+				var idealAns;
+				if(comps[1][0] == "(" && comps[1][comps[1].length - 1] == ")")
+				{
+					idealAns = eval(comps[1]);
+				}
+				else
+				{
+					idealAns = Number(comps[1]);
+				}
+				
 				var tolerance = 0;
 				if(comps[2] !== "absolute")
 					tolerance = Number(comps[2]);
-				var studentAns = Number(this.AnsString);
+				var studentAns = Number(this.AnsString); 
 				if(Math.abs(studentAns-idealAns) <= tolerance)
 				{
 					this.isCorrect = true;

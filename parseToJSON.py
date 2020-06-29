@@ -195,8 +195,8 @@ def parse(f, JSONString, idNum, pageNum):
             line = line.replace('!var','').strip()
             lineAr = line.split(":")
             # by array location: 0 - variable identifier, 1 - min value, 2 - max value 
-            if lineAr[2]:
-                JSONString += "{\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
+            if lineAr[3]:
+                JSONString += "{\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\",\"decimals\":\""+lineAr[3] +"\"},"
         
         elif line.startswith("!endRandVar"):
             JSONString = JSONString[0:-1]

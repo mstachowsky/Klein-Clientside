@@ -31,6 +31,7 @@ var randVar = [];
 var randVarValMin = [];
 var randVarValMax = [];
 var randomizedVal = [];
+var decimals  = [];
 
 /*
 	There must be a single "How did I do" button, and that must be global
@@ -264,6 +265,7 @@ function parseBookFromJSON(inputBook,resURL="")
 		randVar.push(rand.variable);
 		randVarValMin.push(rand.variableValMin);
 		randVarValMax.push(rand.variableValMax);
+		decimals.push(rand.decimals);
 	}
 	randomize();
 
@@ -290,7 +292,7 @@ function parseBookFromJSON(inputBook,resURL="")
 		{
 			var cmp = inputBook.pages[i].components[j];
 			
-			if(cmp.content)
+			if(cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 			{
 				for(var k =0; k < randomizedVal.length; k++)
 				{
@@ -301,6 +303,17 @@ function parseBookFromJSON(inputBook,resURL="")
 				}
 			}
 			
+			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
+			{
+				for(var k =0; k < randomizedVal.length; k++)
+				{
+					if(randomizedVal[k] != "")
+					{
+						cmp.dataString = cmp.dataString.replace(randVar[k], randomizedVal[k]);
+					}
+				}
+			}
+
 			if(cmp.type==="HTML")
 			{
 				newPage.appendChild(makeNewHTML(cmp));
@@ -421,7 +434,9 @@ function randomize()
 		{
 			min = Number(randVarValMin[i]);
 			max = Number(randVarValMax[i]);
-			randomizedVal.push(Math.floor(Math.random() * (max + 1 - min) +min));
+			deci = Number(decimals[i]);
+			deci = Math.pow(10,deci);
+			randomizedVal.push(Math.round((Math.random() * (max - min) +min)* deci) / deci);
 		}
 
 	}
