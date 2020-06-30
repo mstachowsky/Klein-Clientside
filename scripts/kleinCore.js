@@ -1,5 +1,5 @@
 /*
-	Klein Core, V0.6
+	Klein Core, V0.9
 	
 	Changelog: 
 	
@@ -10,6 +10,10 @@
 			- 0.5.2 Added highlight to the active button
 		v0.6: Changed name (FINALLY) to Klein Core
 			o Added URL book loading
+			
+		Skipped ahead due to rapid development by K. Jiang:
+		
+		v0.9: Major changes.  Implemented randomized variables and multiple choice
 */
 
 /*
