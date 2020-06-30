@@ -33,7 +33,7 @@
   background-color: #ECECEC;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 20px;
-  margin-top: 30px;
+  margin-top: 0px;
   border-style: none solid none none;
   border-color: var(--border-grey);
   float: left;
