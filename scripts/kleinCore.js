@@ -305,7 +305,7 @@ function parseBookFromJSON(inputBook,resURL="")
 						cmp.content = cmp.content.replace(new RegExp(randVar[k], 'g'), varValue[k]);
 					}
 				}
-				/*
+				
 				var index = 0;
 				while(cmp.content.includes("eqn:(", index)) //loops through each occurance of eqn:()
 				{
@@ -318,7 +318,7 @@ function parseBookFromJSON(inputBook,resURL="")
 
 					cmp.content = cmp.content.replace(str, value)
 				}
-				*/
+				
 			}
 			
 			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
