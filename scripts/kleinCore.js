@@ -306,6 +306,18 @@ function parseBookFromJSON(inputBook,resURL="")
 						cmp.content = cmp.content.replace(new RegExp(randVar[k], 'g'), randomizedVal[k]);
 					}
 				}
+				var index = 0;
+				while(cmp.content.includes("eqn:(", index)) //loops through each occurance of eqn:()
+				{
+					//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
+					index = cmp.content.indexOf("eqn:(");			
+					var index2 = cmp.content.indexOf(")", index);
+					var str = cmp.content.slice(index,index2+1);
+					var eqn = cmp.content.slice(index+5, index2);
+					var value = eval(eqn);
+
+					cmp.content = cmp.content.replace(str, value)
+				}
 			}
 			
 			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
