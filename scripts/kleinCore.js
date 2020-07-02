@@ -307,6 +307,9 @@ function parseBookFromJSON(inputBook,resURL="")
 					}
 				}
 				var index = 0;
+
+
+				///////////////////////////////////////////////////////////////////////////////////////////////////
 				while(cmp.content.includes("eqn:(", index)) //loops through each occurance of eqn:()
 				{
 					//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
@@ -315,7 +318,8 @@ function parseBookFromJSON(inputBook,resURL="")
 					var setVar = "";
 					var index2 = cmp.content.indexOf(")", index);
 					var index3 = cmp.content.indexOf(",", index);
-					if(index3 <index2)
+
+					if(index3 <index2 && index3 != -1)
 					{
 						eqn = cmp.content.slice(index+5, index3);
 						setVar = cmp.content.slice(index3+1,index2);
@@ -338,7 +342,9 @@ function parseBookFromJSON(inputBook,resURL="")
 					}
 				}
 			}
-			
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
 			{
 				for(var k =0; k < variableVal.length; k++)
