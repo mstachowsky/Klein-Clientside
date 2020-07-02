@@ -31,10 +31,10 @@ var pageButtons = {
 var answers=[];
 
 // arrays to hold random variables and their randomized values
-var randVar = [];
-var randVarValMin = [];
-var randVarValMax = [];
-var randomizedVal = [];
+var variables = [];
+var randVarMin = [];
+var randVarMax = [];
+var variableVal = [];
 var decimals  = [];
 
 /*
@@ -267,9 +267,9 @@ function parseBookFromJSON(inputBook,resURL="")
 		for(var i = 0; i <inputBook.randomVariable.length; i++)
 		{
 			var rand = inputBook.randomVariable[i];
-			randVar.push(rand.variable);
-			randVarValMin.push(rand.variableValMin);
-			randVarValMax.push(rand.variableValMax);
+			variables.push(rand.variable);
+			randVarMin.push(rand.variableValMin);
+			randVarMax.push(rand.variableValMax);
 			decimals.push(rand.decimals);
 		}
 		randomize();
@@ -299,34 +299,53 @@ function parseBookFromJSON(inputBook,resURL="")
 			
 			if(cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 			{
-				for(var k =0; k < randomizedVal.length; k++)
+				for(var k =0; k < variableVal.length; k++)
 				{
-					if(randomizedVal[k] != "")
+					if(variableVal[k] != "")
 					{
-						cmp.content = cmp.content.replace(new RegExp(randVar[k], 'g'), randomizedVal[k]);
+						cmp.content = cmp.content.replace(new RegExp(variables[k], 'g'), variableVal[k]);
 					}
 				}
 				var index = 0;
 				while(cmp.content.includes("eqn:(", index)) //loops through each occurance of eqn:()
 				{
 					//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
-					index = cmp.content.indexOf("eqn:(");			
+					index = cmp.content.indexOf("eqn:(");	
+					var eqn;		
+					var setVar = "";
 					var index2 = cmp.content.indexOf(")", index);
-					var str = cmp.content.slice(index,index2+1);
-					var eqn = cmp.content.slice(index+5, index2);
+					var index3 = cmp.content.indexOf(",", index);
+					if(index3 <index2)
+					{
+						eqn = cmp.content.slice(index+5, index3);
+						setVar = cmp.content.slice(index3+1,index2);
+						setVar = setVar.trim();
+					}
+					else
+					{
+						eqn = cmp.content.slice(index+5, index2);
+						
+					}	
 					var value = eval(eqn);
-
+					var str = cmp.content.slice(index,index2+1);
 					cmp.content = cmp.content.replace(str, value)
+					if(setVar !="")
+					{
+						variables.push(setVar);
+						randVarMax.push(0);
+						randVarMin.push(0);
+						variableVal.push(value);
+					}
 				}
 			}
 			
 			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
 			{
-				for(var k =0; k < randomizedVal.length; k++)
+				for(var k =0; k < variableVal.length; k++)
 				{
-					if(randomizedVal[k] != "")
+					if(variableVal[k] != "")
 					{
-						cmp.dataString = cmp.dataString.replace(new RegExp(randVar[k], 'g'), randomizedVal[k]);
+						cmp.dataString = cmp.dataString.replace(new RegExp(variables[k], 'g'), variableVal[k]);
 					}
 				}
 			}
@@ -444,16 +463,20 @@ function parseBookFromJSON(inputBook,resURL="")
 
 function randomize()
 {
-	var min, max;
-	if(randVar && randVarValMax && randVarValMin)
+	var min, max, deci, value;
+	for(var i =0; i < variables.length; i++)
 	{
-		for(var i =0; i < randVar.length; i++)
+		if(variables[i] && (randVarMax[i]!=0) && (randVarMin[i]!=0))
 		{
-			min = Number(randVarValMin[i]);
-			max = Number(randVarValMax[i]);
+			min = Number(randVarMin[i]);
+			max = Number(randVarMax[i]);
 			deci = Number(decimals[i]);
 			deci = Math.pow(10,deci);
-			randomizedVal.push(Math.round((Math.random() * (max - min) +min)* deci) / deci);
+			value = Math.round((Math.random() * (max - min) +min)* deci) / deci; 
+			if(variableVal[i])
+				variableVal[i] = value;
+			else
+				variableVal.push(value);
 		}
 
 	}

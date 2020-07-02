@@ -20,8 +20,8 @@ closingTags = ['!endPage','!endCheckpoint','!endList','!endList',]
 #outFile = open(fName+'.bk','w')
 
 #path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower' #for laptop
-path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
-#path = 'BOOKS\\Lab_2_ArduinoPower'
+#path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
+path = 'BOOKS\\Lab_2_ArduinoPower'
 f = open(path +'.md', 'r')
 outFile = open(path +'.bk','w')
 
