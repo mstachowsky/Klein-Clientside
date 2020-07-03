@@ -299,50 +299,11 @@ function parseBookFromJSON(inputBook,resURL="")
 			
 			if(cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 			{
-				for(var k =0; k < variableVal.length; k++)
-				{
-					if(variableVal[k] != "")
-					{
-						cmp.content = cmp.content.replace(new RegExp(variables[k], 'g'), variableVal[k]);
-					}
-				}
-				var index = 0;
+				cmp.content = renderVariable(cmp.content);
 
-
-				///////////////////////////////////////////////////////////////////////////////////////////////////
-				while(cmp.content.includes("eqn:(", index)) //loops through each occurance of eqn:()
-				{
-					//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
-					index = cmp.content.indexOf("eqn:(");	
-					var eqn;		
-					var setVar = "";
-					var index2 = cmp.content.indexOf(")", index);
-					var index3 = cmp.content.indexOf(",", index);
-
-					if(index3 <index2 && index3 != -1)
-					{
-						eqn = cmp.content.slice(index+5, index3);
-						setVar = cmp.content.slice(index3+1,index2);
-						setVar = setVar.trim();
-					}
-					else
-					{
-						eqn = cmp.content.slice(index+5, index2);
-						
-					}	
-					var value = eval(eqn);
-					var str = cmp.content.slice(index,index2+1);
-					cmp.content = cmp.content.replace(str, value)
-					if(setVar !="")
-					{
-						variables.push(setVar);
-						randVarMax.push(0);
-						randVarMin.push(0);
-						variableVal.push(value);
-					}
-				}
+				cmp.content = renderEqn(cmp.content);
+				
 			}
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
@@ -440,7 +401,19 @@ function parseBookFromJSON(inputBook,resURL="")
 				var newAns = new multipleChoice(cmp.dataString,cmp.id,cmp.pageNum);
 				answers.push(newAns);
 				newAns.addContent(newPage);
+				newPage.appendChild(makeNewHTML(cmp));
+				if(cmp.choices)
+				{
+					for(var n = 0; n < cmp.choices.length; n++)
+					{
+						var mc = cmp.choices[n];
+						mc.content = renderVariable(mc.content);
+						mc.content = renderEqn(mc.content);
+						newPage.appendChild(makeNewHTML(mc));
+						
+					}
 
+				}
 				//cmp.id = name of radio, dataString = correct selection 
 
 			}
@@ -489,7 +462,55 @@ function randomize()
 	
 }
 
+function renderEqn(node)
+{
+	var index = 0 ;
+	while(node.includes("eqn:(", index)) //loops through each occurance of eqn:()
+	{
+		//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
+		index = node.indexOf("eqn:(");	
+		var eqn;		
+		var setVar = "";
+		var index2 = node.indexOf(")", index);
+		var index3 = node.indexOf(",", index);
 
+		if(index3 <index2 && index3 != -1)
+		{
+			eqn = node.slice(index+5, index3);
+			setVar = node.slice(index3+1,index2);
+			setVar = setVar.trim();
+		}
+		else
+		{
+			eqn = node.slice(index+5, index2);
+			
+		}	
+		var value = eval(eqn);
+		var str = node.slice(index,index2+1);
+		node = node.replace(str, value)
+		if(setVar !="")
+		{
+			variables.push(setVar);
+			randVarMax.push(0);
+			randVarMin.push(0);
+			variableVal.push(value);
+		}
+	}
+	return node;
+
+}
+
+function renderVariable(node)
+{
+	for(var k =0; k < variableVal.length; k++)
+	{
+		if(variableVal[k] != "")
+		{
+			node = node.replace(new RegExp(variables[k], 'g'), variableVal[k]);
+		}
+	}
+	return node;
+}
 
 function mutate()
 {
