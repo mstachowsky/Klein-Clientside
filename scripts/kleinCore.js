@@ -470,7 +470,7 @@ function randomize()
 		else if (equation[i] != "")
 		{
 			var eqn = renderVariable(equation[i]);
-			var val = eval(eqn);
+			var val = math.evaluate(eqn);
 			variableVal.push(val);
 		}
 
@@ -503,7 +503,7 @@ function renderEqn(node)
 			eqn = node.slice(index+5, index2);
 			
 		}	
-		var value = eval(eqn);
+		var value = math.evaluate(eqn);
 		var str = node.slice(index,index2+1);
 		node = node.replace(str, value)
 		if(setVar !="")
