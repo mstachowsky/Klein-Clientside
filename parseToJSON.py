@@ -189,18 +189,20 @@ def parse(f, JSONString, idNum, pageNum):
         if "eqn:(" in line:
             line = line.replace('&#42', '*')
         
-        if line.startswith("!randVar"):
-            JSONString += "\"randomVariable\": ["
+        if line.startswith("!bookVariables"):
+            JSONString += "\"variable\": ["
             #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
         
         elif line.startswith("!var"):
             line = line.replace('!var','').strip()
             lineAr = line.split(":")
             # by array location: 0 - variable identifier, 1 - min value, 2 - max value 
-            if lineAr[3]:
-                JSONString += "{\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\",\"decimals\":\""+lineAr[3] +"\"},"
+            if len(lineAr) == 4:
+                JSONString += "{\"name\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\",\"decimals\":\""+lineAr[3] +"\"},"
+            else:
+                JSONString += "{\"name\":\""+lineAr[0].strip() +"\", \"equation\":\""+lineAr[1]+"\"},"
         
-        elif line.startswith("!endRandVar"):
+        elif line.startswith("!endBookVariables"):
             JSONString = JSONString[0:-1]
             JSONString += "],"
             

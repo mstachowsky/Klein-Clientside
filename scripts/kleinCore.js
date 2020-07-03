@@ -36,6 +36,7 @@ var randVarMin = [];
 var randVarMax = [];
 var variableVal = [];
 var decimals  = [];
+var equation = [];
 
 /*
 	There must be a single "How did I do" button, and that must be global
@@ -263,14 +264,27 @@ function parseBookFromJSON(inputBook,resURL="")
 	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
 		
 	//If there are random variables, handle them now
-	if(inputBook.randomVariable){
-		for(var i = 0; i <inputBook.randomVariable.length; i++)
+	if(inputBook.variable){
+		for(var i = 0; i <inputBook.variable.length; i++)
 		{
-			var rand = inputBook.randomVariable[i];
-			variables.push(rand.variable);
-			randVarMin.push(rand.variableValMin);
-			randVarMax.push(rand.variableValMax);
-			decimals.push(rand.decimals);
+			var rand = inputBook.variable[i];
+			variables.push(rand.name);
+			if(rand.variableValMin && rand.variableValMax)
+			{
+				randVarMin.push(rand.variableValMin);
+				randVarMax.push(rand.variableValMax);
+				decimals.push(rand.decimals);
+				equation.push("");
+			}
+			else
+			{
+				randVarMin.push(0);
+				randVarMax.push(0);
+				decimals.push(0);
+				equation.push(rand.equation);
+			}
+
+			
 		}
 		randomize();
 	}
@@ -299,10 +313,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			
 			if(cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 			{
-				cmp.content = renderVariable(cmp.content);
-
 				cmp.content = renderEqn(cmp.content);
-				
 			}
 
 
@@ -407,7 +418,6 @@ function parseBookFromJSON(inputBook,resURL="")
 					for(var n = 0; n < cmp.choices.length; n++)
 					{
 						var mc = cmp.choices[n];
-						mc.content = renderVariable(mc.content);
 						mc.content = renderEqn(mc.content);
 						newPage.appendChild(makeNewHTML(mc));
 						
@@ -457,6 +467,12 @@ function randomize()
 			else
 				variableVal.push(value);
 		}
+		else if (equation[i] != "")
+		{
+			var eqn = renderVariable(equation[i]);
+			var val = eval(eqn);
+			variableVal.push(val);
+		}
 
 	}
 	
@@ -465,6 +481,8 @@ function randomize()
 function renderEqn(node)
 {
 	var index = 0 ;
+	node = renderVariable(node);
+
 	while(node.includes("eqn:(", index)) //loops through each occurance of eqn:()
 	{
 		//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
@@ -493,6 +511,8 @@ function renderEqn(node)
 			variables.push(setVar);
 			randVarMax.push(0);
 			randVarMin.push(0);
+			decimals.push(0);
+			equation.push("");
 			variableVal.push(value);
 		}
 	}
