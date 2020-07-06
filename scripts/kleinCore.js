@@ -49,22 +49,23 @@ function howDidIDo()
 	for(var i = 0; i < answers.length; i++)
 	{
 		var yesBx = document.getElementById("AnswerCheck"+answers[i].ID);
-
-		if(answers[i].pageNum == curPage)
+		if(yesBx)
 		{
-			if(answers[i].checkAnswer())
+			if(answers[i].pageNum == curPage)
 			{
-				yesBx.innerHTML = " \u2705";
+				if(answers[i].checkAnswer())
+				{
+					yesBx.innerHTML = " \u2705";
+				}
+				else
+				{
+					yesBx.innerHTML = " \u274C";
+				}
 			}
 			else
 			{
-				yesBx.innerHTML = " \u274C";
-				//yesBx.innerHTML = answers[i].pageNum;
+				yesBx.innerHTML = "";
 			}
-		}
-		else
-		{
-			yesBx.innerHTML = "";
 		}
 	}
 	

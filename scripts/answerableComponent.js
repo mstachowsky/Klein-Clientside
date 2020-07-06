@@ -69,7 +69,7 @@ class answer{
 					while((idealAns === Infinity && tries < 10) || tries <1)
 					{
 						randomize();*/
-					idealAns = eval(comps[1]);
+					idealAns = math.evaluate(comps[1]);
 						/*tries += 1; 
 					}*/
 				}
@@ -96,17 +96,20 @@ class answer{
 			
 			if(this.type == "MC")
 			{
-				if(document.getElementById(this.dataString + this.id).checked == true)
+				if(document.getElementById(this.dataString + this.id))	
 				{
-					this.isCorrect = true;
-					return true;
-				}	
+					if(document.getElementById(this.dataString + this.id).checked == true)
+					{
+						this.isCorrect = true;
+						return true;
+					}	
+				}
 				else 
 				{
 					this.isCorrect = false;
 					return false; 
 				}
-				
+					
 			}
 			else{
 				if(this.AnsString === this.dataString)
