@@ -186,7 +186,7 @@ def parse(f, JSONString, idNum, pageNum):
         #now inline links
         line = inlineLink(line);
         
-        if "eqn:(" in line:
+        if "eqn:{" in line:
             line = line.replace('&#42', '*')
         
         if line.startswith("!bookVariables"):

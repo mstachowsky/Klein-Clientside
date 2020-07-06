@@ -483,13 +483,13 @@ function renderEqn(node)
 	var index = 0 ;
 	node = renderVariable(node);
 
-	while(node.includes("eqn:(", index)) //loops through each occurance of eqn:()
+	while(node.includes("eqn:{", index)) //loops through each occurance of eqn:{}
 	{
-		//loops and replaces the first occurance of eqn:() with the appropriate value until eqn:() can not be found 
-		index = node.indexOf("eqn:(");	
+		//loops and replaces the first occurance of eqn:{} with the appropriate value until eqn:{} can not be found 
+		index = node.indexOf("eqn:{");	
 		var eqn;		
 		var setVar = "";
-		var index2 = node.indexOf(")", index);
+		var index2 = node.indexOf("}", index);
 		var index3 = node.indexOf(",", index);
 
 		if(index3 <index2 && index3 != -1)
