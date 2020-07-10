@@ -317,18 +317,6 @@ function parseBookFromJSON(inputBook,resURL="")
 				cmp.content = renderEqn(cmp.content);
 			}
 
-
-			if(cmp.type == "answerBox") // this replaces the random variables in the answerbox answer equation
-			{
-				for(var k =0; k < variableVal.length; k++)
-				{
-					if(variableVal[k] != "")
-					{
-						cmp.dataString = cmp.dataString.replace(new RegExp(variables[k], 'g'), variableVal[k]);
-					}
-				}
-			}
-
 			if(cmp.type==="HTML")
 			{
 				newPage.appendChild(makeNewHTML(cmp));
@@ -394,6 +382,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type==="answerBox")
 			{
+				cmp.dataString = renderVariable(cmp.dataString);
 				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum);
 				answers.push(newAns);
 				newAns.addContent(newPage);
@@ -440,7 +429,7 @@ function parseBookFromJSON(inputBook,resURL="")
 	makeNewPage();
 }
 
-/*
+/*;
 	What follows is required for MathJax.  Basically, once we change
 	a page, MathJax has to re-render the DOM.  It can't do that until the
 	DOM is done rendering, and we must explicitly tell it to re-render.
