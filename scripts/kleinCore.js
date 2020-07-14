@@ -1,5 +1,5 @@
 /*
-	Klein Core, V0.6
+	Klein Core, V0.9
 	
 	Changelog: 
 	
@@ -10,6 +10,10 @@
 			- 0.5.2 Added highlight to the active button
 		v0.6: Changed name (FINALLY) to Klein Core
 			o Added URL book loading
+			
+		Skipped ahead due to rapid development by K. Jiang:
+		
+		v0.9: Major changes.  Implemented randomized variables and multiple choice
 */
 
 /*
@@ -26,6 +30,14 @@ var pageButtons = {
 */
 var answers=[];
 
+// arrays to hold random variables and their randomized values
+var variables = [];
+var randVarMin = [];
+var randVarMax = [];
+var variableVal = [];
+var decimals  = [];
+var equation = [];
+
 /*
 	There must be a single "How did I do" button, and that must be global
 	to Clien.  This way, once you click it, the entire page is searched.
@@ -37,14 +49,23 @@ function howDidIDo()
 	for(var i = 0; i < answers.length; i++)
 	{
 		var yesBx = document.getElementById("AnswerCheck"+answers[i].ID);
-		if(answers[i].checkAnswer())
+		if(yesBx)
 		{
-
-			yesBx.innerHTML = " \u2705";
-		}
-		else
-		{
-			yesBx.innerHTML = " \u274C";
+			if(answers[i].pageNum == curPage)
+			{
+				if(answers[i].checkAnswer())
+				{
+					yesBx.innerHTML = " \u2705";
+				}
+				else
+				{
+					yesBx.innerHTML = " \u274C";
+				}
+			}
+			else
+			{
+				yesBx.innerHTML = "";
+			}
 		}
 	}
 	
@@ -62,12 +83,14 @@ function wait(ms){
 /*
 	The onclick for the page select buttons
 */
+var pageArray = [];
 var curPage = 0;
 var totPages = 0;
+
 function changePage(elem){
 	//force a deep copy
 	//data.currentPage = JSON.parse(JSON.stringify(data.pages[elem.id]))
-	var pageArray = document.getElementsByClassName("PAGE");
+	pageArray = document.getElementsByClassName("PAGE");
 	for(var i = 0; i < pageArray.length; i++)
 	{
 		var id = pageArray[i].getAttribute("id").replace("pg","");
@@ -177,7 +200,21 @@ function makeNewPage(){
 
 function makeNewHTML(htmlNode)
 {
-	var newHtml = document.createElement(htmlNode.tag.toUpperCase());
+	if(htmlNode.options.type === "radio")
+	{ // this is to create the right html format for radio buttons
+		var newHtml = document.createElement("INPUT");
+		var label = document.createElement('label');
+		var labelContent = document.createElement('label');
+		newHtml.setAttribute("type", "radio");
+		labelContent.setAttribute("for", htmlNode.options.id);
+		labelContent.innerHTML = htmlNode.content;
+	}
+	else 
+	{
+		var newHtml = document.createElement(htmlNode.tag.toUpperCase());
+	}
+
+
 	newHtml.setAttribute('id',htmlNode.options.id);
 	if(htmlNode.options.class)
 		newHtml.setAttribute("class",htmlNode.options.class);
@@ -186,8 +223,24 @@ function makeNewHTML(htmlNode)
 		newHtml.setAttribute("href",htmlNode.options.href);
 		newHtml.setAttribute("target","_blank"); //new tab
 	}
+	
+	if(htmlNode.options.name)
+		newHtml.setAttribute("name", htmlNode.options.name);
+	if(htmlNode.options.value)
+		newHtml.setAttribute("value", htmlNode.options.value);
+	
+	
 	newHtml.innerHTML = htmlNode.content;
-	return newHtml;
+	if(htmlNode.options.type === "radio")
+	{
+		label.appendChild(newHtml);
+		label.appendChild(labelContent);
+		return label;
+	}
+	else
+	{
+		return newHtml;
+	}
 }
 
 //makes videos and images
@@ -210,6 +263,32 @@ function parseBookFromJSON(inputBook,resURL="")
 {	
 	var contentRoot = document.getElementById('contentPlace');
 	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
+		
+	//If there are random variables, handle them now
+	if(inputBook.variable){
+		for(var i = 0; i <inputBook.variable.length; i++)
+		{
+			var rand = inputBook.variable[i];
+			variables.push(rand.name);
+			if(rand.variableValMin && rand.variableValMax)
+			{
+				randVarMin.push(rand.variableValMin);
+				randVarMax.push(rand.variableValMax);
+				decimals.push(rand.decimals);
+				equation.push("");
+			}
+			else
+			{
+				randVarMin.push(0);
+				randVarMax.push(0);
+				decimals.push(0);
+				equation.push(rand.equation);
+			}
+
+			
+		}
+		randomize();
+	}
 	for (var i = 0; i < inputBook.pages.length; i++)
 	{
 		
@@ -228,9 +307,16 @@ function parseBookFromJSON(inputBook,resURL="")
 		newPage.setAttribute("id","pg"+i);
 		contentRoot.appendChild(newPage);
 		//add content to the page
+
 		for(var j = 0; j < inputBook.pages[i].components.length;j++)
 		{
 			var cmp = inputBook.pages[i].components[j];
+			
+			if(cmp.content) //this replaces all instances of the random variables in the html with their randomized values
+			{
+				cmp.content = renderEqn(cmp.content);
+			}
+
 			if(cmp.type==="HTML")
 			{
 				newPage.appendChild(makeNewHTML(cmp));
@@ -248,9 +334,9 @@ function parseBookFromJSON(inputBook,resURL="")
 				cmp.options = {class:"endcheckpoint",id:" "}
 				cmp.tag="h2";
 				cmp.content="   ";
-				newPage.appendChild(makeNewHTML(cmp))
+				newPage.appendChild(makeNewHTML(cmp));
 				
-				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+				newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
 			}
 			else if(cmp.type == "BLOCKCODE")
 			{
@@ -262,10 +348,10 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type == "ENDBLOCKCODE")
 			{
-				cmp.options = {class:"endBlockCode",id:" "}
+				cmp.options = {class:"endBlockCode",id:" "};
 				cmp.tag="p";
 				cmp.content="   ";
-				newPage.appendChild(makeNewHTML(cmp))
+				newPage.appendChild(makeNewHTML(cmp));
 				
 				newPage = pageStack.pop();
 			}
@@ -287,7 +373,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type == "ENDLIST")
 			{
-				newPage = pageStack.pop()//JSON.parse(JSON.stringify(pageStack.pop()));
+				newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
 			}
 			else if(cmp.type == "LINK")
 			{
@@ -296,7 +382,8 @@ function parseBookFromJSON(inputBook,resURL="")
 			}
 			else if(cmp.type==="answerBox")
 			{
-				var newAns = new answerBox(cmp.dataString,cmp.id);
+				cmp.dataString = renderVariable(cmp.dataString);
+				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum);
 				answers.push(newAns);
 				newAns.addContent(newPage);
 			}
@@ -309,6 +396,26 @@ function parseBookFromJSON(inputBook,resURL="")
 			{
 				cmp.src = resURL+cmp.src;
 				newPage.appendChild(makeNewMedia(cmp,"IMG"));
+			}	
+			else if (cmp.type ==="multipleChoice")
+			{
+				var newAns = new multipleChoice(cmp.dataString,cmp.id,cmp.pageNum);
+				answers.push(newAns);
+				newAns.addContent(newPage);
+				newPage.appendChild(makeNewHTML(cmp));
+				if(cmp.choices)
+				{
+					for(var n = 0; n < cmp.choices.length; n++)
+					{
+						var mc = cmp.choices[n];
+						mc.content = renderEqn(mc.content);
+						newPage.appendChild(makeNewHTML(mc));
+						
+					}
+
+				}
+				//cmp.id = name of radio, dataString = correct selection 
+
 			}
 		}
 	}
@@ -322,7 +429,7 @@ function parseBookFromJSON(inputBook,resURL="")
 	makeNewPage();
 }
 
-/*
+/*;
 	What follows is required for MathJax.  Basically, once we change
 	a page, MathJax has to re-render the DOM.  It can't do that until the
 	DOM is done rendering, and we must explicitly tell it to re-render.
@@ -331,6 +438,90 @@ function parseBookFromJSON(inputBook,resURL="")
 	for mutations in a particular element), and then call MathJax's 
 	typesetting functions
 */
+////////////////////////////////////
+
+function randomize()
+{
+	var min, max, deci, value;
+	for(var i =0; i < variables.length; i++)
+	{
+		if(variables[i] && (randVarMax[i]!=0) && (randVarMin[i]!=0))
+		{
+			min = Number(randVarMin[i]);
+			max = Number(randVarMax[i]);
+			deci = Number(decimals[i]);
+			deci = Math.pow(10,deci);
+			value = Math.round((Math.random() * (max - min) +min)* deci) / deci; 
+			if(variableVal[i])
+				variableVal[i] = value;
+			else
+				variableVal.push(value);
+		}
+		else if (equation[i] != "")
+		{
+			var eqn = renderVariable(equation[i]);
+			var val = math.evaluate(eqn);
+			variableVal.push(val);
+		}
+
+	}
+	
+}
+
+function renderEqn(node)
+{
+	var index = 0 ;
+	node = renderVariable(node);
+
+	while(node.includes("eqn:{", index)) //loops through each occurance of eqn:{}
+	{
+		//loops and replaces the first occurance of eqn:{} with the appropriate value until eqn:{} can not be found 
+		index = node.indexOf("eqn:{");	
+		var eqn;		
+		var setVar = "";
+		var index2 = node.indexOf("}", index);
+		var index3 = node.indexOf(",", index);
+
+		if(index3 <index2 && index3 != -1)
+		{
+			eqn = node.slice(index+5, index3);
+			setVar = node.slice(index3+1,index2);
+			setVar = setVar.trim();
+		}
+		else
+		{
+			eqn = node.slice(index+5, index2);
+			
+		}	
+		var value = math.evaluate(eqn);
+		var str = node.slice(index,index2+1);
+		node = node.replace(str, value)
+		if(setVar !="")
+		{
+			variables.push(setVar);
+			randVarMax.push(0);
+			randVarMin.push(0);
+			decimals.push(0);
+			equation.push("");
+			variableVal.push(value);
+		}
+	}
+	return node;
+
+}
+
+function renderVariable(node)
+{
+	for(var k =0; k < variableVal.length; k++)
+	{
+		if(variableVal[k] != "")
+		{
+			node = node.replace(new RegExp(variables[k], 'g'), variableVal[k]);
+		}
+	}
+	return node;
+}
+
 function mutate()
 {
 	//disconnect, or else we will infinitely change/mutate
