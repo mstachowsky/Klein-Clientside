@@ -15,19 +15,9 @@ closingTags = ['!endPage','!endCheckpoint','!endList','!endList', '!endMultipleC
 
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
-#fName = os.getcwd()+sys.argv[1]
-#f = open(fName+'.md','r')
-#outFile = open(fName+'.bk','w')
-
-#path = 'C:\\Users\\Space Invader\\Desktop\\Klein-Clientside\\BOOKS\\Lab_2_ArduinoPower' #for laptop
-path = 'C:\\Users\\Kevin Zhang\\Downloads\\Lab_2_ArduinoPower' #for desktop
-#path = 'BOOKS\\Lab_2_ArduinoPower'
-f = open(path +'.md', 'r')
-outFile = open(path +'.bk','w')
-
-
-
-
+fName = os.getcwd()+sys.argv[1]
+# = open(fName+'.md','r')
+outFile = open(fName+'.bk','w')
 
 
 #all we do is build a huge JSON string.  You'll notice below that there are a bunch of open braces and the like.  It's just to create
