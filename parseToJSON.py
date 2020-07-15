@@ -10,8 +10,10 @@ startTime = time.time();
 #stack for closing tags 
 myStack = []
 #list based stack, to push use append(x), to pop use pop(), to peek, use myStack[-1]
-openingTags = ['!Page',   '!checkpoint',   '!oList',  '!list',    '!multipleChoice']
-closingTags = ['!endPage','!endCheckpoint','!endList','!endList', '!endMultipleChoice']
+openingTags = ['!Page',   '!checkpoint',    '!multipleChoice',   '!oList',  '!list']
+closingTags = ['!endPage','!endCheckpoint', '!endMultipleChoice','!endList','!endList',]
+
+
 
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
