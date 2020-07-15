@@ -16,7 +16,7 @@ closingTags = ['!endPage','!endCheckpoint','!endList','!endList', '!endMultipleC
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
 fName = os.getcwd()+sys.argv[1]
-# = open(fName+'.md','r')
+f = open(fName+'.md','r')
 outFile = open(fName+'.bk','w')
 
 
