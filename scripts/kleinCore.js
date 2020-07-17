@@ -16,6 +16,19 @@
 		v0.9: Major changes.  Implemented randomized variables and multiple choice
 */
 
+// testing mysql db 
+/*
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+	host: "localhost",
+	user: "root",
+	password: "",
+	database: "test"
+  });
+*/
+
+
 /*
 	each page gets it own button.  However, the buttons are stored in a
 	separate part of the view, so I chose to put them into their own 
