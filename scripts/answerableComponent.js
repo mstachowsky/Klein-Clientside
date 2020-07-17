@@ -64,14 +64,9 @@ class answer{
 				var idealAns;
 				if(comps[1][0] == "(" && comps[1][comps[1].length - 1] == ")")
 				{
-					/*
-					var tries = 0;
-					while((idealAns === Infinity && tries < 10) || tries <1)
-					{
-						randomize();*/
+				
 					idealAns = math.evaluate(comps[1]);
-						/*tries += 1; 
-					}*/
+				
 				}
 				else
 				{

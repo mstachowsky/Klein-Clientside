@@ -36,7 +36,8 @@
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 	</script>
 	    
-	<!-- End of MathJax -->
+    <!-- End of MathJax -->
+    <?php #include 'connection.php';?>
 	
 	<link rel="stylesheet" type="text/css" href="/Klein-Clientside/css/kleinStyle.css">
 </head>
