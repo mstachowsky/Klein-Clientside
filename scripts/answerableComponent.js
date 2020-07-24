@@ -51,6 +51,7 @@ class answer{
 	}
 
 	//currently just boilerplate checkAnswer function.  Eventually will involve server calls.  It is the client-side controller
+	/*
 	checkAnswer()
 	{
 		if(this.AnsString != "")
@@ -122,6 +123,7 @@ class answer{
 		else
 			return false;
 	}
+	*/
 	
 }
 
