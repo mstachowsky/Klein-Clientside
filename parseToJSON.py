@@ -242,21 +242,29 @@ def parse(f, JSONString, idNum, pageNum):
                 inCheckpoint = False
                 
             elif line.startswith("!ans"):
+                serverside = False
+                if (line.find("serverside") != -1):
+                    serverside = True
+                    line.replace("serverside", "")
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
                 line = line.replace(lineAr[-1], '')
                 line = line.replace('&#42', '*')
-                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
+                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\"},"
                 
             elif line.startswith("!multipleChoice"):
                 radioId = 0
                 numOption = 0
+                serverside = False
+                if (line.find("serverside") != -1):
+                    serverside = True
+                    line.replace("serverside", "")
                 line = line.replace("!multipleChoice", '')
     
                 lineAr = line.split()
                 radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
                 #JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\"},"
-                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\" "
+                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\" "
                 line = line.replace(radioId, '')
                 line = line.replace(lineAr[0], '')
                 line = line.strip()
