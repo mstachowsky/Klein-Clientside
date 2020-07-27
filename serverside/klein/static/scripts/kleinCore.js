@@ -71,6 +71,25 @@ function howDidIDo()
 	
 	
 }
+/*
+////////////////////////////////////
+$(function(){
+    $("HDID").bind('click', function(){
+        $.post(
+         url : "/hello/",
+         dataType:"html",
+         success: function(data, status, xhr){
+            //do something with your data
+        }
+        );
+
+        return false;
+    });
+   });
+
+
+//////////////////////////////////
+*/
 
 function wait(ms){
    var start = new Date().getTime();

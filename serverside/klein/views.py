@@ -5,4 +5,6 @@ from django.http import HttpResponse
 # Create your views here.
 def index(request):
     #return HttpResponse("testing")
-    return render(request, 'klein_testing.html')
+    if not request.POST:
+        return render(request, 'klein_testing.html')
+    return HttpResponse("yes sir")
