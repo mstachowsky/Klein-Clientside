@@ -245,7 +245,7 @@ def parse(f, JSONString, idNum, pageNum):
                 serverside = False
                 if (line.find("serverside") != -1):
                     serverside = True
-                    line.replace("serverside", "")
+                    line = line.replace("serverside", "")
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
                 line = line.replace(lineAr[-1], '')

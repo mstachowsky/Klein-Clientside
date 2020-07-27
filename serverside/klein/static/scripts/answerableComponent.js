@@ -34,6 +34,8 @@ class answer{
 
 		//to tell which page the question is on
 		this.pageNum = 0;
+
+		this.serverside = "False"; 
 	}
 
 	setType(type)
@@ -53,10 +55,12 @@ class answer{
 }
 
 class answerBox extends answer{
-	constructor(dataString,newID="", page){
+	constructor(dataString,newID="", page, serverside){
 		super(dataString,"text");
 		this.ID = newID;
 		this.pageNum = page -1;
+		if(serverside === "True")
+			this.serverside = "True";
 	}
 	
 	addContent (page) {
@@ -78,10 +82,12 @@ class answerBox extends answer{
 }
 
 class multipleChoice extends answer{
-	constructor(dataString,newID="", page){
+	constructor(dataString,newID="", page, serverside){
 		super(dataString,"text");
 		this.ID = newID; // this is the name of the radio button set
 		this.pageNum = page -1;
+		if(serverside === "True")
+			this.serverside = "True";
 	}
 
 	addContent(page){

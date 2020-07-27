@@ -399,13 +399,6 @@ function parseBookFromJSON(inputBook,resURL="")
 				var linkDiv = {tag:"a",options:{id:cmp.id,href:cmp.addr,class:"link"},content:cmp.text};
 				newPage.appendChild(makeNewHTML(linkDiv));
 			}
-			else if(cmp.type==="answerBox")
-			{
-				cmp.dataString = renderVariable(cmp.dataString);
-				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum);
-				answers.push(newAns);
-				newAns.addContent(newPage);
-			}
 			else if(cmp.type==="video")
 			{
 				cmp.src = resURL+cmp.src;
@@ -416,9 +409,20 @@ function parseBookFromJSON(inputBook,resURL="")
 				cmp.src = resURL+cmp.src;
 				newPage.appendChild(makeNewMedia(cmp,"IMG"));
 			}	
+			else if(cmp.type==="answerBox")
+			{
+				cmp.dataString = renderVariable(cmp.dataString);
+				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum, cmp.serverside);
+				
+				
+				answers.push(newAns);
+				newAns.addContent(newPage);
+			}
 			else if (cmp.type ==="multipleChoice")
 			{
-				var newAns = new multipleChoice(cmp.dataString,cmp.id,cmp.pageNum);
+			
+				var newAns = new multipleChoice(cmp.dataString,cmp.id,cmp.pageNum, cmp.serverside);
+
 				answers.push(newAns);
 				newAns.addContent(newPage);
 				newPage.appendChild(makeNewHTML(cmp));
