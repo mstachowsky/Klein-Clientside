@@ -69,57 +69,78 @@ function howDidIDo()
 				}
 			}
 			else if(answers[i].serverside === "True"){
-				saveToDatabase(answers[i]);
+				if(answers[i].pageNum == curPage)
+				{
+					if(serverAnsCheck(answers[i]))
+					{
+						yesBx.innerHTML = " \u2705";
+					}
+					else
+					{
+						yesBx.innerHTML = " \u274C";
+					}
+				}
+				else
+				{
+					yesBx.innerHTML = "";
+				}
 			}
 		}
 	}
 	
 	
 }
-/*
-////////////////////////////////////
-$(function(){
-    $("HDID").bind('click', function(){
-        $.post(
-         url : "/hello/",
-         dataType:"html",
-         success: function(data, status, xhr){
-            //do something with your data
-        }
-        );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        return false;
-    });
-   });
+function saveToDatabase() {
+	for(var i = 0; i < answers.length; i++){
+		if(answers[i].serverside === "True"){
+			$.ajax({
+				type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+				//url         : {% url 'klein:klein' %}, // the url where we want to POST
+				//url         : 'klein:klein',
+				data        :  JSON.stringify({
+					'id' : answers[i].ID,
+					'ans' : answers[i].dataString,
+					'page' : answers[i].pageNum,
+					'operation' : 'save',
 
+				}), 
+				contentType    : 'json',
+			});
+			//answers[i].dataString = ""
+		}
+	}
+}
 
-//////////////////////////////////
-*/
-function saveToDatabase(ans) {
-	//e.preventDefault();
+function serverAnsCheck(ans){
+	var bool = false;
 	$.ajax({
 		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-		//url         : {% url 'klein:klein' %}, // the url where we want to POST
-		//url         : 'klein:klein',
 		data        :  JSON.stringify({
 			'id' : ans.ID,
 			'ans' : ans.dataString,
 			'page' : ans.pageNum,
-			//'csrfmiddlewaretoken': csrftoken,
+			'operation' : 'check'
 		}), 
 		contentType    : 'json',
 		dataType    : 'json', // what type of data do we expect back from the server
-		success     : function(msg){
-			if (msg.message === 'success') {
-				//alert(stringify(msg.ID) + ' ' stringify(msg.page) + ' ' + stringify(msg.ans));
-				alert('success ' + msg.id + ' '+  msg.page + ' '+ msg.ans)
-			}
+		success     : 
+		bool = function(msg){
+			alert(checkAnswer(ans, msg.ans));
+			return checkAnswer(ans, msg.ans);
 		}
 	});
+	return bool;
 }
-
-
-//////////////////////////////////
+/*
+function(msg){
+	if (msg.message === 'success') {
+		//alert(stringify(msg.ID) + ' ' stringify(msg.page) + ' ' + stringify(msg.ans));
+		alert('success '+ msg.ans)
+	}
+}*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function wait(ms){
    var start = new Date().getTime();
    var end = start;
@@ -477,6 +498,7 @@ function parseBookFromJSON(inputBook,resURL="")
 	var headDiv = {tag:"span",options:{id:cmp.id},content:inputBook.bookName};
 	headerRoot.appendChild(makeNewHTML(headDiv));
 
+	saveToDatabase();
 	//finally, create the first page
 	makeNewPage();
 }

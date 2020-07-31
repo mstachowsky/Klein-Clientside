@@ -1,8 +1,15 @@
-function checkAnswer(answer){
+function checkAnswer(answer, override){
     if(answer.AnsString != "")
 		{
 			//obtain the data string components
-			var comps = answer.dataString.split(":");
+			var correctAns = ""
+			if(override){
+				correctAns = override;
+			}
+			else{
+				correctAns = answer.dataString;
+			}
+			var comps = correctAns.split(":");
 			//answer will be updated later and totally replaced if we go server-side
 			
 			if(comps[0] == "numeric")
@@ -37,9 +44,9 @@ function checkAnswer(answer){
 			
 			if(answer.type == "MC")
 			{
-				if(document.getElementById(answer.dataString + answer.id))	
+				if(document.getElementById(correctAns + answer.id))	
 				{
-					if(document.getElementById(answer.dataString + answer.id).checked == true)
+					if(document.getElementById(correctAns + answer.id).checked == true)
 					{
 						answer.isCorrect = true;
 						return true;
@@ -53,7 +60,7 @@ function checkAnswer(answer){
 					
 			}
 			else{
-				if(answer.AnsString === answer.dataString)
+				if(answer.AnsString === correctAns)
 				{
 					answer.isCorrect=true;
 					return true;
