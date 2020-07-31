@@ -69,7 +69,7 @@ function howDidIDo()
 				}
 			}
 			else if(answers[i].serverside === "True"){
-				submitHandler(answers[i]);
+				saveToDatabase(answers[i]);
 			}
 		}
 	}
@@ -95,16 +95,16 @@ $(function(){
 
 //////////////////////////////////
 */
-function submitHandler(e) {
+function saveToDatabase(ans) {
 	//e.preventDefault();
 	$.ajax({
 		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
 		//url         : {% url 'klein:klein' %}, // the url where we want to POST
 		//url         : 'klein:klein',
 		data        :  JSON.stringify({
-			'id' : e.ID,
-			'ans' : e.AnsString,
-			'page' : e.pageNum,
+			'id' : ans.ID,
+			'ans' : ans.dataString,
+			'page' : ans.pageNum,
 			//'csrfmiddlewaretoken': csrftoken,
 		}), 
 		contentType    : 'json',
