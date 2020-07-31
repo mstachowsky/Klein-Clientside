@@ -51,20 +51,25 @@ function howDidIDo()
 		var yesBx = document.getElementById("AnswerCheck"+answers[i].ID);
 		if(yesBx)
 		{
-			if(answers[i].pageNum == curPage)
-			{
-				if(checkAnswer(answers[i]))
+			if(answers[i].serverside === "False"){
+				if(answers[i].pageNum == curPage)
 				{
-					yesBx.innerHTML = " \u2705";
+					if(checkAnswer(answers[i]))
+					{
+						yesBx.innerHTML = " \u2705";
+					}
+					else
+					{
+						yesBx.innerHTML = " \u274C";
+					}
 				}
 				else
 				{
-					yesBx.innerHTML = " \u274C";
+					yesBx.innerHTML = "";
 				}
 			}
-			else
-			{
-				yesBx.innerHTML = "";
+			else if(answers[i].serverside === "True"){
+				submitHandler(answers[i]);
 			}
 		}
 	}
@@ -90,7 +95,29 @@ $(function(){
 
 //////////////////////////////////
 */
+function submitHandler(e) {
+	//e.preventDefault();
+	$.ajax({
+		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+		//url         : "{% url 'klein' %}", // the url where we want to POST
+		//url         : '/klein',
+		data        :  JSON.stringify({
+			id : e.ID,
+			ans : e.dataString,
+			page : e.pageNum
+		}), 
+		contentType    : 'json',
+		dataType    : 'json', // what type of data do we expect back from the server
+		success     : function(msg){
+			if (msg.message === 'success') {
+				alert('Success!');
+			}
+		}
+	});
+}
 
+
+//////////////////////////////////
 function wait(ms){
    var start = new Date().getTime();
    var end = start;
