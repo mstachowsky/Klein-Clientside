@@ -99,18 +99,20 @@ function submitHandler(e) {
 	//e.preventDefault();
 	$.ajax({
 		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-		//url         : "{% url 'klein' %}", // the url where we want to POST
-		//url         : '/klein',
+		//url         : {% url 'klein:klein' %}, // the url where we want to POST
+		//url         : 'klein:klein',
 		data        :  JSON.stringify({
-			id : e.ID,
-			ans : e.dataString,
-			page : e.pageNum
+			'id' : e.ID,
+			'ans' : e.AnsString,
+			'page' : e.pageNum,
+			//'csrfmiddlewaretoken': csrftoken,
 		}), 
 		contentType    : 'json',
 		dataType    : 'json', // what type of data do we expect back from the server
 		success     : function(msg){
 			if (msg.message === 'success') {
-				alert('Success!');
+				//alert(stringify(msg.ID) + ' ' stringify(msg.page) + ' ' + stringify(msg.ans));
+				alert('success ' + msg.id + ' '+  msg.page + ' '+ msg.ans)
 			}
 		}
 	});
