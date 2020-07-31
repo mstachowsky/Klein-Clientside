@@ -74,7 +74,34 @@ function checkAnswer(answer, override){
 		}
 	else
 		return false;
-	
+}
 
-
+function serverAnsCheck(ans){
+	var bool = false;
+	$.ajax({
+		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+		data        :  JSON.stringify({
+			'id' : ans.ID,
+			'ans' : ans.dataString,
+			'page' : ans.pageNum,
+			'operation' : 'check'
+		}), 
+		contentType    : 'json',
+		dataType    : 'json', // what type of data do we expect back from the server
+		success     : 
+		function(msg){
+			//alert(checkAnswer(ans, msg.ans));
+			bool = checkAnswer(ans, msg.ans);
+			var yesBx = document.getElementById("AnswerCheck"+ans.ID);
+			if(yesBx){
+				if(bool == true){
+					yesBx.innerHTML = " \u2705"
+				}
+				else if (bool == false){
+					yesBx.innerHTML = " \u274C";
+				}
+			}
+		}
+	});
+	return bool;
 }

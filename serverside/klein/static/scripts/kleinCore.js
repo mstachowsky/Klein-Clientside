@@ -71,14 +71,7 @@ function howDidIDo()
 			else if(answers[i].serverside === "True"){
 				if(answers[i].pageNum == curPage)
 				{
-					if(serverAnsCheck(answers[i]))
-					{
-						yesBx.innerHTML = " \u2705";
-					}
-					else
-					{
-						yesBx.innerHTML = " \u274C";
-					}
+					serverAnsCheck(answers[i])
 				}
 				else
 				{
@@ -113,33 +106,6 @@ function saveToDatabase() {
 	}
 }
 
-function serverAnsCheck(ans){
-	var bool = false;
-	$.ajax({
-		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-		data        :  JSON.stringify({
-			'id' : ans.ID,
-			'ans' : ans.dataString,
-			'page' : ans.pageNum,
-			'operation' : 'check'
-		}), 
-		contentType    : 'json',
-		dataType    : 'json', // what type of data do we expect back from the server
-		success     : 
-		bool = function(msg){
-			alert(checkAnswer(ans, msg.ans));
-			return checkAnswer(ans, msg.ans);
-		}
-	});
-	return bool;
-}
-/*
-function(msg){
-	if (msg.message === 'success') {
-		//alert(stringify(msg.ID) + ' ' stringify(msg.page) + ' ' + stringify(msg.ans));
-		alert('success '+ msg.ans)
-	}
-}*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function wait(ms){
    var start = new Date().getTime();
