@@ -11,7 +11,7 @@
 		v0.6: Changed name (FINALLY) to Klein Core
 			o Added URL book loading
 			
-		Skipped ahead due to rapid development by K. Jiang:
+		Skipped ahead due to rapid development by K. Zhang:
 		
 		v0.9: Major changes.  Implemented randomized variables and multiple choice
 */
@@ -89,9 +89,7 @@ function saveToDatabase() {
 	for(var i = 0; i < answers.length; i++){
 		if(answers[i].serverside === "True"){
 			$.ajax({
-				type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-				//url         : {% url 'klein:klein' %}, // the url where we want to POST
-				//url         : 'klein:klein',
+				type        : 'POST', 
 				data        :  JSON.stringify({
 					'id' : answers[i].ID,
 					'ans' : answers[i].dataString,
@@ -101,7 +99,7 @@ function saveToDatabase() {
 				}), 
 				contentType    : 'json',
 			});
-			//answers[i].dataString = ""
+			answers[i].dataString = ""
 		}
 	}
 }

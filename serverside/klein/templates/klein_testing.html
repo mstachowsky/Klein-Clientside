@@ -44,11 +44,20 @@
 <script src="{% static 'scripts/CSRF_token.js' %}"></script>
 
 <script>
+	/*
 	let url = "{% static 'BOOKS/Lab_2_ArduinoPower.bk' %}";
-	//let url = 'https://learn.uwaterloo.ca/d2l/common/viewFile.d2lfile/Content/637273113418029494/Lab_7_CIntro_base.bk?ou=296412&fid=L2NvbnRlbnQvZW5mb3JjZWQvMjk2NDEyLVNhbmRib3hfTV9TdGFjaG93c2t5L0tldmluX3Rlc3QvQk9PS1MvdGVzdEVkaXRvci5iaw';
 	var text2 = {};
 	fetch(url).then(res => res.json()).then((out)=>(parseBookFromJSON(out)));
-
+	*/
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	let url = urlParams.get("book");
+	let resURL = urlParams.get("resURL");
+	
+	console.log(url);
+	
+	var text2 = {};
+	fetch(url).then(res => res.json()).then((out)=>{parseBookFromJSON(out,resURL)})
 	</script>
 </p>
 </body>

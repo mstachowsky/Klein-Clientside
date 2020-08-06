@@ -11,10 +11,8 @@ import json
 
 # Create your views here.
 def index(request):
-    #return HttpResponse("testing")
     
     if request.is_ajax():
-        #data = json.loads(request.POST.get(''))
 
         json_str = request.body.decode(encoding='UTF-8')
         #json_obj = json.loads(json_str, ensure_ascii = False)
