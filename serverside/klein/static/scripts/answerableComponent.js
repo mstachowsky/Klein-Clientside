@@ -92,7 +92,7 @@ class multipleChoice extends answer{
 
 	addContent(page){
 		var that = this;
-		that.setAnsString(this.dataString+this.id);
+		that.setAnsString(this.ID);
 		that.setType("MC");
 		that.setId(this.ID);
 

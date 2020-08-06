@@ -97,7 +97,7 @@ function serverAnsCheck(ans){
 				if(bool == true){
 					yesBx.innerHTML = " \u2705"
 				}
-				else if (bool == false){
+				else{
 					yesBx.innerHTML = " \u274C";
 				}
 			}

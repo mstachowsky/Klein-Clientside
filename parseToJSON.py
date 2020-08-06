@@ -5,7 +5,7 @@ import sys
 import time
 
 #time is just here because I'm curious how long this program takes to run
-startTime = time.time();
+startTime = time.time()
 
 #stack for closing tags 
 myStack = []
@@ -54,12 +54,12 @@ JSONString = "{"
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
 def replaceEnclosing(line,delims,beginTag,endTag):
-    lineAr = line.split(delims);
+    lineAr = line.split(delims)
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
         bldNum = 0
         if(ind != 0):
-            bldNum = 1;
+            bldNum = 1
         line = ""
         for strng in lineAr:
             if(strng != ''):
@@ -85,14 +85,14 @@ def inlineLink(line):
     endString = "&#93&#93&#93"
     while(line.find(startString) != -1):
         #get the start location
-        indxOfLink = line.find(startString);
+        indxOfLink = line.find(startString)
         #get the ending bracket
-        indxOfEnd = line.find(endString);
+        indxOfEnd = line.find(endString)
         #extract the link text: address:::text
-        linkText = line[indxOfLink+len(startString):indxOfEnd];
-        linkAr = linkText.split(":::");
-        linkAddr = linkAr[0];
-        linkContent = linkAr[1];
+        linkText = line[indxOfLink+len(startString):indxOfEnd]
+        linkAr = linkText.split(":::")
+        linkAddr = linkAr[0]
+        linkContent = linkAr[1]
         link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
         line = line.replace(startString+linkText+endString,link)
     return line
@@ -125,8 +125,8 @@ def tagMatching(line, myStack, openingTags, closingTags):
             myStack.pop()
     return
 
-idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
-pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
+idNum = 0 #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
+pageNum = 0 #every page gets a name, whether it wants one or not.  They are assigned serially
 
 def parse(f, JSONString, idNum, pageNum):
     
@@ -136,13 +136,13 @@ def parse(f, JSONString, idNum, pageNum):
     
     
     #The checkpoint environment is easy - everything inside gets a special style applied
-    inCheckpoint = False;
+    inCheckpoint = False
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
     #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
     #that we don't write the name of the page out once we start it, hence why there are two flags.
-    inPage = False;
-    firstLine = False;
+    inPage = False
+    firstLine = False
     
         
 
@@ -186,7 +186,7 @@ def parse(f, JSONString, idNum, pageNum):
         #now code, using Discord-like syntax
         line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
         #now inline links
-        line = inlineLink(line);
+        line = inlineLink(line)
         
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
@@ -213,16 +213,16 @@ def parse(f, JSONString, idNum, pageNum):
             JSONString += "\"bookName\":\"" + line + "\",\"pages\":["
             
         elif line.startswith("!Page"):
-            inPage = True;
+            inPage = True
             line = line.replace('!Page','').strip()
-            pageNum = pageNum + 1;
+            pageNum = pageNum + 1
             if(line == ""):
                 line = "Page" + str(pageNum)
             JSONString+="{\"name\":\"" + line + "\",\"components\":["
-            firstLine = True;
+            firstLine = True
             
         elif line.startswith("!endPage"):
-            inPage = False;
+            inPage = False
             #it just looks better to add an extra few blank lines at the bottom of the page
             JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
             JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
@@ -328,12 +328,12 @@ def parse(f, JSONString, idNum, pageNum):
                 JSONString+="{\"type\":\"ENDLIST\"},"
                 
             elif line.startswith("!code"):
-                line=line.replace("!code","").strip();
+                line=line.replace("!code","").strip()
                 JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
                 idNum = idNum+1
                 
             elif line.startswith("!link"):
-                line = line.replace("!link","").strip();
+                line = line.replace("!link","").strip()
                 lineAr = line.split()
                 linkText = ""
                 for ln in lineAr[1:len(lineAr)-1]:
@@ -351,7 +351,7 @@ def parse(f, JSONString, idNum, pageNum):
                         JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
                         idNum = idNum+1
                 else:
-                    firstLine = False;
+                    firstLine = False
     return JSONString
 
 
@@ -361,8 +361,8 @@ JSONString = parse(f, JSONString, idNum, pageNum)
 JSONString = JSONString[:-1]
 JSONString+= "]}"
 
-endTime = time.time();
+endTime = time.time()
 if myStack:
     print('Error: Tag mismatch --' + str(myStack))
 
-print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds');
+print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds')
