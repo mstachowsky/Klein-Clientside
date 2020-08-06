@@ -1,4 +1,4 @@
-// using jQuery
+//This is required to be able to send server requests.
 
 // function from django documents to acquire CSRF token
 function getCookie(name) {
@@ -21,6 +21,7 @@ function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
+// sets up all ajax requests to use the CSRF token 
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {

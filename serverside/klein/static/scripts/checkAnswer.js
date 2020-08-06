@@ -3,6 +3,8 @@ function checkAnswer(answer, override){
 		{
 			//obtain the data string components
 			var correctAns = ""
+			// override is used solely for serverside checking. Override will be the answer provided from the server
+			// Makes it such that it uses the server answer vs the empty string clientside
 			if(override){
 				correctAns = override;
 			}
@@ -95,7 +97,7 @@ function serverAnsCheck(ans){
 			var yesBx = document.getElementById("AnswerCheck"+ans.ID);
 			if(yesBx){
 				if(bool == true){
-					yesBx.innerHTML = " \u2705"
+					yesBx.innerHTML = " \u2705";
 				}
 				else{
 					yesBx.innerHTML = " \u274C";

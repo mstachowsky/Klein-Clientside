@@ -15,7 +15,7 @@ def index(request):
     if request.is_ajax():
 
         json_str = request.body.decode(encoding='UTF-8')
-        #json_obj = json.loads(json_str, ensure_ascii = False)
+        #loads the incoming JSON string 
         json_obj = json.loads(json_str)
         
         if (json_obj["operation"] == "save"):
@@ -30,11 +30,13 @@ def index(request):
             key.save() 
 
         elif (json_obj["operation"] == "check"):
-            #assume the answer key has been created
+            #assumes the answer key has been created
             key = answerKey.objects.get(questionID = json_obj["id"], page = json_obj["page"]) 
             
+            #sends JSON response back to client with the answer 
             return JsonResponse({
                 'message': 'success',
                 'ans' : key.answer,
             }) 
+    #renders the html page 
     return render(request, 'klein_testing.html')

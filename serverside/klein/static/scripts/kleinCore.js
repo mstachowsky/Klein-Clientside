@@ -1,5 +1,5 @@
 /*
-	Klein Core, V0.9
+	Klein Core, V1.0
 	
 	Changelog: 
 	
@@ -14,6 +14,8 @@
 		Skipped ahead due to rapid development by K. Zhang:
 		
 		v0.9: Major changes.  Implemented randomized variables and multiple choice
+
+		v1.0: Server request functional. Now saves serverside answers into the database.
 */
 
 /*
@@ -83,7 +85,6 @@ function howDidIDo()
 	
 	
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function saveToDatabase() {
 	for(var i = 0; i < answers.length; i++){
@@ -104,7 +105,6 @@ function saveToDatabase() {
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function wait(ms){
    var start = new Date().getTime();
    var end = start;

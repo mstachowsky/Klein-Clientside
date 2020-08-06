@@ -44,11 +44,7 @@
 <script src="{% static 'scripts/CSRF_token.js' %}"></script>
 
 <script>
-	/*
-	let url = "{% static 'BOOKS/Lab_2_ArduinoPower.bk' %}";
-	var text2 = {};
-	fetch(url).then(res => res.json()).then((out)=>(parseBookFromJSON(out)));
-	*/
+
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
 	let url = urlParams.get("book");
