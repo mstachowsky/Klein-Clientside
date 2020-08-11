@@ -15,7 +15,7 @@
 		
 		v0.9: Major changes.  Implemented randomized variables and multiple choice
 
-		v1.0: Server request functional. Now saves serverside answers into the database.
+		v1.0: Server side answer checking now functional, currently using SQLlite as the database.
 */
 
 /*
@@ -42,7 +42,7 @@ var equation = [];
 
 /*
 	There must be a single "How did I do" button, and that must be global
-	to Clien.  This way, once you click it, the entire page is searched.
+	to Klien.  This way, once you click it, the entire page is searched.
 	It cannot be question-specific, otherwise it will not properly search
 	every answer and change the DOM.
 */
@@ -86,6 +86,7 @@ function howDidIDo()
 	
 }
 
+//function used to save appropriate answerkeys into the database
 function saveToDatabase() {
 	for(var i = 0; i < answers.length; i++){
 		if(answers[i].serverside === "True"){
@@ -100,6 +101,7 @@ function saveToDatabase() {
 				}), 
 				contentType    : 'json',
 			});
+			//clears the clientside answerkey to prevent snooping
 			answers[i].dataString = ""
 		}
 	}
@@ -440,6 +442,7 @@ function parseBookFromJSON(inputBook,resURL="")
 				answers.push(newAns);
 				newAns.addContent(newPage);
 				newPage.appendChild(makeNewHTML(cmp));
+				// looks at the options to render an equations or random variables
 				if(cmp.choices)
 				{
 					for(var n = 0; n < cmp.choices.length; n++)
@@ -476,7 +479,9 @@ function parseBookFromJSON(inputBook,resURL="")
 	for mutations in a particular element), and then call MathJax's 
 	typesetting functions
 */
-////////////////////////////////////
+
+//Below function is used to randomize the random variables in the book,
+//uses min value, max value, # of decimals
 
 function randomize()
 {
@@ -506,6 +511,8 @@ function randomize()
 	
 }
 
+// Below function is used to render specific equations in the book with their values 
+// looks for the following format -> eqn:{equation to be evaluated, optional variable to be saved as}
 function renderEqn(node)
 {
 	var index = 0 ;
@@ -548,6 +555,7 @@ function renderEqn(node)
 
 }
 
+// below function is used to replace the unique random variable keys/names with their randomized values
 function renderVariable(node)
 {
 	for(var k =0; k < variableVal.length; k++)

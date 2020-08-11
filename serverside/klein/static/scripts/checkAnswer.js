@@ -4,7 +4,7 @@ function checkAnswer(answer, override){
 			//obtain the data string components
 			var correctAns = ""
 			// override is used solely for serverside checking. Override will be the answer provided from the server
-			// Makes it such that it uses the server answer vs the empty string clientside
+			// Makes it such that it uses the server answer over the empty string clientside
 			if(override){
 				correctAns = override;
 			}
@@ -82,17 +82,20 @@ function serverAnsCheck(ans){
 	var bool = false;
 	$.ajax({
 		type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+
+		//defines the data being sent to the server, contains the answer ID, dataString (answkerkey) and page number in addition to the type of operation, here is to check the answer
 		data        :  JSON.stringify({
 			'id' : ans.ID,
 			'ans' : ans.dataString,
 			'page' : ans.pageNum,
 			'operation' : 'check'
 		}), 
-		contentType    : 'json',
+		contentType    : 'json', //defines the type of data being sent to the server, in our case it's a JSON string 
 		dataType    : 'json', // what type of data do we expect back from the server
 		success     : 
+		//When the data from the server is received successfully, the below function is called.
+		//Performs answercheck based on the data received from the server, activates the appropriate correct/incorrect answer symbol
 		function(msg){
-			//alert(checkAnswer(ans, msg.ans));
 			bool = checkAnswer(ans, msg.ans);
 			var yesBx = document.getElementById("AnswerCheck"+ans.ID);
 			if(yesBx){
@@ -105,5 +108,4 @@ function serverAnsCheck(ans){
 			}
 		}
 	});
-	return bool;
 }

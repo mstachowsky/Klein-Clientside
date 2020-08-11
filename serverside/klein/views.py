@@ -11,7 +11,7 @@ import json
 
 # Create your views here.
 def index(request):
-    
+    # checks to see if the incoming request is AJAX request
     if request.is_ajax():
 
         json_str = request.body.decode(encoding='UTF-8')

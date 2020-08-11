@@ -1,6 +1,6 @@
 //This is required to be able to send server requests.
 
-// function from django documents to acquire CSRF token
+// function taken from django documents to acquire CSRF token
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
