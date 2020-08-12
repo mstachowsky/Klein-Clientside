@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-
+from pathlib import Path
 #time is just here because I'm curious how long this program takes to run
 startTime = time.time()
 
@@ -16,7 +16,10 @@ openingTags = ['!Page',   '!checkpoint',    '!multipleChoice',   '!oList',  '!li
 closingTags = ['!endPage','!endCheckpoint', '!endMultipleChoice','!endList','!endList',]
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
-fName = os.getcwd()+sys.argv[1]
+#This automatically looks in directory \Klein-Clientside\serverside\klein\static\BOOKS for the markdown file to convert
+bookFolder = os.path.join(os.getcwd(),"serverside","klein","static","BOOKS", sys.argv[1])
+#fName = os.getcwd()+sys.argv[1]
+fName = bookFolder
 f = open(fName+'.md','r')
 outFile = open(fName+'.bk','w')
 

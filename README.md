@@ -1,41 +1,46 @@
-# Klein-Clientside
-A client-side instructional material framework
+# Klein
+A client-side instructional material framework, with server-side capabilities. Currently the only server-side function is answer storage and checking.
 
 ## Overview
 
-Klein-Clientside is a client-side web framework for authoring and displaying instructional material.  It is based around the concept of a "book", which contains "pages".  The pages are the content that you display to your students.  Klein includes facilities to author content using a markdown-like syntax.  One of the key features of Klein is the answerbox, which allows students to test their understanding.  The answerboxes are checked using a "How did I do?" button, which tells the student if they are right or wrong.  
+Klein is a client-side web framework for authoring and displaying instructional material.  It is based around the concept of a "book", which contains "pages".  The pages are the content that you display to your students.  Klein includes facilities to author content using a markdown-like syntax.  One of the key features of Klein is the answerbox, which allows students to test their understanding.  The answerboxes are checked using a "How did I do?" button, which tells the student if they are right or wrong.  
 
-Klein clientside is currently not able to store user data or grades, and as such is currently useful for lab manuals and practice but not for graded assignments.
+Klein is currently not able to store user data or grades, and as such is currently useful for lab manuals and practice but not for graded assignments. 
 
 ### The book file
 
-You write your own books you use a basic text editor.  The file is a markdown file with modified syntax (see below), so it would be a \*.md file.  Once you've written the file, you use the JSON parser (see below)  to parse it into a "book", or \*.bk, file.  Klein fetches the book file and any resources, such as images and videos, on page load.
+You write your own books using a basic text editor.  The file is a markdown file with modified syntax (see below), so it would be a \*.md file.  Once you've written the file, you use the JSON parser (see below)  to parse it into a "book", or \*.bk, file.  Klein fetches the book file and any resources, such as images and videos, on page load.
 
 ## Klein's Components
 
-Klein consists of two components: a python script for converting the content and a Javascript/css/html web front-end for displaying the content.
+Klein consists of three components: a python script for converting the content, a Javascript/css/html web front-end, and a Django server to display the content.
 
 ### The Python to JSON Parser
 
-parseToJSON.py is the parser that takes the md file and turns it into JSON that is ready for the front-end.  It parses directly to JSON and creates a .bk file (a "book").  It is recommended that you set up your folder structure as follows:
+parseToJSON.py is the parser that takes the md file and turns it into JSON that is ready for the front-end.  It parses directly to JSON and creates a .bk file (a "book"). Our repository has already established the directory structure. 
 
-- Create a "books" folder, which contains parseToJSON.py
-- Inside of the books folder, create sub-folders that store each book's markdown and (after parsing) its .bk file
-- When running parseToJSON.py, you supply it with a command line argument that demonstrates how to find the md file.  Currently, line 10 of that file gets the current working directory from the OS, and appends the command line argument to it.  Thus if I have a book folder called BOOK1 that resides in the books folder and a markdown file BOOK1.md, I would call parseToJSON.py as follows:
+- Create a md file and save it into the following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
+- Open a terminal and navigate to the location of Klein on your device.
+- When running parseToJSON.py, you supply it with the file name, and it will automatically search the above directory for that specific md file. For example;
 
-    >> python parseToJSON.py /BOOK1/BOOK1.md
+    >> python parseToJSON.py exampleBook.md
 
-This will create or overwrite the file BOOK1.bk and place it into the BOOK1 folder.
+This will create or overwrite the file exampleBook.bk and place it following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
 
-You can then either point the web front-end directly to that bk file, or move it to a more convenient location on your server.  See below for instructions if you do not have a server and are just opening webpages directly.
 
-### The HTML Framework: V0.6 and up
+### The HTML Framework: V1.0 and up
 
 Klein is currently set up to use the following folder structure:
 
-- a root directory, which we'll call [Root].  [Root] must contain the file 'kleinCore.html' and the following sub-directories:
-  - a `script` directory inside of root.  This must contain `clienCore.js` and `answerableComponent.js` at a minimum
-  - a `css` directory that contains `kleinStyle.css'
+- a root directory, which we'll call [Root].  [Root] contains the file 'parseToJSON.py' and the following sub-directory:
+  - `serverside`, which contains the entire Django web application. It Contains the file 'manage.py' which is used to manage the Django server, and the following sub-directories:
+    - `klein` which contains default Django configuration files in addition to the sub-directories of interest:
+      - `static` which contains the following sub-directories:
+        - `BOOKS` which will contain all your markdown and book files.
+        - `css` which must contain the file 'kleinStyle.css'.
+        - `scripts`which must contain the files 'answerableComponent.js', 'checkAnswer.js', 'CSRF_token.js', 'kleinCore.js', and 'math.js'.
+      - `templates` which contains the 'klein_testing.html' file used to display the content.
+    - `serverside` which contains default Django configuration files.
   
 To load a book you require two parameters in the URL to kleinCore.html.  It is called like this:
 
@@ -43,7 +48,7 @@ To load a book you require two parameters in the URL to kleinCore.html.  It is c
 
 Note that "/" at the end is required (see issues page).  For example, if I have a "books" directory in [Root], and inside of that is a folder "book1", which contains "book1.bk".  Say also that I have a folder called "res" in the "book1" folder, which holds all of the image and video files.  Then I would use the following url:
 
-[url to your server]/kleinCore.html?book=books/book1/book1.bk&resURL=books/book1/res/
+[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk
 
 ### The HTML Framework: Pre-V0.6
 
@@ -64,7 +69,7 @@ Place a copy of the `GeneralKlein.html` file into one of the `res` folders, then
 
 ### What to do if you don't have a server
 
-It is possible to use Klein Clientside without a server.  The only difference is that the HTML file you are using cannot make a JSON request to the server to get the .bk file.  
+It is possible to use Klein without a server.  The only difference is that the HTML file you are using cannot make a JSON request to the server to get the .bk file.  
 
 ## Overview of the scripting language
 
