@@ -51,7 +51,9 @@
 	let resURL = urlParams.get("resURL");
 	// example url -> http://127.0.0.1:8000/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk
 	console.log(url);
-	
+	let filePath = "../static/BOOKS/";
+	url = filePath + url;
+	resURL = filePath + resURL;
 	var text2 = {};
 	fetch(url).then(res => res.json()).then((out)=>{parseBookFromJSON(out,resURL)})
 	</script>

@@ -11,9 +11,18 @@ Klein is currently not able to store user data or grades, and as such is current
 
 You write your own books using a basic text editor.  The file is a markdown file with modified syntax (see below), so it would be a \*.md file.  Once you've written the file, you use the JSON parser (see below)  to parse it into a "book", or \*.bk, file.  Klein fetches the book file and any resources, such as images and videos, on page load.
 
+### Web Server
+
+Klein was developped using Python version 3.8.4 and Django version 3.0.8, to ensure the functionality of Klein, the latest versions are recommended on your device. Older versions may be sufficient, but they have not been tested. 
+
+To set up Klein on your device, simply clone this repository into the location of your choice. To run the server open a terminal at the root of the repository and move into the `serverside` folder and run the following command:
+  >> python manage.py runserver 
+This will start the web server at a default port of 8000, if you require the server to be run on a different port run the following command instead:
+  >> python manage.py runserver portNumber
+
 ## Klein's Components
 
-Klein consists of three components: a python script for converting the content, a Javascript/css/html web front-end, and a Django server to display the content.
+Klein consists of three components: a python script for converting the content, a Javascript/css/html web front-end, and a Django web server to display the content.
 
 ### The Python to JSON Parser
 
@@ -23,7 +32,7 @@ parseToJSON.py is the parser that takes the md file and turns it into JSON that 
 - Open a terminal and navigate to the location of Klein on your device.
 - When running parseToJSON.py, you supply it with the file name, and it will automatically search the above directory for that specific md file. For example;
 
-    >> python parseToJSON.py exampleBook.md
+  >> python parseToJSON.py exampleBook.md
 
 This will create or overwrite the file exampleBook.bk and place it following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
 
@@ -33,7 +42,7 @@ This will create or overwrite the file exampleBook.bk and place it following dir
 Klein is currently set up to use the following folder structure:
 
 - a root directory, which we'll call [Root].  [Root] contains the file 'parseToJSON.py' and the following sub-directory:
-  - `serverside`, which contains the entire Django web application. It Contains the file 'manage.py' which is used to manage the Django server, and the following sub-directories:
+  - `serverside`, which contains the entire Django web application. It contains the file 'manage.py' which is used to manage the Django server, and the following sub-directories:
     - `klein` which contains default Django configuration files in addition to the sub-directories of interest:
       - `static` which contains the following sub-directories:
         - `BOOKS` which will contain all your markdown and book files.
@@ -42,34 +51,16 @@ Klein is currently set up to use the following folder structure:
       - `templates` which contains the 'klein_testing.html' file used to display the content.
     - `serverside` which contains default Django configuration files.
   
-To load a book you require two parameters in the URL to kleinCore.html.  It is called like this:
+To load a book there is one mandatory and one optional parameter in the URL to klein. See below the two options below.
 
-[url to your server]/kleinCore.html?book=[path to book relative to root]&resURL=[path to resource folder relative to root]/
+[url to your server]/klein?book=[book name]
 
-Note that "/" at the end is required (see issues page).  For example, if I have a "books" directory in [Root], and inside of that is a folder "book1", which contains "book1.bk".  Say also that I have a folder called "res" in the "book1" folder, which holds all of the image and video files.  Then I would use the following url:
+[url to your server]/klein?book=[book name]&resURL=[resource folder(optional)]
 
-[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk
+For example, if I have a book called "Lab_2_ArduinoPower.bk" in the `BOOKS` directory stated above, and I also have a folder called "res" in the `BOOKS` directory, which holds all of the images and video files.  Then I would use the following url:
 
-### The HTML Framework: Pre-V0.6
+[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk&resURL=res/
 
-**NOTE** This section is depracated.  All future Klein projects should use the V0.6 and above, 'kleinCore.js' framework.  The older (pre-0.6) js file is named 'clienCore.js' to emphasize the difference and to prevent breaking pre-0.6 books.  0.5.2 will be phased out after December 2020.
-
-Klein is currently set up to use the following folder structure:
-
-- a root directory, which we'll call [Root]
-  - a `script` directory inside of root.  This must contain `clienCore.js` and `answerableComponent.js` at a minimum
-  - a `css` directory that contains `kleinStyle.css'
-  - a `books` directory that contains `parseToJSON.py` and the individual book folders.  
-    - Inside of each book folder should be:
-      - A folder that holds the HTML file and any resources.  I've called this folder `res`.
-
-As long as your folders are set up like that and you are basing your HTML files on the GeneralKlein.html file, then:
-
-Place a copy of the `GeneralKlein.html` file into one of the `res` folders, then modify line 35 in that file to point to the URL of your .bk file.  Once you navigate to the page Klein will parse your book and display it.
-
-### What to do if you don't have a server
-
-It is possible to use Klein without a server.  The only difference is that the HTML file you are using cannot make a JSON request to the server to get the .bk file.  
 
 ## Overview of the scripting language
 
