@@ -107,6 +107,8 @@ A full example using both formats can be seen below.
 
 This will create variables with the names `%x`, `%y`, and `%z`. `%x` will have a minimum value of 1, maximum value of 10, with a decimal percision of 2. `%y` will have a minimum value of 10, maximum value of 100, with a decimal percision of 3. `%z` will be the addition between `%x` and `%y`
 
+All randomizations occur on webpage load. 
+
 ### The `!Book` directive
 
 The book file must contain the line !Book [bookName] whether following the book variable declarations, or at the very beginning of the file, if no book variables are used.
@@ -165,14 +167,13 @@ An example can be seen below.
 
 ```
 This is some text. The voltage of the battery is eqn:{%x / %y, %z}V.
-
 ```
 
 If `%x` was assigned a value of 10 and `%y` was assigned a value of 2, a new book variable called `%z` will be created with a value of 5.
 
 On the webpage it will appear like below
 
->> This is some text. The volatge of the battery is 5V.
+>> This is some text. The voltage of the battery is 5V.
 
 
 ### Answer boxes: the `!ans` directive
@@ -203,7 +204,9 @@ This will be an answer box that accepts the result of the equation `%x + %y + 2`
 
 ### Multiple Choice: the `!multipleChoice` and `!endMultipleChoice` directives
 
-Multiple choice questions can be created using these directives. Each multipl choice question must begin with `!multipleChoice correctChoice id [: question text]` and end with `!endMultipleChoice`. In between these two directives, the `!option` directive is used to produce the options present within the multiple choice question, see `!option` directive below for more details and full examples.
+Each multiple choice question must begin with `!multipleChoice correctChoice id [: question text]` and end with `!endMultipleChoice`. 
+
+In between these two directives, the `!option` directive is used to produce the options present within the multiple choice question, see the `!option` directive below for more details and full examples.
 
 
 ### `!option` directive
@@ -221,21 +224,21 @@ A full multiple choice example is as follows.
 ```
 !multipleChoice 1 multi1 :what is 1+2?
 		
-		!option yes 
+	!option yes 
 
-		!option no 
+	!option no 
 
-		!option %x
+	!option %x
 
-		!option eqn:{2*%x}
+	!option eqn:{2*%x}
 
-	!endMultipleChoice 
+!endMultipleChoice 
 
 ```
 
 Assuming `%x` has been randomly assigned the value of 1.1, this will create a multiple choice question with a question text of 'what is 1+2?' with an id of 'multi1', correct answer of '1' or 'option 1', and the following options: yes, no, 1.1, and 2.2.
 
-Visually on the webpage the multiple choice question will look something like this:
+Visually on the webpage the multiple choice question will look something like this: 
 
 ```
 what is 1+2?
@@ -245,6 +248,33 @@ o 1.1
 o 2.2 
 ```
 
+Note: it is possible to set the correct option outside of the number of available options, when this occurs, whenever you check the answer using HDID, it will always appear as incorrect.
+
+### Server-side Answer Checking 
+
+The previously detailed answer box and multiple choice questions have their answers saved client-side by default. 
+
+There is the option to have these answers saved server-side in a database. To save the answers server-side, simply add `serverside` to the end of your declarations.
+
+For example:
+
+```
+!multipleChoice 1 multi1 :what is 1+2? serverside
+		
+	!option yes 
+
+	!option no 
+
+	!option %x
+
+	!option eqn:{2*%x}
+
+!endMultipleChoice 
+```
+
+```
+!ans numeric:(%x + %y + 2):0.1 id serverside
+```
 
 ### The !img and !video directives
 

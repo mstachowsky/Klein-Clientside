@@ -26,7 +26,7 @@
 
 
 	
-	!multipleChoice 2 multi1 :this is a test question
+	!multipleChoice 2 multi1 :this is a test question serverside
 		
 		!option yes testing eqn:{1 +2 \* 5, %z}
 

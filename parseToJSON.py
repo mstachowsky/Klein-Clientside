@@ -265,11 +265,11 @@ def parse(f, JSONString, idNum, pageNum):
                 
             elif line.startswith("!ans"):
                 serverside = False
-                if (line.find("serverside") != -1):
-                    serverside = True
-                    line = line.replace("serverside", "")
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
+                if (lineAr[-1] == "serverside"):
+                    serverside = True
+                    line.replace("serverside", "")
                 line = line.replace(lineAr[-1], '')
                 line = line.replace('&#42', '*')
                 JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\"},"
@@ -278,12 +278,13 @@ def parse(f, JSONString, idNum, pageNum):
                 radioId = 0
                 numOption = 0
                 serverside = False
-                if (line.find("serverside") != -1):
-                    serverside = True
-                    line.replace("serverside", "")
                 line = line.replace("!multipleChoice", '')
     
                 lineAr = line.split()
+                if (lineAr[-1] == "serverside"):
+                    serverside = True
+                    line.replace("serverside", "")
+
                 radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
                 JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\" "
                 line = line.replace(radioId, '')
