@@ -30,13 +30,13 @@ Klein consists of three components: a python script for converting the content, 
 
 parseToJSON.py is the parser that takes the md file and turns it into JSON that is ready for the front-end.  It parses directly to JSON and creates a .bk file (a "book"). Our repository has already established the directory structure. 
 
-- Create a md file and save it into the following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
+- Create a md file and save it into the following directory: `\Klein-Clientside\serverside\klein\static\BOOKS`.
 - Open a terminal and navigate to the location of Klein on your device.
 - When running parseToJSON.py, you supply it with the file name, and it will automatically search the above directory for that specific md file. For example;
 
 >> python parseToJSON.py exampleBook.md
 
-This will create or overwrite the file exampleBook.bk and place it following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
+This will create or overwrite the file 'exampleBook.bk' and place it following directory: `\Klein-Clientside\serverside\klein\static\BOOKS`.
 
 
 ### The HTML Framework: V1.0 and up
@@ -48,20 +48,20 @@ Klein is currently set up to use the following folder structure:
     - `klein` which contains default Django configuration files in addition to the sub-directories of interest:
       - `static` which contains the following sub-directories:
         - `BOOKS` which will contain all your markdown and book files.
-        - `css` which must contain the file 'kleinStyle.css'.
-        - `scripts`which must contain the files 'answerableComponent.js', 'checkAnswer.js', 'CSRF_token.js', 'kleinCore.js', and 'math.js'.
-      - `templates` which contains the 'klein_testing.html' file used to display the content.
+        - `css` which must contain the file `kleinStyle.css`.
+        - `scripts`which must contain the files `answerableComponent.js`, `AnswerCheck.js`, `CSRF_token.js`, `kleinCore.js`, and `math.js`.
+      - `templates` which contains the `klein_testing.html` file used to display the content.
     - `serverside` which contains default Django configuration files.
   
 To load a book there is one mandatory and one optional parameter in the URL to klein. See below the two options below.
 
-[url to your server]/klein?book=[book name]
+`[url to your server]/klein?book=[book name]`
 
-[url to your server]/klein?book=[book name]&resURL=[resource folder(optional)]
+`[url to your server]/klein?book=[book name]&resURL=[resource folder(optional)]`
 
 For example, if I have a book called "Lab_2_ArduinoPower.bk" in the `BOOKS` directory stated above, and I also have a folder called "res" in the `BOOKS` directory, which holds all of the images and video files.  Then I would use the following url:
 
-[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk&resURL=res/
+`[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk&resURL=res/`
 
 
 ## Overview of the scripting language
@@ -74,13 +74,40 @@ All directives must come at the start of a line at the moment.  Some nesting is 
 
 ### The `!bookVariables` and `!endBookVariables` directives 
 
-Each book can set their own global variables that can be used throughout the document. Each variable must have an unique name such as '%x' or '%y' as every instance of the name will be replaced by it's value. The variables values can either be set randomly within a range or by using an equation, details can be seen below in `!var` directives.
+Each book can set their own global variables that can be used throughout the document. Each variable must have an unique name such as `%x` or `%y` as every instance of the name will be replaced by it's value. The variables values can either be set randomly within a range or by using an equation, details can be seen below in `!var` directives.
 
 Global book variables are not mandatory, but if you choose to use them, this directive must placed at the start of the file.
 
 ### The `!var` directive 
-To declare your global variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives
+To declare your global variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives.
 
+The declaration follows the two formats: 
+
+`!var uniqueName:minimumValue:maximumValue:decimalPercision`
+
+and
+
+`!var uniqueName:value`
+
+The first format creates a randomized global variable within in the specified range and decimal percision. The second format simply creates a global variable with a value, the value can either be a numeric value or an equation. The equation can contain previously declared variables. 
+
+For example, if you want a global variable named `%x` with a minimum value of 1, maximum value of 10, with a decimal percision of 2, the syntax is as follows.
+
+`!var %x:1:10:2`
+
+A full example using both formats can be seen below.
+
+```
+!bookVariables
+
+	!var %x:1:10:2
+	!var %y:10:100:3
+	!var %z: %x + %y
+
+!endBookVariables
+```
+
+This will create variables with the names `%x`, `%y`, and `%z`. `%x` will have a minimum value of 1, maximum value of 10, with a decimal percision of 2. `%y` will have a minimum value of 10, maximum value of 100, with a decimal percision of 3. `%z` will be the addition between `%x` and `%y`
 
 ### The `!Book` directive
 
@@ -103,7 +130,7 @@ Currently, if you have multiple pages, you must include the `!Page` directive on
 
 Additionally, you may add pages to your book by referencing another page file with \*.pg extension by using the !addPage directive. 
 
-### The !addPage directive 
+### The `!addPage` directive 
 
 To use this directive, first create a file with the \*.pg file extension, and populate the file as you would a page in a book file. Then in your book file use !addPage [path to page]. 
 
@@ -111,32 +138,32 @@ Note the path to the page is automatically set to the `BOOKS` directory; \Klein-
 
 For example let's say we have a markdown file called "test", and a folder called "pages" that contain pages 1 to 3 with the names "page1", "page2", "page3". All of this is within the `BOOKS` directory. The file structures can be seen below.
   ```
-  test.md
+  >>test.md
   !Book bookName 
+
   !addPage pages/page1.pg
   !addPage pages/page2.pg
   !addPage pages/page3.pg 
   ```
-  
+
   ```
-  page1.pg
+  >>page1.pg
   !Page pageName
-  some content
+
+    some content
+
   !endPage
   ```
 
-
-
-
 ### Answer boxes: the `!ans` directive
 
-Answer boxes are currently only available as text or numeric input boxes.  Multiple choice and other options are TODO.  There are two ways to create an answer box: either as a text or a numeric box.
+Answer boxes are currently only available as text or numeric input boxes. There are two ways to create an answer box: either as a text or a numeric box.
 
 Text answer boxes match the answer string directly.  The syntax is:
 
 `!ans textToMatch id`
 
-To create a numeric answer box, you specify the answer with a colon separated string.  The string always begins with "numeric", then the numeric nominal answer, then either the string "absolute" or a tolerance on the nominal answer.  It looks like this:
+To create a numeric answer box, you specify the answer with a colon separated string.  The string always begins with "numeric", then the numeric nominal answer, then either the string "absolute" or a tolerance on the nominal answer. You may replace the numeric nomial answer with an equation surrounded by round brackets.  It looks like this:
 
 `!ans numeric:2:absolute id`
 
@@ -144,9 +171,19 @@ This will be an answer box essentially identical to `!ans 2 id`.  It matches the
 
 `!ans numeric:2:0.1 id`
 
-This will be an answer box that matches any number between 1.9 and 2.1, inclusive.  In general, it is `!ans numeric:nominal:tolderance id`.  The algorithm used is:
+This will be an answer box that matches any number between 1.9 and 2.1, inclusive. 
+
+`!ans numeric:(%x + %y + 2):0.1 id`
+
+This will be an answer box that accepts the result of the equation `%x + %y + 2`, if `%x` and `%y` are global variables that were randomly assigned values of '1.1' and '2.2'. The answer box will accept any number between 5.2 and 5.4, inclusive.
+
+ In general, it is `!ans numeric:nominal:tolderance id`.  The algorithm used is:
 
 `if(Math.Abs(answerBoxValue-nominal) <= tolerance)` then it is marked correct, otherwise it is marked wrong.
+
+### Multiple Choice: the `!multipleChoice`, `!endMultipleChoice` and `!option` directives
+
+
 
 ### The !img and !video directives
 

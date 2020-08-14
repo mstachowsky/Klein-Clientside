@@ -3,19 +3,25 @@
 	!var %x:1:10:2
 	!var %y:10:100:3
 	!var %test: %x + %y
+	!var %z:10
+	!var %q: 1+5
 
 !endBookVariables
 
 !Book Multiple choice testing 
 
 
-!Page TEST
+!Page TEST 
 	# LETS PRETEND THAT THIS IS A QUESTION HEADING
 
 	TESTing 123 %x + %y \*\* %x /%y 
 	
 	Whats %x + %y^ %x /%y : testing eqn:{tan(90 deg)  , %lol} : %test
+
+	testing z : %z
 	
+	testing q : %q
+
 	!ans numeric:(%x + %y ^ %x / %y):0.01 numAns2 serverside
 
 
