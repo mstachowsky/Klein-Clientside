@@ -16,9 +16,11 @@ You write your own books using a basic text editor.  The file is a markdown file
 Klein was developped using Python version 3.8.4 and Django version 3.0.8, to ensure the functionality of Klein, the latest versions are recommended on your device. Older versions may be sufficient, but they have not been tested. 
 
 To set up Klein on your device, simply clone this repository into the location of your choice. To run the server open a terminal at the root of the repository and move into the `serverside` folder and run the following command:
-  >> python manage.py runserver 
+>> python manage.py runserver 
+
 This will start the web server at a default port of 8000, if you require the server to be run on a different port run the following command instead:
-  >> python manage.py runserver portNumber
+
+>> python manage.py runserver portNumber
 
 ## Klein's Components
 
@@ -32,7 +34,7 @@ parseToJSON.py is the parser that takes the md file and turns it into JSON that 
 - Open a terminal and navigate to the location of Klein on your device.
 - When running parseToJSON.py, you supply it with the file name, and it will automatically search the above directory for that specific md file. For example;
 
-  >> python parseToJSON.py exampleBook.md
+>> python parseToJSON.py exampleBook.md
 
 This will create or overwrite the file exampleBook.bk and place it following directory: \Klein-Clientside\serverside\klein\static\BOOKS.
 
@@ -76,7 +78,7 @@ Each book can set their own global variables that can be used throughout the doc
 
 Global book variables are not mandatory, but if you choose to use them, this directive must placed at the start of the file.
 
-#### The `!var` directive 
+### The `!var` directive 
 To declare your global variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives
 
 
@@ -101,7 +103,7 @@ Currently, if you have multiple pages, you must include the `!Page` directive on
 
 Additionally, you may add pages to your book by referencing another page file with \*.pg extension by using the !addPage directive. 
 
-#### THe !addPage directive 
+### The !addPage directive 
 
 To use this directive, first create a file with the \*.pg file extension, and populate the file as you would a page in a book file. Then in your book file use !addPage [path to page]. 
 
@@ -109,18 +111,15 @@ Note the path to the page is automatically set to the `BOOKS` directory; \Klein-
 
 For example let's say we have a markdown file called "test", and a folder called "pages" that contain pages 1 to 3 with the names "page1", "page2", "page3". All of this is within the `BOOKS` directory. The file structures can be seen below.
 
-  >> test.md
+  test.md
   !Book bookName 
-
   !addPage pages/page1.pg
   !addPage pages/page2.pg
   !addPage pages/page3.pg 
 
-  >> page1.pg
+  page1.pg
   !Page pageName
-  
-      some content 
-
+  some content
   !endPage
 
 
