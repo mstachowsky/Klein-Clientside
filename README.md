@@ -110,18 +110,20 @@ To use this directive, first create a file with the \*.pg file extension, and po
 Note the path to the page is automatically set to the `BOOKS` directory; \Klein-Clientside\serverside\klein\static\BOOKS.
 
 For example let's say we have a markdown file called "test", and a folder called "pages" that contain pages 1 to 3 with the names "page1", "page2", "page3". All of this is within the `BOOKS` directory. The file structures can be seen below.
-
+  ```
   test.md
   !Book bookName 
   !addPage pages/page1.pg
   !addPage pages/page2.pg
   !addPage pages/page3.pg 
-
+  ```
+  
+  ```
   page1.pg
   !Page pageName
   some content
   !endPage
-
+  ```
 
 
 
