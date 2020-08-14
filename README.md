@@ -74,24 +74,22 @@ All directives must come at the start of a line at the moment.  Some nesting is 
 
 ### The `!bookVariables` and `!endBookVariables` directives 
 
-Each book can set their own global variables that can be used throughout the document. Each variable must have an unique name such as `%x` or `%y` as every instance of the name will be replaced by it's value. The variables values can either be set randomly within a range or by using an equation, details can be seen below in `!var` directives.
+Each book can set their own book variables that can be used throughout the document. Each variable must have an unique name such as `%x` or `%y` as every instance of the name will be replaced by it's value. The variables values can either be set randomly within a range or by using an equation, details can be seen below in `!var` directives.
 
-Global book variables are not mandatory, but if you choose to use them, this directive must placed at the start of the file.
+Book variables are not mandatory, but if you choose to use them, this directive must placed at the start of the file.
 
 ### The `!var` directive 
-To declare your global variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives.
+To declare your book variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives.
 
 The declaration follows the two formats: 
 
 `!var uniqueName:minimumValue:maximumValue:decimalPercision`
 
-and
-
 `!var uniqueName:value`
 
-The first format creates a randomized global variable within in the specified range and decimal percision. The second format simply creates a global variable with a value, the value can either be a numeric value or an equation. The equation can contain previously declared variables. 
+The first format creates a randomized book variable within in the specified range and decimal percision. The second format simply creates a book variable with a value, the value can either be a numeric value or an equation. The equation can contain previously declared variables. 
 
-For example, if you want a global variable named `%x` with a minimum value of 1, maximum value of 10, with a decimal percision of 2, the syntax is as follows.
+For example, if you want a book variable named `%x` with a minimum value of 1, maximum value of 10, with a decimal percision of 2, the syntax is as follows.
 
 `!var %x:1:10:2`
 
@@ -111,7 +109,7 @@ This will create variables with the names `%x`, `%y`, and `%z`. `%x` will have a
 
 ### The `!Book` directive
 
-The book file must contain the line !Book [bookName] whether following the global variable declarations, or at the very beginning of the file, if no global variables are used.
+The book file must contain the line !Book [bookName] whether following the book variable declarations, or at the very beginning of the file, if no book variables are used.
 
 The string [bookName] is the name of your book, and may be any valid text string, including spaces.  It is displayed at the top of each page.
 
@@ -155,6 +153,28 @@ For example let's say we have a markdown file called "test", and a folder called
   !endPage
   ```
 
+### Inline equation values
+
+It is possible to show the resulting value from an equation anywhere within the document by using the following syntax within text. 
+
+`eqn:{your equation [, assign variable]}`
+
+This will be rendered as the resulting value of the equation, and can be optionally saved as a book variable. 
+
+An example can be seen below.
+
+```
+This is some text. The voltage of the battery is eqn:{%x / %y, %z}V.
+
+```
+
+If `%x` was assigned a value of 10 and `%y` was assigned a value of 2, a new book variable called `%z` will be created with a value of 5.
+
+On the webpage it will appear like below
+
+>> This is some text. The volatge of the battery is 5V.
+
+
 ### Answer boxes: the `!ans` directive
 
 Answer boxes are currently only available as text or numeric input boxes. There are two ways to create an answer box: either as a text or a numeric box.
@@ -175,14 +195,55 @@ This will be an answer box that matches any number between 1.9 and 2.1, inclusiv
 
 `!ans numeric:(%x + %y + 2):0.1 id`
 
-This will be an answer box that accepts the result of the equation `%x + %y + 2`, if `%x` and `%y` are global variables that were randomly assigned values of '1.1' and '2.2'. The answer box will accept any number between 5.2 and 5.4, inclusive.
+This will be an answer box that accepts the result of the equation `%x + %y + 2`, if `%x` and `%y` are book variables that were randomly assigned values of '1.1' and '2.2'. The answer box will accept any number between 5.2 and 5.4, inclusive.
 
  In general, it is `!ans numeric:nominal:tolderance id`.  The algorithm used is:
 
 `if(Math.Abs(answerBoxValue-nominal) <= tolerance)` then it is marked correct, otherwise it is marked wrong.
 
-### Multiple Choice: the `!multipleChoice`, `!endMultipleChoice` and `!option` directives
+### Multiple Choice: the `!multipleChoice` and `!endMultipleChoice` directives
 
+Multiple choice questions can be created using these directives. Each multipl choice question must begin with `!multipleChoice correctChoice id [: question text]` and end with `!endMultipleChoice`. In between these two directives, the `!option` directive is used to produce the options present within the multiple choice question, see `!option` directive below for more details and full examples.
+
+
+### `!option` directive
+
+Within the multiple choice directives, you may have as many options as you like, they will be automatically be numbered serially starting from 1. 
+
+To create an option use the following syntax.
+
+`!option some text` 
+
+In the options text, declared variables and equations can be used. See inline equations above for details of use. 
+
+A full multiple choice example is as follows. 
+
+```
+!multipleChoice 1 multi1 :what is 1+2?
+		
+		!option yes 
+
+		!option no 
+
+		!option %x
+
+		!option eqn:{2*%x}
+
+	!endMultipleChoice 
+
+```
+
+Assuming `%x` has been randomly assigned the value of 1.1, this will create a multiple choice question with a question text of 'what is 1+2?' with an id of 'multi1', correct answer of '1' or 'option 1', and the following options: yes, no, 1.1, and 2.2.
+
+Visually on the webpage the multiple choice question will look something like this:
+
+```
+what is 1+2?
+o yes
+o no
+o 1.1
+o 2.2 
+```
 
 
 ### The !img and !video directives
