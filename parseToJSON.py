@@ -17,9 +17,9 @@ closingTags = ['!endPage','!endCheckpoint', '!endMultipleChoice','!endList','!en
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
 #This automatically looks in directory \Klein-Clientside\serverside\klein\static\BOOKS for the markdown file to convert
-bookFolder = os.path.join(os.getcwd(),"serverside","klein","static","BOOKS", sys.argv[1])
+bookFolder = os.path.join(os.getcwd(),"serverside","klein","static","BOOKS")
 #fName = os.getcwd()+sys.argv[1]
-fName = bookFolder
+fName = os.path.join(bookFolder, sys.argv[1] )
 f = open(fName+'.md','r')
 outFile = open(fName+'.bk','w')
 
@@ -177,7 +177,7 @@ def parse(f, JSONString, idNum, pageNum):
         '''
         if line.startswith("!addPage"):
             line = line + ' '
-            pageDir = line[9:-1] #takes what ever is after the command 
+            pageDir = os.path.join(bookFolder, line[9:-1]) #takes what ever is after the command 
             if line.find('.pg') != -1: #.pg will be file extention for pages 
                 pageFile = open(pageDir, 'r')
             else:

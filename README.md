@@ -70,13 +70,26 @@ In this syntax, anything shown in square brackets [like this] is optional.  The 
 
 All directives must come at the start of a line at the moment.  Some nesting is implemented, especially for lists of text content and checkpoints.
 
+### The `!bookVariables` and `!endBookVariables` directives 
+
+Each book can set their own global variables that can be used throughout the document. Each variable must have an unique name such as '%x' or '%y' as every instance of the name will be replaced by it's value. The variables values can either be set randomly within a range or by using an equation, details can be seen below in `!var` directives.
+
+Global book variables are not mandatory, but if you choose to use them, this directive must placed at the start of the file.
+
+#### The `!var` directive 
+To declare your global variables, the `!var` directive must be used within the `!bookVariables` and `!endBookVariables` directives
+
+
 ### The `!Book` directive
 
-Every book file must begin with the line !Book [bookName]
+The book file must contain the line !Book [bookName] whether following the global variable declarations, or at the very beginning of the file, if no global variables are used.
 
 The string [bookName] is the name of your book, and may be any valid text string, including spaces.  It is displayed at the top of each page.
 
 Each book can contain only a single `!Book` directive, or the JSON will not parse correctly.
+
+The markdown file can either contain all the pages in one file, or reference additional page files with the extension \*.pg using the !addPage directive seen below. 
+
 
 ### The `!Page` and `!endPage` directives
 
@@ -85,6 +98,34 @@ Each page in your book begins with a `!Page` directive and ends with a `!endPage
 The `!Page` directive has an optional page name, like this:  `!Page [optional page name]`.  This name is what gets displayed on the page's selection button.  If it is left blank then the button defaults to the text "Page N", where N is the page number.
 
 Currently, if you have multiple pages, you must include the `!Page` directive on the line immediately following an `!endPage` or a `!Book1` directive, without any whitespace.  This is being tracked as a todo and will be removed as a requirement in the future.
+
+Additionally, you may add pages to your book by referencing another page file with \*.pg extension by using the !addPage directive. 
+
+#### THe !addPage directive 
+
+To use this directive, first create a file with the \*.pg file extension, and populate the file as you would a page in a book file. Then in your book file use !addPage [path to page]. 
+
+Note the path to the page is automatically set to the `BOOKS` directory; \Klein-Clientside\serverside\klein\static\BOOKS.
+
+For example let's say we have a markdown file called "test", and a folder called "pages" that contain pages 1 to 3 with the names "page1", "page2", "page3". All of this is within the `BOOKS` directory. The file structures can be seen below.
+
+  >> test.md
+  !Book bookName 
+
+  !addPage pages/page1.pg
+  !addPage pages/page2.pg
+  !addPage pages/page3.pg 
+
+  >> page1.pg
+  !Page pageName
+  
+      some content 
+
+  !endPage
+
+
+
+
 
 ### Answer boxes: the `!ans` directive
 
