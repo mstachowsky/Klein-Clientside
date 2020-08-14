@@ -236,7 +236,7 @@ A full multiple choice example is as follows.
 
 ```
 
-Assuming `%x` has been randomly assigned the value of 1.1, this will create a multiple choice question with a question text of 'what is 1+2?' with an id of 'multi1', correct answer of '1' or 'option 1', and the following options: yes, no, 1.1, and 2.2.
+Assuming `%x` has been randomly assigned the value of 1.1, this will create a multiple choice question with a question text of 'what is 1+2?' with an id of 'multi1', correct answer of '1' or 'option 1', and the following options: 'yes', 'no', '1.1', and '2.2'.
 
 Visually on the webpage the multiple choice question will look something like this: 
 
@@ -275,6 +275,8 @@ For example:
 ```
 !ans numeric:(%x + %y + 2):0.1 id serverside
 ```
+
+Note: The current database in use is SQLite, which was built into Django. This database is meant only for development, not production. 
 
 ### The !img and !video directives
 

@@ -179,7 +179,7 @@ def parse(f, JSONString, idNum, pageNum):
             line = line + ' '
             pageDir = os.path.join(bookFolder, line[9:-1]) #takes what ever is after the command 
             if line.find('.pg') != -1: #.pg will be file extention for pages 
-                pageFile = open(pageDir, 'r')
+                pageFile = open(pageDir, 'r') #when adding page files, you can just use the name of the file with or without the .pg extension
             else:
                 pageFile = open(pageDir + '.pg', 'r')
                 
