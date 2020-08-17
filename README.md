@@ -256,6 +256,8 @@ The previously detailed answer box and multiple choice questions have their answ
 
 There is the option to have these answers saved server-side in a database. To save the answers server-side, simply add `serverside` to the end of your declarations.
 
+Answers are saved based on ID, if an answer key already exists with a particular ID and you want to save another answer key using that ID, it will be overwritten in the database. 
+
 For example:
 
 ```
