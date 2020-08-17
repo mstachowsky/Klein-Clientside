@@ -61,7 +61,7 @@ To load a book there is one mandatory and one optional parameter in the URL to k
 
 For example, if I have a book called "Lab_2_ArduinoPower.bk" in the `BOOKS` directory stated above, and I also have a folder called "res" in the `BOOKS` directory, which holds all of the images and video files.  Then I would use the following url:
 
-`[url to your server]/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk&resURL=res/`
+`[url to your server]/klein/?book=Lab_2_ArduinoPower.bk&resURL=res/`
 
 
 ## Overview of the scripting language
