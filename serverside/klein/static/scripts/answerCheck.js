@@ -17,9 +17,10 @@ function checkAnswer(answer, override){
 			if(comps[0] == "numeric")
 			{
 				var idealAns;
+				// checks for enclosing brackets to determine if it's an expression
 				if(comps[1][0] == "(" && comps[1][comps[1].length - 1] == ")")
 				{
-				
+					// evaluates the expression, can handle wide varity of expressions. Look into math.js documentation for more details
 					idealAns = math.evaluate(comps[1]);
 				
 				}
@@ -48,6 +49,7 @@ function checkAnswer(answer, override){
 			{
 				if(document.getElementById(correctAns + answer.id))	
 				{
+					// check to see if the correct radio button is selected 
 					if(document.getElementById(correctAns + answer.id).checked == true)
 					{
 						answer.isCorrect = true;
@@ -62,6 +64,7 @@ function checkAnswer(answer, override){
 					
 			}
 			else{
+				// check if the string is equivalent 
 				if(answer.AnsString === correctAns)
 				{
 					answer.isCorrect=true;

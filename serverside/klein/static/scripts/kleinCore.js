@@ -42,7 +42,7 @@ var equation = [];
 
 /*
 	There must be a single "How did I do" button, and that must be global
-	to Klien.  This way, once you click it, the entire page is searched.
+	to Klein.  This way, once you click it, the entire page is searched.
 	It cannot be question-specific, otherwise it will not properly search
 	every answer and change the DOM.
 */
@@ -86,7 +86,7 @@ function howDidIDo()
 	
 }
 
-//function used to save appropriate answerkeys into the database
+//function used to save appropriate answerkeys into the database using Ajax requests
 function saveToDatabase() {
 	for(var i = 0; i < answers.length; i++){
 		if(answers[i].serverside === "True"){
@@ -303,6 +303,7 @@ function parseBookFromJSON(inputBook,resURL="")
 	if(inputBook.variable){
 		for(var i = 0; i <inputBook.variable.length; i++)
 		{
+			// this pushes the book variables parameters into their arrays
 			var rand = inputBook.variable[i];
 			variables.push(rand.name);
 			if(rand.variableValMin && rand.variableValMax)
@@ -322,7 +323,7 @@ function parseBookFromJSON(inputBook,resURL="")
 
 			
 		}
-		randomize();
+		randomize(); // creates randomized values for appropriate variables
 	}
 	for (var i = 0; i < inputBook.pages.length; i++)
 	{
@@ -427,7 +428,7 @@ function parseBookFromJSON(inputBook,resURL="")
 			}	
 			else if(cmp.type==="answerBox")
 			{
-				cmp.dataString = renderVariable(cmp.dataString);
+				cmp.dataString = renderVariable(cmp.dataString); //renders any variables present in the answer string 
 				var newAns = new answerBox(cmp.dataString,cmp.id,cmp.pageNum, cmp.serverside);
 				
 				
