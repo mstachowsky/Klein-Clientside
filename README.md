@@ -1,6 +1,10 @@
 # Klein
 A client-side instructional material framework, with server-side capabilities. Currently the only server-side function is answer storage and checking.
 
+## Install and dependencies
+
+Note Klein runs on Python and the executive decision was made to not have sudo install Python itself. Other dependencies are pip and Django, however with the newest version of Python or at least Python 3.0 or later, pip is installed automatically and `populate.sh` will successfully install Django. The only thing to worry about is having Python installed, and you can go [https://www.python.org/downloads/](here) to make that happen.
+
 ## Overview
 
 Klein is a client-side web framework for authoring and displaying instructional material.  It is based around the concept of a "book", which contains "pages".  The pages are the content that you display to your students.  Klein includes facilities to author content using a markdown-like syntax.  One of the key features of Klein is the answerbox, which allows students to test their understanding.  The answerboxes are checked using a "How did I do?" button, which tells the student if they are right or wrong.  
