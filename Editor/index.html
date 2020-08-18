@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<title>[insert cool name]</title>
+<head>
+	<style type="text/css">
+
+		button {
+			background-color: #efefef;
+			font-weight: 600;
+			font-size: 14px;
+			box-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+		}
+
+		button:hover {
+			background-color: white;
+		}
+
+		button:active {
+			box-shadow: inset 1px 1px 0px rgba(0,0,0,0.3);
+		}
+
+		body {
+			/* UWaterloo colour palette! */
+			background-color: #FFD54F;
+		}
+
+		h1 {
+			color: #000;
+			font-family: 'Helvetica', sans-serif;
+			font-size: 30px;
+		}
+
+		h2 {
+			color: #000;
+			font-family: 'Helvetica', sans-serif;
+			font-size: 22px;
+		}
+
+		h3 {
+			color: #000;
+			font-family: 'Helvetica';
+			text-decoration: underline;
+			font-size: 14px;
+		}
+
+		b {
+			background-color: #eee;
+			font-family: 'Helvetica', sans-serif;
+			font-size: 14px;
+		}
+
+		/* extra width: 2*20px + 2*2px = 44px ... plus left 10px (we ignore the inner padding...) */
+		#container {
+			width: calc(50% - 59px);
+			height: calc(100% - 64px);
+			top:10px;
+			left:10px;
+			padding: 20px;
+			background-color: #efefef;
+			border: 2px solid black;
+			position: fixed;
+			overflow-y: scroll;
+			z-index:99999;
+		}
+
+		#button_box {
+			margin-top: 20px;
+			border: 1px solid black;
+			float: center;
+		}
+
+		.button_btn {
+
+		}
+
+		#input_console {
+		/* no words... */
+		}
+
+		.titlebox {
+			margin-top: 10px;
+			padding: 10px;
+			border: 1px solid black;
+		}
+
+		.TitleInput {
+			border: 1px solid black;
+			background-color: white;
+			display: inline;
+		}
+
+		/* padding: 2*10px + 2*1px = 22px */
+
+		.titles {
+			background-color: #FFD54F;
+			color: ;
+			font-size: 25px;
+			padding: 10px;
+			height: 30px;
+			font-family: 'Helvetica Neue', sans-serif;
+			font-weight: 800;
+			border: 1px solid black;
+			text-transform:;/*
+			white-space: nowrap;
+			overflow-x: scroll;
+			overflow-y: none;*/
+		}
+
+
+		.input_box {
+			margin-top:10px;
+			padding: 10px;
+			border: 1px solid black;
+			background-color: white;
+			box-shadow: 2px 2px 0px rgba(0,0,0,0);
+		}
+
+		/* conConsole 20px + 20px + 2px + 2px = 44px + right 10px (we ignore inner padding) */
+		/* then add 5px so the distance between two boxes is 10px */
+		#conConsole {
+			width: calc(50% - 59px);
+			height: calc(100% - 64px);
+			top:10px;
+			right:10px;
+			padding: 20px;
+			border: 2px solid black;
+			background-color: #efefef;
+			position: fixed;
+			overflow-y: scroll;
+			z-index:99999;
+		}
+
+		/* 2*10px + 2*1px = 22px */
+		#output_box {
+			margin-top: 10px;
+			padding: 10px;
+			border: 1px solid black;
+			background-color: white;
+		}
+
+
+		/* credit to https://webdeasy.de/en/program-your-own-wysiwyg-editor-in-10-minutes/ */
+		/* for the amazing in line WYSIWG editor... */
+		.pageblock {
+			margin-top: 10px;
+			border: 2px solid black;
+
+		}
+
+		.editor {
+			min-height: 50px;
+			border-top: 6px solid #4a4a4a;
+			/*margin-top: 10px;*/
+			border:1px solid black;
+			background-color: white;
+		}
+		.editor .toolbar {
+			background-color: #fff;
+			border-bottom: 3px double black;
+		}
+		.editor .toolbar .line {
+			display: flex;
+			border-bottom: 1px solid #e2e2e2;
+		}
+		.editor .toolbar .line:last-child {
+			border-bottom: none;
+		}
+		.editor .toolbar .line .box {
+			display: flex;
+			border-left: 1px solid #e2e2e2;
+		}
+		.editor .toolbar .line .box .btn {
+			display: block;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			transition: 0.2s ease all;
+		}
+		.editor .toolbar .line .box .btn:hover, .editor .toolbar .line .box .btn.active {
+			background-color: #e1e1e1;
+			cursor: pointer;
+		}
+		.editor .toolbar .line .box .btn.icon img {
+			width: 15px;
+			padding: 10px;
+		}
+		.editor .toolbar .line .box .btn.icon.smaller img {
+			width: 12px;
+		}
+		.editor .toolbar .line .box .btn.has-submenu {
+			width: 20px;
+			padding: 0 10px;
+		}
+		.editor .toolbar .line .box .btn.has-submenu:hover {
+			cursor: help;
+			width: 20px;
+			padding: 0 10px;
+		}
+		.editor .toolbar .line .box .btn.has-submenu::after {
+			content: '';
+			width: 6px;
+			height: 6px;
+			position: absolute;
+			background-image: url(https://image.flaticon.com/icons/svg/25/25243.svg);
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: center;
+			right: 4px;
+		}
+		.editor .toolbar .line .box .btn.has-submenu .submenu {
+			display: none;
+			position: absolute;
+			top: 36px;
+			left: -1px;
+			background-color: #fff;
+			border: 1px solid #b5b5b5;
+			border-top: none;
+		}
+		.editor .toolbar .line .box .btn.has-submenu .submenu .btn {
+			width: 39px;
+		}
+		.editor .toolbar .line .box .btn.has-submenu:hover .submenu {
+			display: block;
+		}
+		
+		.content-area {
+			padding: 15px 12px;
+			line-height: 1.5;
+			background-color: white;
+		}
+
+		#s-m-t-tooltip {
+			color: #000;
+			padding: 3px 8px;
+			margin: 20px;
+			font-size: 9px;
+			font-family: 'Open Sans';
+			z-index: 99999999999;
+			background-color: #fff;
+			border: 1px solid #000;
+			box-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+			-webkit-transition:all 0.3s linear;
+			-moz-transition:all 0.3s linear;
+			-ms-transition:all 0.3s linear;
+			-o-transition:all 0.3s linear;
+			transition:all 0.3s linear;
+		}
+
+	</style>
+
+	<script src="./addedJS/jquery-3.3.0.js"></script>
+	<script src="./addedJS/jquery.style-my-tooltips.js"></script>
+
+<script>
+		(function($){
+			$(document).ready(function(){
+			$("[title]").style_my_tooltips({
+			tip_follows_cursor:true,
+			tip_delay_time:0,
+			tip_fade_speed:0,
+			attribute:"title"
+			});
+		});
+    }
+)(jQuery);
+</script>
+
+	</head>
+
+	<body>
+
+
+		<div id="container">
+			<div class="titles">Inputs:</div>
+			<div id ="btitle">
+				
+			</div>
+			<div id="ribbon">
+			</div>
+			<div id="input_console">
+			</div>
+			<div id="button_box">
+				<button rel="add new element" onclick="appendInput()">Add Box!</button>
+				<button onclick="printToBox()">Print!</button>
+				<button onclick="clearLastInput()">Clear Last Input.</button>
+				<button onclick="clearAllInput()">Clear All Input.</button>
+				<button onclick="clearBox()">Clear Output.</button>
+				<button onclick="activateClick()">Help Me...</button>
+			</div>
+		</div>
+		<div id="conConsole">
+			<div class="titles">Output:</div>
+			<div id="output_box" contenteditable="false"></div>
+		</div>
+	</body>
+	<script src="script.js"></script>
+</html>
