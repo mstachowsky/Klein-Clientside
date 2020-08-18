@@ -3,7 +3,7 @@ A client-side instructional material framework, with server-side capabilities. C
 
 ## Install and dependencies
 
-Note Klein runs on Python and the executive decision was made to not have sudo install Python itself. Other dependencies are pip and Django, however with the newest version of Python or at least Python 3.0 or later, pip is installed automatically and `populate.sh` will successfully install Django. The only thing to worry about is having Python installed, and you can go [https://www.python.org/downloads/](here) to make that happen.
+Note Klein runs on Python and the executive decision was made to not have sudo install Python itself. Other dependencies are pip and Django, however with the newest version of Python or at least Python 3.0 or later, pip is installed automatically and `populate.sh` will successfully install Django. The only thing to worry about is having Python installed, and you can go [here](https://www.python.org/downloads/) to make that happen.
 
 ## Overview
 
