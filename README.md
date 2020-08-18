@@ -11,7 +11,9 @@ Note Klein runs on Python and the executive decision was made to not have sudo i
 
 Installation is simple, in the install folder download the `populate.sh` file and then move it to whichever directory you want to contain your serverside/klein project. Be sure to use the command
 
->> chmod +x ./populate.sh
+```bash
+chmod +x ./populate.sh
+```
 
 since bash scripts have permissions which need to be overwritten to be used by anyone. 
 
