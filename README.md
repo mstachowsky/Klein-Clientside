@@ -3,7 +3,17 @@ A client-side instructional material framework, with server-side capabilities. C
 
 ## Install and dependencies
 
+### Dependencies
+
 Note Klein runs on Python and the executive decision was made to not have sudo install Python itself. Other dependencies are pip and Django, however with the newest version of Python or at least Python 3.0 or later, pip is installed automatically and `populate.sh` will successfully install Django. The only thing to worry about is having Python installed, and you can go [here](https://www.python.org/downloads/) to make that happen.
+
+### Install
+
+Installation is simple, in the install folder download the `populate.sh` file and then move it to whichever directory you want to contain your serverside/klein project. Be sure to use the command
+
+>> chmod +x ./populate.sh
+
+since bash scripts have permissions which need to be overwritten to be used by anyone. 
 
 ## Overview
 
