@@ -78,13 +78,13 @@
 			padding: 10px;
 			padding-top: 19px;
 			padding-bottom: 0px;
-			background-color:;
+			background-color: pink;
 		}
 
 		.pages {
 			padding: 10px;
 			padding-top: 0px;
-			background-color:;
+			background-color: yellow;
 			overflow-y: scroll;
 		}
 
@@ -115,23 +115,25 @@
 
 		.button_box {
 			/*margin-top: 20px;*/
-			background-color:;
+			background-color: orange;
 			padding:10px;
 			padding-top: 19px;
+			border: 1px solid black;
 		}
 
 		.bkv_buttons {
 			/*margin-top: 20px;*/
 			padding:10px;
+			background-color: green;
+			border: 1px solid black;
 		}
 
 		.bkv_env {
 			display: grid;
-			background-color:;
+			background-color: blue;
 			overflow: hidden;
 			grid-template-rows: auto 1fr;
 			padding:10px;
-			padding-bottom: 19px;
 		}
 
 		.bkv_title {
@@ -173,13 +175,13 @@
 			top:0px;
 			padding: 10px;
 			border: 1px solid black;
-			background-color: #eee;
+			background-color:green;
 		}
 
 		/* The small input boxes for the page titles and book title */
 		.TitleInput {
 			border: 1px solid black;
-			background-color: white;
+			background-color: purple;
 			display: inline;
 		}
 
@@ -368,12 +370,12 @@
 			<div class="right-content">
 					<div class="button_box">
 						<div class="button_container">
-							<a onclick="appendInput()">Add Page.</a>
-							<a onclick="removeLast()">Remove Last Page.</a>
+							<a onclick="appendInput()">Add Box!</a>
+							<a onclick="removeLast()">Remove Last Box!</a>
+							<a onclick="printToBox()">Print!</a>
 							<a onclick="clearLastInput()">Clear Last Input.</a>
 							<a onclick="clearAllInput()">Clear All Input.</a>
 							<a onclick="clearBox()">Clear Output.</a>
-							<a onclick="printToBox()"><b>Print!</b></a>
 						</div>
 					<!--<a onclick="activateClick()">Help Me...</a>-->
 					</div>

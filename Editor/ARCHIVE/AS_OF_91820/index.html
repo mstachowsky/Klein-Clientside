@@ -22,7 +22,7 @@
 		} */
 
 		body {
-			overflow: hidden;
+			
 			background-color: white;
 			font-family: 'Helvetica', sans-serif;
 			font-size: 12px;
@@ -54,104 +54,53 @@
 			font-weight: bold;
 		}
 
-		/* This is what makes all the grids and subgrids,*/
-		/* I use css grid template as it has multi browser support and is super quick and easy to change */
-
-		.viewport {
-			width:100vw;
-			height:100vh;
-			display: grid;
-  			grid-template-columns: minmax(500px, 50%) 250px;
-  			grid-template-rows: 1fr;
+		/* extra width: 2*20px + 2*2px = 44px ... plus left 10px (we ignore the inner padding...) */
+		#container {
+			width: calc(50%);
+			top:10px;
+			left:10px;
+			float:center;
+			/*padding: 20px;
+			background-color: #efefef;
+			/*border: 2px solid black;*/
+			background-color: orange;
+			position: absolute;
+			z-index:99999;
 		}
 
-		/* LEFT CONTENT */
-
-		.left-content {
-			display: grid;
-  			grid-template-columns: 1fr;
-  			grid-template-rows: auto 1fr;
-  			overflow: hidden;
-		}
-
-		.header {
-			padding: 10px;
-			padding-top: 19px;
-			padding-bottom: 0px;
-			background-color:;
-		}
-
-		.pages {
-			padding: 10px;
-			padding-top: 0px;
-			background-color:;
-			overflow-y: scroll;
-		}
-
-		/* RIGHT CONTENT aka SIDEBAR */ 
-		.right-content {
-			display: grid;
-  			grid-template-columns: 1fr;
-  			grid-template-rows: auto auto 1fr;
-  			overflow: hidden;
-		}
-
-		.right-content a {
-			padding: 3px;
-			display: block;
-			margin: 3px;
-			background-color: #eee;
-		}
-
-		.right-content a:hover {
-			text-decoration: underline;
-			cursor:pointer;
-		}
-
-		.button_container {
-			border: 1px solid black;
-			padding: 10px;
-		}
-
-		.button_box {
+		#button_box {
 			/*margin-top: 20px;*/
-			background-color:;
-			padding:10px;
-			padding-top: 19px;
-		}
-
-		.bkv_buttons {
-			/*margin-top: 20px;*/
-			padding:10px;
-		}
-
-		.bkv_env {
-			display: grid;
-			background-color:;
-			overflow: hidden;
-			grid-template-rows: auto 1fr;
-			padding:10px;
-			padding-bottom: 19px;
-		}
-
-		.bkv_title {
 			border: 1px solid black;
-			padding: 10px;
-			font-weight: bold;
 		}
 
-		.bkv_ins {
-			padding: 10px;
-			background-color:;
-			overflow-y: scroll;
+		.button_btn {
+
 		}
 
-		#bkv_input {
+		#input_console {
+		/* no words... */
+		}
+
+		.titlebox {
+			padding: 10px;
 			border: 1px solid black;
-			border-top: 0px solid black;
+			background-color: #efefef;
 		}
 
-		/* Styling for 'title' class which currently is only 'Output: ' box */
+		.TitleInput {
+			border: 1px solid black;
+			background-color: white;
+			display: inline;
+		}
+
+		/* padding: 2*10px + 2*1px = 22px */
+
+		#header {
+			position: -webkit-sticky; /* Safari */
+			position: sticky;
+			top: 10px;
+			z-index: 999999;
+		}
 
 		.titles {
 			background-color: #FFD54F;
@@ -163,24 +112,69 @@
 			font-weight: 800;
 			border: 1px solid black;
 			text-transform:;
-			margin-top: 10px;
+			
+			/*
+			white-space: nowrap;
+			overflow-x: scroll;
+			overflow-y: none;*/
 		}
 
+		.btitle {
+			
+		}
 
-		/* Input box styling */
+		.ribbon {
+			
+		}
 
-		.titlebox {
-			top:0px;
+		.input_box {
+			margin-top:10px;
 			padding: 10px;
 			border: 1px solid black;
-			background-color: #eee;
+			background-color: white;
+			box-shadow: 2px 2px 0px rgba(0,0,0,0);
+			position: absolute;
 		}
 
-		/* The small input boxes for the page titles and book title */
-		.TitleInput {
+		/* conConsole 20px + 20px + 2px + 2px = 44px + right 10px (we ignore inner padding) */
+		/* then add 5px so the distance between two boxes is 10px */
+		#conConsole {
+			width: calc(100%);
+			margin-top:10px;
+			/*padding: 20px;
+			border: 2px solid black;
+			background-color: #efefef;*/
+			position: absolute;
+			z-index:99999;
+		}
+
+		/* 2*10px + 2*1px = 22px */
+		#output_box {
+			margin-top: 10px;
+			margin-bottom: 30px;
+			padding: 10px;
 			border: 1px solid black;
 			background-color: white;
-			display: inline;
+		}
+
+		/* for the book variables editor environment at the beginning */
+		#bkv_env {
+			border: 2px solid black;
+		}
+
+		#bkv_title {
+			border: 1px solid black;
+			padding: 10px;
+			font-weight: bold;
+		}
+
+		#bkv_input {
+			margin-top: 10px;
+			padding: 10px;
+			border: 1px solid black;
+			background-color:;
+			/*max-height: 200px;*/
+			overflow-y: scroll;
 		}
 
 		.bkv {
@@ -196,22 +190,34 @@
 			display: inline;
 		}
 
-		.input_box {
-			margin-top:10px;
-			padding: 10px;
-			border: 1px solid black;
-			background-color: white;
-			box-shadow: 2px 2px 0px rgba(0,0,0,0);
-			position: absolute;
+		/* Sidebar! */
+
+		#sidebar {
+			width: 200px;
+			top: 10px;
+			left: calc(50% + 10px);
+			margin-left: 10px;
+			position: fixed;
+			display: grid;
+			grid-template-rows: auto auto 1fr;
 		}
 
-		#output_box {
-			margin-top: 10px;
-			margin-bottom: 30px;
-			padding: 10px;
-			border: 1px solid black;
-			background-color: white;
+		#sidebar a {
+			padding: 3px;
+			display: block;
+			margin: 3px;
+			background-color: #eee;
 		}
+
+		#sidebar a:hover {
+			text-decoration: underline;
+			cursor:pointer;
+		}
+
+
+
+
+
 
 
 		/* this is all for the ribbon and buttons */
@@ -331,82 +337,59 @@
 	<script src="./addedJS/jquery-3.3.0.js"></script>
 	<script src="./addedJS/jquery.style-my-tooltips.js"></script>
 
-		<script>
-				(function($){
-					$(document).ready(function(){
-					$("[title]").style_my_tooltips({
-					tip_follows_cursor:true,
-					tip_delay_time:0,
-					tip_fade_speed:0,
-					attribute:"title"
-					});
-				});
-		    }
-		)(jQuery);
-		</script>
+<script>
+		(function($){
+			$(document).ready(function(){
+			$("[title]").style_my_tooltips({
+			tip_follows_cursor:true,
+			tip_delay_time:0,
+			tip_fade_speed:0,
+			attribute:"title"
+			});
+		});
+    }
+)(jQuery);
+</script>
 
 	</head>
+
 	<body>
 
-		<div class="viewport">
-			<div class="left-content">
-				<div class="header">
-					<div id="btitle">
-					</div>
-					<div id="ribbon">
-					</div>
+		<div id="container">
+			<div id="header">
+				<div id="btitle">
+					
 				</div>
-				<div class="pages">
-					<div id="input_console">
-					</div>
-					<div id="conConsole">
-						<div class="titles">Output:</div>
-						<div id="output_box" contenteditable="true"></div>
-					</div>
+				<div id="ribbon">
 				</div>
 			</div>
-			<div class="right-content">
-					<div class="button_box">
-						<div class="button_container">
-							<a onclick="appendInput()">Add Page.</a>
-							<a onclick="removeLast()">Remove Last Page.</a>
-							<a onclick="clearLastInput()">Clear Last Input.</a>
-							<a onclick="clearAllInput()">Clear All Input.</a>
-							<a onclick="clearBox()">Clear Output.</a>
-							<a onclick="printToBox()"><b>Print!</b></a>
-						</div>
-					<!--<a onclick="activateClick()">Help Me...</a>-->
-					</div>
-					<div class="bkv_buttons">
-						<div class="button_container">
-							<a onclick="makeVariable()">Add Variable</a>
-							<a onclick="removeVariable()">Remove Variable</a>
-						</div>
-					</div>
-					<div class="bkv_env">
-						<div class="bkv_title">Book Variables</div>
-						<div class="bkv_ins" id="bkv_input">	
-						</div>
-					</div>
+			<div id="input_console">
+			</div>
+			<div id="conConsole">
+				<div class="titles">Output:</div>
+				<div id="output_box" contenteditable="true"></div>
 			</div>
 		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			<div id="sidebar">
+				<div id="button_box">
+					<a onclick="appendInput()">Add Box!</a>
+					<a onclick="removeLast()">Remove Last Box!</a>
+					<a onclick="printToBox()">Print!</a>
+					<a onclick="clearLastInput()">Clear Last Input.</a>
+					<a onclick="clearAllInput()">Clear All Input.</a>
+					<a onclick="clearBox()">Clear Output.</a>
+					<!--<a onclick="activateClick()">Help Me...</a>-->
+				</div>
+				<div id="bkv_buttons">
+					<a onclick="makeVariable()">Add Variable</a>
+					<a onclick="removeVariable()">Remove Variable</a>
+				</div>
+				<div id="bkv_env">
+					<div id="bkv_title">Book Variables</div>
+					<div id="bkv_input">	
+					</div>
+				</div>
+			</div>
 	</body>
 	<script src="script.js"></script>
 </html>
