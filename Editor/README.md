@@ -18,8 +18,7 @@ There are a few things which are incomplete:
 - The only bug currently is a weird one, when everything is bolded and then you make a list and then exit the list there is the rare case that `<font face="Helvetica, sans-serif"><span style="font-size: 14px;">` and `</span></font>` appears around the font following the list. A hard coded fix would be to just replace that with the empty string, since the font and size are all constants of the html which makes this document. Another fix is also welcome. 
 - Coverage of execCommand(), it works fine on Chrome and Safari, but Firefox coverage may be spotty, I know execCommand() is not highly recommended anymore. I'm not sure of a better replacement. 
 - A good way to incorporate this into the Klein project would be for it to eventually have a fetched url so that clients who download this simply go to their server `/editor/` and then draft their documents. Which leads to:
-- There is no dynamic memory / recent webpage memory. I don't remember the exact name but there is a way to have it when the page is reloaded and such that all the text contained in it is still there. Currently if you reload or close the page, you will lose all your work... Which isn't ideal.
-!endList 
+- There is no dynamic memory / recent webpage memory. I don't remember the exact name but there is a way to have it when the page is reloaded and such that all the text contained in it is still there. Currently if you reload or close the page, you will lose all your work... Which isn't ideal. 
 
 Most of the fixes are quite simple, and the 'add-ons' are not entirely necessary so absolutely up to you to address them or not. (This was made in the editor!)
 

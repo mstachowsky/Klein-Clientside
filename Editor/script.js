@@ -196,6 +196,8 @@ function parseText(str) {
         ["</div><div>", "!brk\n"],
         ["<div>", ""],
         ["</div>", "!brk\n"],
+        ["&gt;",">"],
+        ["&lt;","<"],
         ["!brk!brk","!brk"],
         // ['\n\n', '\n'],
         ["&nbsp;", " "]
