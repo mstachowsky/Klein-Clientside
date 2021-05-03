@@ -10,6 +10,7 @@ try:
     config.read('./config.ini')
     devRoot = config['Paths']['devRoot']
     bookRoot = config['Paths']['bookRoot']
+    htmlRoot = config['Paths']['htmlPath']
 except:
     sys.exit('Misconfigured config.ini file.')
 
@@ -32,18 +33,18 @@ try:
 except:
     sys.exit(f"{bookDevDir} already exists.")
 
-#  Creating parse file
-with open(os.path.join(bookDevDir, "parse"), 'x') as parseFile:
+#  Creating parse file - NEEDS TO BE UPDATED WITH PROPER FILE EXTENSION
+with open(os.path.join(bookDevDir, "parse.bat"), 'x') as parseFile:
     # platform specific content
     if(platform.system() == 'Windows'):
-        parseFileContent = fr'@ECHO OFF python "{ scriptPath }\parseToJSON.py" "\{ bookName }" move *.bk "{ bookRoot }\{ bookName }"'
+        parseFileContent = '@ECHO OFF \n python ..\parseToJSON.py' + fr' \{ bookName }' +'\n move *.bk ' + fr'{ bookRoot }\{ bookName }'
     else:
         parseFileContent = f'python "{ scriptPath }/parseToJSON.py" "/{ bookName }" move *.bk "{ bookRoot }/book1" > dev/null'
     parseFile.write(parseFileContent)
 
 #  Creating markdown book file
 with open(os.path.join(bookDevDir, f'{bookName}.md'), 'x') as bookFile:
-    bookFile.write(f'!Book {bookName}')
+    bookFile.write(f'!Book {bookName}' + '\n' + '!Page newPage' + '\n' + '!endPage')
 
 #  Creating book directory
 try:
@@ -54,8 +55,9 @@ except:
 
 resDir = os.path.join(bookDir, 'res')
 os.makedirs(resDir)
-with open(os.path.join(resDir, 'LectureReviews.html'), 'x') as newHTMLfile:
-    with open(os.path.join(scriptPath, 'LectureReviews.html'), 'r') as oldHTMLfile:
+
+with open(os.path.join(resDir, f'{bookName}.html'), 'x') as newHTMLfile:
+    with open(os.path.join(scriptPath, 'TemplateHTML.html'), 'r') as oldHTMLfile:
         lines = oldHTMLfile.readlines()
-        lines[34] = f"        let url = '{ re.escape(os.path.join(bookRoot, bookName, f'{bookName}.bk')) }';"
+        lines[34] = f"        let url = '{ re.escape(os.path.join(htmlRoot, bookName, f'{bookName}.bk')) }';"
         newHTMLfile.writelines(lines)
