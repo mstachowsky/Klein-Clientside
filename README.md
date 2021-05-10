@@ -369,3 +369,22 @@ Within any text line, you may use some standard Markdown syntax for inline enclo
 - Three backticks (\`) will enclose inline code.  This puts the code directly into the line.  This can be used instead of the !code directive if you wish.
 
 - Inline links are enclosed with three square brackets `[[[` and end with three closing square brackets `]]]`.  An inline link is broken into two components: the address and the text.  The two components are separated by three colons: `:::`.  An inline link therefore looks like this: `This is text [[[https://ww.google.ca:::this is a link to google]]] and this is more text```.
+
+
+<!-- 
+@license
+
+Licensed under the GNU GPLv3 License (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy
+of the License at
+
+https://www.gnu.org/licenses/gpl-3.0.en.html
+
+Any libraries written by third parties are provided under a license that is identical to or compatible with the License on this project.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+ -->
