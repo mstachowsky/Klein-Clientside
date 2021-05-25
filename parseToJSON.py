@@ -1,25 +1,21 @@
-#The parser that takes a md type file and turns it into something that klein can handle.  note: the user should basically never look at this
+#The parser that takes a md type file and turns it into something that Clein can handle.  note: the user should basically never look at this
 #it's ugly and just produces a JSON string.
 import os
 import sys
 import time
-from pathlib import Path
+
 #time is just here because I'm curious how long this program takes to run
-startTime = time.time()
+startTime = time.time();
 
-#stack for matching closing tags 
-#list based stack, to push use append(x), to pop use pop(), to peek, use myStack[-1]
+#stack for closing tags 
 myStack = []
-
-#Array of all opening and closing tags 
+#list based stack, to push use append(x), to pop use pop(), to peek, use myStack[-1]
 openingTags = ['!Page',   '!checkpoint',    '!multipleChoice',   '!oList',  '!list']
-closingTags = ['!endPage','!endCheckpoint', '!endMultipleChoice','!endList','!endList',]
+closingTags = ['!endPage','!endCheckpoint', '!endMultipleChoice','!endList','!endList']
+
 
 #Here is where we parse the file.  This script assumes that the md file is in a folder named FILE_NAME and the script is called FILE_NAME.md.  This can be made MUCH more generic
-#This automatically looks in directory \Klein-Clientside\serverside\klein\static\BOOKS for the markdown file to convert
-bookFolder = os.path.join(os.getcwd(),"serverside","klein","static","BOOKS")
-#fName = os.getcwd()+sys.argv[1]
-fName = os.path.join(bookFolder, sys.argv[1] )
+fName = os.getcwd()+sys.argv[1]
 f = open(fName+'.md','r')
 outFile = open(fName+'.bk','w')
 
@@ -28,7 +24,7 @@ outFile = open(fName+'.bk','w')
 #the appropriate JSON.  You should probably just follow along with the output file to better understand it, but here is the gist:
 
 '''
-    klein files begin with a bookName and then a big array of Pages.
+    Clein files begin with a bookName and then a big array of Pages.
     
     Each Page contains a page name and a big array of Components
     
@@ -42,17 +38,16 @@ outFile = open(fName+'.bk','w')
 '''
 JSONString = "{"
 
-
 '''
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
 def replaceEnclosing(line,delims,beginTag,endTag):
-    lineAr = line.split(delims)
+    lineAr = line.split(delims);
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
         bldNum = 0
         if(ind != 0):
-            bldNum = 1
+            bldNum = 1;
         line = ""
         for strng in lineAr:
             if(strng != ''):
@@ -66,7 +61,6 @@ def replaceEnclosing(line,delims,beginTag,endTag):
             line = beginTag + line + endTag
     return line
 
-
 '''
     This function replaces inline links with HTML links.  I can't think of an easier way to do this.
     
@@ -79,30 +73,25 @@ def inlineLink(line):
     endString = "&#93&#93&#93"
     while(line.find(startString) != -1):
         #get the start location
-        indxOfLink = line.find(startString)
+        indxOfLink = line.find(startString);
         #get the ending bracket
-        indxOfEnd = line.find(endString)
+        indxOfEnd = line.find(endString);
         #extract the link text: address:::text
-        linkText = line[indxOfLink+len(startString):indxOfEnd]
-        linkAr = linkText.split(":::")
-        linkAddr = linkAr[0]
-        linkContent = linkAr[1]
+        linkText = line[indxOfLink+len(startString):indxOfEnd];
+        linkAr = linkText.split(":::");
+        linkAddr = linkAr[0];
+        linkContent = linkAr[1];
         link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
         line = line.replace(startString+linkText+endString,link)
     return line
 
 
-'''
-    This function replaces all backslash escape characters in a line recursively. This solves the previous issue of escape character ordering, 
-
-    where the order of the characters being escaped mattered. 
-'''
-#recursive function for backslash escape characters 
+#recursive function for backslash esacpe characters 
 def backslashEsc(line, index):
     location = line.find('\\', index) #if this trys to find from an index outside of the string returns -1
     index = location 
     if location != -1:
-        #the last character of the string gets cut off so added padding, whitespace gets removed later on
+        #the last character of the string seems to get cut off 
         line = line + ' '
         if line[location:location+2] == '\*':
             line = line[0:location] + '&#42' + line[location+2:-1]
@@ -112,19 +101,9 @@ def backslashEsc(line, index):
     elif location == -1:
         return line
 
-'''
-    This function is used to match tags in the markdown file. Errors occur when tags are not matched properly, so this is used to check if tags 
-
-    are being matched properly, and prints out any mismatched tags 
-
-'''
 def tagMatching(line, myStack, openingTags, closingTags):
     tag = line.split(' ', 1)[0]
-    '''
-        checks to see if the tag obtained in within the array of opening/closing tags
-        pushs the tag to the stack if found in openingTags array
-        peeks the stack if the tag was found in closingTags array, if the peek is the same as the matching opening tag then it pops.
-    '''
+    
     if openingTags.count(tag):
         myStack.append(tag)
     elif closingTags.count(tag):
@@ -134,13 +113,9 @@ def tagMatching(line, myStack, openingTags, closingTags):
             myStack.pop()
     return
 
-idNum = 0 #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
-pageNum = 0 #every page gets a name, whether it wants one or not.  They are assigned serially
+idNum = 0; #everything gets an ID, whether it wants one or not.  If it doesn't have an ID, we assign it a serial number ID
+pageNum = 0; #every page gets a name, whether it wants one or not.  They are assigned serially
 
-'''
-    Function for parsing into JSON format, created as a function to allow for recursive calls if the markdown 
-    file calls for a page as a seperate file
-'''
 def parse(f, JSONString, idNum, pageNum):
     
         
@@ -149,37 +124,29 @@ def parse(f, JSONString, idNum, pageNum):
     
     
     #The checkpoint environment is easy - everything inside gets a special style applied
-    inCheckpoint = False
+    inCheckpoint = False;
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
     #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
     #that we don't write the name of the page out once we start it, hence why there are two flags.
-    inPage = False
-    firstLine = False
+    inPage = False;
+    firstLine = False;
     
         
-    #sets page file directory to default as an empty string
+
     pageFile = ''
      
-    #parses the markdown file line by line
     for line in f:
         #remove leading and trailing whitespace
         line = line.strip()
       
         tagMatching(line, myStack, openingTags, closingTags)
         
-        '''
-            Book pages can be added as seperate files. This calls the parse function recursively to include the page in the JSON file
-
-            use the !addPage tag followed by the directory containing the page file. 
-
-            The page file uses .pg file extension 
-        '''
         if line.startswith("!addPage"):
             line = line + ' '
-            pageDir = os.path.join(bookFolder, line[9:-1]) #takes what ever is after the command 
+            pageDir = line[9:-1] #takes what ever is after the command 
             if line.find('.pg') != -1: #.pg will be file extention for pages 
-                pageFile = open(pageDir, 'r') #when adding page files, you can just use the name of the file with or without the .pg extension
+                pageFile = open(pageDir, 'r')
             else:
                 pageFile = open(pageDir + '.pg', 'r')
                 
@@ -190,6 +157,8 @@ def parse(f, JSONString, idNum, pageNum):
         
         #escape the backslashes and other special characters
         line = backslashEsc(line,0)
+    #    line = line.replace('\*','&#42') #asterisks in math
+    #    line = line.replace('\\','\\\\')
         
         line = line.replace('"','\\"')
         line = line.replace('\'','&#39')
@@ -205,17 +174,14 @@ def parse(f, JSONString, idNum, pageNum):
         #now code, using Discord-like syntax
         line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
         #now inline links
-        line = inlineLink(line)
+        line = inlineLink(line);
         
-        '''
-            Below is the conversion from markdown to JSON
-
-        '''
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
         
         if line.startswith("!bookVariables"):
             JSONString += "\"variable\": ["
+            #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
         
         elif line.startswith("!var"):
             line = line.replace('!var','').strip()
@@ -235,16 +201,16 @@ def parse(f, JSONString, idNum, pageNum):
             JSONString += "\"bookName\":\"" + line + "\",\"pages\":["
             
         elif line.startswith("!Page"):
-            inPage = True
+            inPage = True;
             line = line.replace('!Page','').strip()
-            pageNum = pageNum + 1
+            pageNum = pageNum + 1;
             if(line == ""):
                 line = "Page" + str(pageNum)
             JSONString+="{\"name\":\"" + line + "\",\"components\":["
-            firstLine = True
+            firstLine = True;
             
         elif line.startswith("!endPage"):
-            inPage = False
+            inPage = False;
             #it just looks better to add an extra few blank lines at the bottom of the page
             JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
             JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
@@ -264,34 +230,27 @@ def parse(f, JSONString, idNum, pageNum):
                 inCheckpoint = False
                 
             elif line.startswith("!ans"):
-                serverside = False
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
-                if (lineAr[-1] == "serverside"):
-                    serverside = True
-                    line.replace("serverside", "")
                 line = line.replace(lineAr[-1], '')
                 line = line.replace('&#42', '*')
-                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\"},"
+                JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
                 
             elif line.startswith("!multipleChoice"):
                 radioId = 0
                 numOption = 0
-                serverside = False
                 line = line.replace("!multipleChoice", '')
     
                 lineAr = line.split()
-                if (lineAr[-1] == "serverside"):
-                    serverside = True
-                    line.replace("serverside", "")
-
                 radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
-                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\",\"serverside\":\""+str(serverside)+"\" "
+                #JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\"},"
+                JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\" "
                 line = line.replace(radioId, '')
                 line = line.replace(lineAr[0], '')
                 line = line.strip()
                 if line.startswith(":"):
                     line = line.replace(":", '')
+                    #JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
                     JSONString += ",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\""
                 JSONString +=  ",\"choices\": [   "
                 idNum = idNum +1
@@ -299,6 +258,7 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!option"):
                 line = line.replace("!option", '')
                 numOption +=1 
+               # JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
                 JSONString +="{\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
 
                 
@@ -348,12 +308,12 @@ def parse(f, JSONString, idNum, pageNum):
                 JSONString+="{\"type\":\"ENDLIST\"},"
                 
             elif line.startswith("!code"):
-                line=line.replace("!code","").strip()
+                line=line.replace("!code","").strip();
                 JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
                 idNum = idNum+1
                 
             elif line.startswith("!link"):
-                line = line.replace("!link","").strip()
+                line = line.replace("!link","").strip();
                 lineAr = line.split()
                 linkText = ""
                 for ln in lineAr[1:len(lineAr)-1]:
@@ -371,7 +331,7 @@ def parse(f, JSONString, idNum, pageNum):
                         JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
                         idNum = idNum+1
                 else:
-                    firstLine = False
+                    firstLine = False;
     return JSONString
 
 
@@ -381,30 +341,8 @@ JSONString = parse(f, JSONString, idNum, pageNum)
 JSONString = JSONString[:-1]
 JSONString+= "]}"
 
-endTime = time.time()
-
-'''
-    At the end of parsing, we check myStack to see if there are any tag matching errors
-
-    If there are no errors, myStack will be empty 
-'''
+endTime = time.time();
 if myStack:
-    print('Error: Tag mismatch --' + str(myStack)) #prints out all the mismatched tags 
+    print('Error: Tag mismatch --' + str(myStack))
 
-print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds')
-
-# @license
-
-# Licensed under the GNU GPLv3 License (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy
-# of the License at
-
-# https://www.gnu.org/licenses/gpl-3.0.en.html
-
-# Any libraries written by third parties are provided under a license that is identical to or compatible with the License on this project.
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
+print('Parsing done.  Wrote: ' + str(outFile.write(JSONString.strip())) + ' characters in ' + str(endTime-startTime) + ' seconds');
