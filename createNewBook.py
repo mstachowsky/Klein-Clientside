@@ -59,7 +59,14 @@ os.makedirs(resDir)
 with open(os.path.join(resDir, f'{bookName}.html'), 'x') as newHTMLfile:
     with open(os.path.join(scriptPath, 'TemplateHTML.html'), 'r') as oldHTMLfile:
         lines = oldHTMLfile.readlines()
-        lines[34] = f"        let url = '{ re.escape(os.path.join(htmlRoot, bookName, f'{bookName}.bk')) }';"
+        count = 0
+        for item in lines:
+            # print(count)
+            if "let url" in item:
+                lineNumToReplace = count
+            count += 1
+        lines[lineNumToReplace -1] =""
+        lines[lineNumToReplace] = f"        let url = '{ re.escape(os.path.join(htmlRoot, bookName, f'{bookName}.bk')) }';\n"
         newHTMLfile.writelines(lines)
 
 
