@@ -37,14 +37,42 @@ except:
 with open(os.path.join(bookDevDir, "parse.bat"), 'x') as parseFile:
     # platform specific content
     if(platform.system() == 'Windows'):
-        parseFileContent = '@ECHO OFF \n python ..\parseToJSON.py' + fr' \{ bookName }' +'\n move *.bk ' + fr'{ bookRoot }\{ bookName }'
+
+        # Changes the / to \ to match the parse formatting and adjusts the bookName to match the format
+        if "/" in bookName:
+            parseBookNameDir = bookName.replace("/", "\\")
+            parseBookNameArr = bookName.split("/")
+            parseBookName = parseBookNameArr[len(parseBookNameArr)-1]
+            numFileUp = len(parseBookNameArr)-1
+        else:
+            numFileUp = 0
+            parseBookNameDir = bookName
+            parseBookName = bookName
+
+        parseFileContent = '@ECHO OFF \n python ..\parseToJSON.py' + fr' \{ parseBookName }' +'\n move *.bk ' + fr'{ bookRoot }\{ parseBookNameDir }'
+        numFileUpReplace = "..\\"
+
+        for numReplaces in range(numFileUp):
+            numFileUpReplace = numFileUpReplace +  "..\\"
+
+        parseFileContent = parseFileContent.replace('..\\', numFileUpReplace)
+
     else:
         parseFileContent = f'python "{ scriptPath }/parseToJSON.py" "/{ bookName }" move *.bk "{ bookRoot }/book1" > dev/null'
     parseFile.write(parseFileContent)
 
 #  Creating markdown book file
-with open(os.path.join(bookDevDir, f'{bookName}.md'), 'x') as bookFile:
-    bookFile.write(f'!Book {bookName}' + '\n' + '!Page newPage' + '\n' + '!endPage')
+# Changes the / to \ or \\ to match the parse formatting and changes the bookName to match the format
+if "/" in bookName:
+    mdBookNameArr = bookName.split("/")
+    mdBookName = mdBookNameArr[len(mdBookNameArr)-1]
+    mdBookDevDir = bookDevDir.replace("/", "\\\\")
+else:
+    mdBookName = bookName
+    mdBookDevDir = bookDevDir
+
+with open(os.path.join(mdBookDevDir, f'{mdBookName}.md'), 'x') as bookFile:
+    bookFile.write(f'!Book {mdBookName}' + '\n' + '!Page newPage' + '\n' + '!endPage')
 
 #  Creating book directory
 try:
@@ -56,17 +84,35 @@ except:
 resDir = os.path.join(bookDir, 'res')
 os.makedirs(resDir)
 
-with open(os.path.join(resDir, f'{bookName}.html'), 'x') as newHTMLfile:
+# Changes around the names to make allow the html file to be made properly
+if "/" in bookName:
+    htmlBookNameArr = bookName.split("/")
+    htmlBookName = htmlBookNameArr[len(htmlBookNameArr)-1]
+else:
+    htmlBookName = bookName
+
+with open(os.path.join(resDir, f'{htmlBookName}.html'), 'x') as newHTMLfile:
     with open(os.path.join(scriptPath, 'TemplateHTML.html'), 'r') as oldHTMLfile:
         lines = oldHTMLfile.readlines()
+
+        # Taking numFileUpReplace to determine how many files up the CSS and Scripts are
+        htmlNumFileUpReplace = "../../"
+
+        for numReplaces in range(numFileUp):
+            htmlNumFileUpReplace = htmlNumFileUpReplace +  "../"
+
+        # Removes the old url for the new one and configures the file dir for the CSS and Scripts
         count = 0
         for item in lines:
+            if ("kleinStyle.css" in item or "answerableComponent.js" in item or "kleinCore.js" in item or "math.js" in item):
+                lines[count] = lines[count].replace("../../", htmlNumFileUpReplace)
+
             # print(count)
             if "let url" in item:
                 lineNumToReplace = count
             count += 1
-        lines[lineNumToReplace -1] =""
-        lines[lineNumToReplace] = f"        let url = '{ re.escape(os.path.join(htmlRoot, bookName, f'{bookName}.bk')) }';\n"
+
+        lines[lineNumToReplace] = f"        let url = '{ re.escape(os.path.join(htmlRoot, bookName, f'{htmlBookName}.bk')) }';\n"
         newHTMLfile.writelines(lines)
 
 
