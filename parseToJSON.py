@@ -125,6 +125,7 @@ def parse(f, JSONString, idNum, pageNum):
     
     #The checkpoint environment is easy - everything inside gets a special style applied
     inCheckpoint = False;
+    inCode = False;
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
     #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
@@ -169,10 +170,12 @@ def parse(f, JSONString, idNum, pageNum):
         #handle inline tags
         #Bolding first
         line = replaceEnclosing(line,"**","<b>","</b>")
+        line = replaceEnclosing(line,"__","<b>","</b>")
         #now italics
         line = replaceEnclosing(line,"*","<i>","</i>")
-        #now code, using Discord-like syntax
-        line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
+        line = replaceEnclosing(line,"_","<i>","</i>")
+        # #now code, using Discord-like syntax
+        # line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
         #now inline links
         line = inlineLink(line);
         
@@ -228,6 +231,18 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!endCheckpoint"):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
+
+            elif inCode == True or line.startswith("```"):
+                if line.startswith("```"):
+                    inCode = not inCode
+                line=line.replace("```","").strip();
+                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
+                idNum = idNum+1
+
+            elif line.startswith("`") and line.endswith("`"):
+                line=line.replace("`","").strip();
+                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
+                idNum = idNum+1
                 
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
@@ -294,6 +309,18 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!item"):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            # elif line.startswith("*"):
+            #     line = line.replace("*","").strip()
+            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            # elif line.startswith("+"):
+            #     line = line.replace("+","").strip()
+            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            # elif line.startswith("-"):
+            #     line = line.replace("*","").strip()
+            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
                 
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
