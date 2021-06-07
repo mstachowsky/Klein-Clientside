@@ -139,14 +139,6 @@ def inlineLinkMd(line):
         indxOfText = closeSquareBracketCheck(line, indxOfMiddle);
         #get the ending bracket
         indxOfEnd = openBracketCheck(line, indxOfMiddle);
-
-        # #get the middle location
-        # indxOfMiddle = line.find(middleString);
-        # #get the start location
-        # indxOfText = line.find(startString);
-        # #get the ending bracket
-        # indxOfEnd = line.rfind(endString);
-        #extract the link text: address:::text
         linkText = line[indxOfText+len(startString):indxOfEnd];
         linkAr = linkText.split(middleString);
         linkAddr = linkAr[1];
@@ -170,11 +162,7 @@ def inlineImageMd(line):
         imageText = line[indxOfText+len(startString):indxOfEnd];
         imageAr = imageText.split(middleString);
         image = '<img src= \\"' + imageAr[1] + '\\" alt=\\"' + imageAr[0] + '\\">'
-        # print("iimage")
-        # print(image)
-        # JSONString += "{\"type\":\"img\",\"src\":\""+imageAr[1]+"\",\"width\":\""+"width"+"\",\"height\":\""+"heigth"+"\",\"id\":\"" +imageAr[0]+ "\"},"
         line = line.replace(startString+imageText+endString,image)
-        # line = line.replace(startString+imageText+endString,"!img " + imageAr[1] + " width" + " heigth " + imageAr[0])
     return line
 
 
@@ -190,27 +178,9 @@ def inlineVideoeMd(line):
         indxOfText = line.find(startString);
         #get the ending bracket
         indxOfEnd = openBracketCheck(line, openSquareBracketCheck(line, indxOfText) + 4);
-        # print(line)
-        # print(indxOfText)
-        # print(indxOfFirstMiddle)
-        # print(indxOfSecondMiddle)
-        # print(indxOfEnd)
         vidText = line[indxOfText:indxOfEnd + 1]
-        # print(vidText)
-        # print(line[indxOfText + 9:indxOfFirstMiddle])
-        
-        # print(line[indxOfFirstMiddle + 5:indxOfSecondMiddle])
-        # print(line[indxOfSecondMiddle+6:indxOfEnd])
         video = '<video width=\\"width\\" id=\\"' + line[indxOfText + 9:indxOfFirstMiddle] + '\\" controls=\\"controls\\" poster=\\"' + line[indxOfFirstMiddle + 5:indxOfSecondMiddle] + '\\" src=\\"' + line[indxOfSecondMiddle+6:indxOfEnd] + '\\"></video>'
-        # print(video)
         line = line.replace(vidText, video, 1)
-        # print(line)
-        # imageText = line[indxOfText+len(startString):indxOfEnd];
-        # imageAr = imageText.split(middleString);
-        # image = '<img src= \\"' + imageAr[1] + '\\" alt=\\"' + imageAr[0] + '\\">'
-        # # JSONString += "{\"type\":\"img\",\"src\":\""+imageAr[1]+"\",\"width\":\""+"width"+"\",\"height\":\""+"heigth"+"\",\"id\":\"" +imageAr[0]+ "\"},"
-        # line = line.replace(startString+imageText+endString,image)
-        # # line = line.replace(startString+imageText+endString,"!img " + imageAr[1] + " width" + " heigth " + imageAr[0])
     return line
 
 
@@ -307,6 +277,7 @@ def parse(f, JSONString, idNum, pageNum):
         line = replaceEnclosing(line,"__","<b>","</b>")
         #now italics
         line = replaceEnclosing(line,"*","<i>","</i>")
+        # Cant use this yet until block esc is implemented
         # line = replaceEnclosing(line,"_","<i>","</i>")
         # #now code, using Discord-like syntax
         if not ("```" in line):
@@ -581,15 +552,7 @@ def parse(f, JSONString, idNum, pageNum):
                         oSub = False
                         oList = False
                     line = line.replace("- ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            # elif line.startswith("+ "):
-            #     line = line.replace("+","").strip()
-            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            # elif line.startswith("- "):
-            #     line = line.replace("-","").strip()
-            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"   
                 
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
