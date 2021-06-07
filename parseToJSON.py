@@ -254,6 +254,12 @@ def parse(f, JSONString, idNum, pageNum):
     #The checkpoint environment is easy - everything inside gets a special style applied
     inCheckpoint = False;
     inCode = False;
+    oList = False;
+    countList = 0;
+    uList = False;
+    uListSyntax = True;
+    oSub = False;
+
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
     #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
@@ -310,6 +316,7 @@ def parse(f, JSONString, idNum, pageNum):
         line = inlineImageMd(line);
         line = inlineLink(line);
         line = inlineLinkMd(line);
+        uListSyntax = True;
         
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
@@ -442,17 +449,147 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
-            elif line.startswith("* "):
-                line = line.replace("*","").strip()
-                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+            elif ((uList and not oList) or line.startswith("* ")  or oSub) and not line.startswith("+ ") and not line.startswith("- "):
+                uListSyntax = False
+                if uList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    uList = True
+                
+                if not line.startswith("* "):
+                    if oList or line.startswith(str(countList + 1) + ". "):
+                        oList = True
+                        if countList == 0:
+                            JSONString+="{\"type\":\"OL\"},"
 
-            elif line.startswith("+ "):
-                line = line.replace("+","").strip()
-                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+                        if not line.startswith(str(countList + 1) + ". "):
+                            oList = False
+                            oSub = False
+                            countList = 0
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            uList = False
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            if(line.strip() == ""):
+                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                            else:
+                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                                idNum = idNum+1
+                        else:
+                            oSub = True
+                            countList += 1
+                            line = line.replace(str(countList) + ". ","",1).strip()
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+                    else:
+                        uList = False
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        if(line.strip() == ""):
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                        else:
+                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                            idNum = idNum+1
+                else:
+                    if oSub and oList:
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        oSub = False
+                        oList = False
+                    line = line.replace("* ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
-            elif line.startswith("- "):
-                line = line.replace("-","").strip()
-                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
+            elif ((uList and not oList) or line.startswith("+ ") or oSub) and uListSyntax and not line.startswith("- "):
+                uListSyntax = False
+                if uList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    uList = True
+                
+                if not line.startswith("+ "):
+                    if oList or line.startswith(str(countList + 1) + ". "):
+                        oList = True
+                        if countList == 0:
+                            JSONString+="{\"type\":\"OL\"},"
+
+                        if not line.startswith(str(countList + 1) + ". "):
+                            oSub = False
+                            oList = False
+                            countList = 0
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            uList = False
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            if(line.strip() == ""):
+                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                            else:
+                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                                idNum = idNum+1
+                        else:
+                            oSub = True
+                            countList += 1
+                            line = line.replace(str(countList) + ". ","",1).strip()
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+                    else:
+                        uList = False
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        if(line.strip() == ""):
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                        else:
+                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                            idNum = idNum+1
+                else:
+                    if oSub and oList:
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        oSub = False
+                        oList = False
+                    line = line.replace("+ ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            elif ((uList and not oList) or line.startswith("- ") or oSub) and uListSyntax:
+                if uList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    uList = True
+                
+                if not line.startswith("- "):
+                    if oList or line.startswith(str(countList + 1) + ". "):
+                        oList = True
+                        if countList == 0:
+                            JSONString+="{\"type\":\"OL\"},"
+
+                        if not line.startswith(str(countList + 1) + ". "):
+                            oList = False
+                            oSub = False
+                            countList = 0
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            uList = False
+                            JSONString+="{\"type\":\"ENDLIST\"},"
+                            if(line.strip() == ""):
+                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                            else:
+                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                                idNum = idNum+1
+                        else:
+                            oSub = True
+                            countList += 1
+                            line = line.replace(str(countList) + ". ","",1).strip()
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+                    else:
+                        uList = False
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        if(line.strip() == ""):
+                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                        else:
+                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                            idNum = idNum+1
+                else:
+                    if oSub and oList:
+                        JSONString+="{\"type\":\"ENDLIST\"},"
+                        oSub = False
+                        oList = False
+                    line = line.replace("- ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            # elif line.startswith("+ "):
+            #     line = line.replace("+","").strip()
+            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            # elif line.startswith("- "):
+            #     line = line.replace("-","").strip()
+            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
                 
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
@@ -465,6 +602,29 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!endList"):
                 line = line.replace("!endList","").strip()
                 JSONString+="{\"type\":\"ENDLIST\"},"
+
+            elif oList or line.startswith(str(countList + 1) + ". "):
+                oList = True
+                if countList == 0:
+                    JSONString+="{\"type\":\"OL\"},"
+
+                if uList:
+                    uList = False
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+
+                if not line.startswith(str(countList + 1) + ". "):
+                    oList = False
+                    countList = 0
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+                    if(line.strip() == ""):
+                        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
+                    else:
+                        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
+                        idNum = idNum+1
+                else:
+                    countList += 1
+                    line = line.replace(str(countList) + ". ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
                 
             elif line.startswith("!code"):
                 line=line.replace("!code","").strip();
