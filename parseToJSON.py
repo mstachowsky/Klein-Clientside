@@ -43,6 +43,8 @@ JSONString = "{"
 '''
 def replaceEnclosing(line,delims,beginTag,endTag):
     lineAr = line.split(delims);
+    if line.startswith("* "):
+        return line
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
         bldNum = 0
@@ -71,18 +73,144 @@ def replaceEnclosing(line,delims,beginTag,endTag):
 def inlineLink(line):
     startString = "&#91&#91&#91"
     endString = "&#93&#93&#93"
-    while(line.find(startString) != -1):
+    middleString = ":::"
+    while(line.find(startString) != -1 and line.find(endString) != -1 and line.find(middleString) != -1):
         #get the start location
         indxOfLink = line.find(startString);
         #get the ending bracket
         indxOfEnd = line.find(endString);
         #extract the link text: address:::text
         linkText = line[indxOfLink+len(startString):indxOfEnd];
-        linkAr = linkText.split(":::");
+        linkAr = linkText.split(middleString);
         linkAddr = linkAr[0];
         linkContent = linkAr[1];
         link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
         line = line.replace(startString+linkText+endString,link)
+    return line
+
+# gets the index of a given closed square bracket index
+def closeSquareBracketCheck(line, index):
+    closeIndex = -1
+    for count in range(index -1, 2, -1):
+        if(line[count-3] + line[count-2] + line[count-1] + line[count] == "&#93"):
+            closeIndex -= 1
+        elif(line[count-3] + line[count-2] + line[count-1] + line[count] == "&#91"):
+            closeIndex += 1
+
+        if(closeIndex == 0):
+            return count-3
+    return -1
+
+# gets the index of a given open square bracket index
+def openSquareBracketCheck(line, index):
+    openIndex = 1
+    for count in range(index + 4, len(line), 1):
+        if(line[count] + line[count+1] + line[count+2] + line[count+3] == "&#93"):
+            openIndex -= 1
+        elif(line[count] + line[count+1] + line[count+2] + line[count+3] == "&#91"):
+            openIndex += 1
+
+        if(openIndex == 0):
+            return count
+    return -1
+
+# gets the index of a given open bracket index
+def openBracketCheck(line, index):
+    openIndex = 1
+    for count in range(index + 5, len(line), 1):
+        if(line[count] == ")"):
+            openIndex -= 1
+        elif(line[count] == "("):
+            openIndex += 1
+
+        if(openIndex == 0):
+            return count
+    return -1
+
+# Markdown in line link text
+def inlineLinkMd(line):
+    startString = "&#91"
+    middleString = "&#93("
+    endString = ")"
+    while(line.find(startString) != -1 and line.find(middleString) != -1 and line.find(endString) != -1):
+        #get the middle location
+        indxOfMiddle = line.find(middleString);
+        #get the start location
+        indxOfText = closeSquareBracketCheck(line, indxOfMiddle);
+        #get the ending bracket
+        indxOfEnd = openBracketCheck(line, indxOfMiddle);
+
+        # #get the middle location
+        # indxOfMiddle = line.find(middleString);
+        # #get the start location
+        # indxOfText = line.find(startString);
+        # #get the ending bracket
+        # indxOfEnd = line.rfind(endString);
+        #extract the link text: address:::text
+        linkText = line[indxOfText+len(startString):indxOfEnd];
+        linkAr = linkText.split(middleString);
+        linkAddr = linkAr[1];
+        linkContent = linkAr[0];
+        link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
+        line = line.replace(startString+linkText+endString,link)
+    return line
+
+# Markdown in line image text
+def inlineImageMd(line):
+    startString = "!&#91"
+    middleString = "&#93("
+    endString = ")"
+    while(line.find(startString) != -1 and line.find(middleString) != -1 and line.find(endString) != -1):
+        indxOfMiddle = line.find(middleString);
+        #get the start location
+        indxOfText = closeSquareBracketCheck(line, indxOfMiddle) -1;
+        #get the ending bracket
+        indxOfEnd = openBracketCheck(line, indxOfMiddle);
+        #extract the link text: address:::text
+        imageText = line[indxOfText+len(startString):indxOfEnd];
+        imageAr = imageText.split(middleString);
+        image = '<img src= \\"' + imageAr[1] + '\\" alt=\\"' + imageAr[0] + '\\">'
+        # print("iimage")
+        # print(image)
+        # JSONString += "{\"type\":\"img\",\"src\":\""+imageAr[1]+"\",\"width\":\""+"width"+"\",\"height\":\""+"heigth"+"\",\"id\":\"" +imageAr[0]+ "\"},"
+        line = line.replace(startString+imageText+endString,image)
+        # line = line.replace(startString+imageText+endString,"!img " + imageAr[1] + " width" + " heigth " + imageAr[0])
+    return line
+
+
+def inlineVideoeMd(line):
+    startString = "&#91!&#91"
+    firstMiddleString = "&#93("
+    secMiddleString = ")&#93("
+    endString = ")"
+    while(line.find(startString) != -1 and line.find(firstMiddleString)  and line.find(secMiddleString) != -1 and line.find(endString) != -1):
+        indxOfFirstMiddle = line.find(firstMiddleString);
+        indxOfSecondMiddle = line.find(secMiddleString);
+        #get the start location
+        indxOfText = line.find(startString);
+        #get the ending bracket
+        indxOfEnd = openBracketCheck(line, openSquareBracketCheck(line, indxOfText) + 4);
+        # print(line)
+        # print(indxOfText)
+        # print(indxOfFirstMiddle)
+        # print(indxOfSecondMiddle)
+        # print(indxOfEnd)
+        vidText = line[indxOfText:indxOfEnd + 1]
+        # print(vidText)
+        # print(line[indxOfText + 9:indxOfFirstMiddle])
+        
+        # print(line[indxOfFirstMiddle + 5:indxOfSecondMiddle])
+        # print(line[indxOfSecondMiddle+6:indxOfEnd])
+        video = '<video width=\\"width\\" id=\\"' + line[indxOfText + 9:indxOfFirstMiddle] + '\\" controls=\\"controls\\" poster=\\"' + line[indxOfFirstMiddle + 5:indxOfSecondMiddle] + '\\" src=\\"' + line[indxOfSecondMiddle+6:indxOfEnd] + '\\"></video>'
+        # print(video)
+        line = line.replace(vidText, video, 1)
+        # print(line)
+        # imageText = line[indxOfText+len(startString):indxOfEnd];
+        # imageAr = imageText.split(middleString);
+        # image = '<img src= \\"' + imageAr[1] + '\\" alt=\\"' + imageAr[0] + '\\">'
+        # # JSONString += "{\"type\":\"img\",\"src\":\""+imageAr[1]+"\",\"width\":\""+"width"+"\",\"height\":\""+"heigth"+"\",\"id\":\"" +imageAr[0]+ "\"},"
+        # line = line.replace(startString+imageText+endString,image)
+        # # line = line.replace(startString+imageText+endString,"!img " + imageAr[1] + " width" + " heigth " + imageAr[0])
     return line
 
 
@@ -173,11 +301,15 @@ def parse(f, JSONString, idNum, pageNum):
         line = replaceEnclosing(line,"__","<b>","</b>")
         #now italics
         line = replaceEnclosing(line,"*","<i>","</i>")
-        line = replaceEnclosing(line,"_","<i>","</i>")
+        # line = replaceEnclosing(line,"_","<i>","</i>")
         # #now code, using Discord-like syntax
-        # line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
+        if not ("```" in line):
+            line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
         #now inline links
+        line = inlineVideoeMd(line);
+        line = inlineImageMd(line);
         line = inlineLink(line);
+        line = inlineLinkMd(line);
         
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
@@ -310,17 +442,17 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
-            # elif line.startswith("*"):
-            #     line = line.replace("*","").strip()
-            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("* "):
+                line = line.replace("*","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
-            # elif line.startswith("+"):
-            #     line = line.replace("+","").strip()
-            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+            elif line.startswith("+ "):
+                line = line.replace("+","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
-            # elif line.startswith("-"):
-            #     line = line.replace("*","").strip()
-            #     JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
+            elif line.startswith("- "):
+                line = line.replace("-","").strip()
+                JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"    
                 
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
