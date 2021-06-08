@@ -240,8 +240,14 @@ def parse(f, JSONString, idNum, pageNum):
         
 
     pageFile = ''
-     
-    for line in f:
+
+    content = f.read()
+    content = content.splitlines()
+    countLine = 0
+
+    while countLine < len(content):
+        line = content[countLine]
+
         #remove leading and trailing whitespace
         line = line.strip()
       
@@ -439,11 +445,7 @@ def parse(f, JSONString, idNum, pageNum):
                             JSONString+="{\"type\":\"ENDLIST\"},"
                             uList = False
                             JSONString+="{\"type\":\"ENDLIST\"},"
-                            if(line.strip() == ""):
-                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                            else:
-                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                                idNum = idNum+1
+                            countLine -= 1
                         else:
                             oSub = True
                             countList += 1
@@ -452,11 +454,7 @@ def parse(f, JSONString, idNum, pageNum):
                     else:
                         uList = False
                         JSONString+="{\"type\":\"ENDLIST\"},"
-                        if(line.strip() == ""):
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                        else:
-                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                            idNum = idNum+1
+                        countLine -= 1
                 else:
                     if oSub and oList:
                         JSONString+="{\"type\":\"ENDLIST\"},"
@@ -484,11 +482,7 @@ def parse(f, JSONString, idNum, pageNum):
                             JSONString+="{\"type\":\"ENDLIST\"},"
                             uList = False
                             JSONString+="{\"type\":\"ENDLIST\"},"
-                            if(line.strip() == ""):
-                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                            else:
-                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                                idNum = idNum+1
+                            countLine -= 1
                         else:
                             oSub = True
                             countList += 1
@@ -497,11 +491,7 @@ def parse(f, JSONString, idNum, pageNum):
                     else:
                         uList = False
                         JSONString+="{\"type\":\"ENDLIST\"},"
-                        if(line.strip() == ""):
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                        else:
-                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                            idNum = idNum+1
+                        countLine -= 1
                 else:
                     if oSub and oList:
                         JSONString+="{\"type\":\"ENDLIST\"},"
@@ -528,11 +518,7 @@ def parse(f, JSONString, idNum, pageNum):
                             JSONString+="{\"type\":\"ENDLIST\"},"
                             uList = False
                             JSONString+="{\"type\":\"ENDLIST\"},"
-                            if(line.strip() == ""):
-                                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                            else:
-                                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                                idNum = idNum+1
+                            countLine -= 1
                         else:
                             oSub = True
                             countList += 1
@@ -541,11 +527,7 @@ def parse(f, JSONString, idNum, pageNum):
                     else:
                         uList = False
                         JSONString+="{\"type\":\"ENDLIST\"},"
-                        if(line.strip() == ""):
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                        else:
-                            JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                            idNum = idNum+1
+                        countLine -= 1
                 else:
                     if oSub and oList:
                         JSONString+="{\"type\":\"ENDLIST\"},"
@@ -579,11 +561,7 @@ def parse(f, JSONString, idNum, pageNum):
                     oList = False
                     countList = 0
                     JSONString+="{\"type\":\"ENDLIST\"},"
-                    if(line.strip() == ""):
-                        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"  
-                    else:
-                        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                        idNum = idNum+1
+                    countLine -= 1
                 else:
                     countList += 1
                     line = line.replace(str(countList) + ". ","",1).strip()
@@ -614,6 +592,7 @@ def parse(f, JSONString, idNum, pageNum):
                         idNum = idNum+1
                 else:
                     firstLine = False;
+        countLine += 1
     return JSONString
 
 
