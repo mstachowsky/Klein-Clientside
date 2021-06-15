@@ -279,10 +279,12 @@ def parse(f, JSONString, idNum, pageNum):
        
         #handle inline tags
         #Bolding first
-        line = replaceEnclosing(line,"**","<b>","</b>")
-        line = replaceEnclosing(line,"__","<b>","</b>")
-        #now italics
-        line = replaceEnclosing(line,"*","<i>","</i>")
+        if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
+            line = replaceEnclosing(line,"**","<b>","</b>")
+            line = replaceEnclosing(line,"__","<b>","</b>")
+            #now italics
+            line = replaceEnclosing(line,"*","<i>","</i>")
+            line = replaceEnclosing(line,"~~","<del>","</del>")
         # Cant use this yet until block esc is implemented
         # line = replaceEnclosing(line,"_","<i>","</i>")
         # #now code, using Discord-like syntax
@@ -359,7 +361,11 @@ def parse(f, JSONString, idNum, pageNum):
                 line=line.replace("`","").strip();
                 JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
                 idNum = idNum+1
-                
+
+            elif len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line)):
+                line = ""
+                JSONString += "{\"type\":\"HORIZLINE\",\"tag\":\"hr\",\"options\":{},\"content\":\"""\"},"
+
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
