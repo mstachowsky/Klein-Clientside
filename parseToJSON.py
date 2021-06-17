@@ -42,9 +42,18 @@ JSONString = "{"
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
 def replaceEnclosing(line,delims,beginTag,endTag):
-    lineAr = line.split(delims);
-    if line.startswith("* "):
-        return line
+    lineAdd = ""
+    if delims == "*" and line.startswith("* "):
+        lineAr = line.replace("* ", "", 1).split(delims);
+        line = line.replace("* ", "", 1)
+        lineAdd = "* "
+    elif delims == "*" and line.startswith("..* "):
+        lineAr = line.replace("..* ", "", 1).split(delims);
+        line = line.replace("..* ", "", 1)
+        lineAdd = "..* "
+    else:
+        lineAr = line.split(delims);
+
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
         bldNum = 0
@@ -61,7 +70,7 @@ def replaceEnclosing(line,delims,beginTag,endTag):
     else:
         if(line.find(delims) != -1): #handle the case where the entire line is bolded
             line = beginTag + line + endTag
-    return line
+    return lineAdd + line
 
 '''
     This function replaces inline links with HTML links.  I can't think of an easier way to do this.
@@ -229,6 +238,10 @@ def parse(f, JSONString, idNum, pageNum):
     uList = False;
     uListSyntax = True;
     oSub = False;
+    subList = False;
+    countSubList = 0;
+    subListSyntax = True;
+    oSubList = False;
 
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
@@ -296,6 +309,7 @@ def parse(f, JSONString, idNum, pageNum):
         line = inlineLink(line);
         line = inlineLinkMd(line);
         uListSyntax = True;
+        subListSyntax = True;
         
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
@@ -431,6 +445,63 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!item"):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            elif oSubList or line.startswith(".." + str(countSubList + 1) + ". "):
+                oSubList = True
+                if countSubList == 0:
+                    JSONString+="{\"type\":\"OL\"},"
+
+                if not line.startswith(".." + str(countSubList + 1) + ". "):
+                    oSubList = False
+                    countSubList = 0
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+                    countLine -= 1
+                else:
+                    countSubList += 1
+                    line = line.replace(".." + str(countSubList) + ". ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            elif ((subList) or line.startswith("..* ")) and not line.startswith("..+ ") and not line.startswith("..- "):
+                subListSyntax = False
+                if subList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    subList = True
+                
+                if not line.startswith("..* "):
+                    subList = False
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+                    countLine -= 1
+                else:
+                    line = line.replace("..* ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            elif ((subList) or line.startswith("..+ ")) and subListSyntax and not line.startswith("..- "):
+                subListSyntax = False
+                if subList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    subList = True
+                
+                if not line.startswith("..+ "):
+                    subList = False
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+                    countLine -= 1
+                else:
+                    line = line.replace("..+ ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
+
+            elif ((subList) or line.startswith("..- ")) and subListSyntax:
+                subListSyntax = False
+                if subList == False:
+                    JSONString+="{\"type\":\"UL\"},"
+                    subList = True
+                
+                if not line.startswith("..- "):
+                    subList = False
+                    JSONString+="{\"type\":\"ENDLIST\"},"
+                    countLine -= 1
+                else:
+                    line = line.replace("..- ","",1).strip()
+                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
 
             elif ((uList and not oList) or line.startswith("* ")  or oSub) and not line.startswith("+ ") and not line.startswith("- "):
                 uListSyntax = False
@@ -586,6 +657,9 @@ def parse(f, JSONString, idNum, pageNum):
                     linkText = linkText+" "+ln
                 JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
                 
+            # elif content[countLine+1].replace(" ","").replace(":","").replace("|","").replace("-","") == "" and ("|-" in content[countLine+1].replace(" ", "") or "|:-" in content[countLine+1].replace(" ", "")):
+            #     print("hello")
+
             else:
                 #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
                 if firstLine == False:
