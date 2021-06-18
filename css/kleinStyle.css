@@ -170,6 +170,34 @@ p {
 	background-color: 44C173;
 
 }
+/* Tables */
+table, th, td {  
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+}
+
+table{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th, td {
+  padding: 15px;
+}
+
+.leftCell{
+  text-align: left;
+}
+
+.rightCell{
+  text-align: right;
+}
+
+.normalCell{
+  text-align: center;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
 
 .selectPane{
 	border-style: none solid none none;
