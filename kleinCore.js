@@ -381,13 +381,74 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				}
 				//cmp.id = name of radio, dataString = correct selection 
 
-			} else if (cmp.type === "HORIZLINE") {
+			}
+			else if (cmp.type === "HORIZLINE") {
 				var hLineDiv = { tag: "hr", options: { id: "horizLine" + j + "Page" + i }, content: "" };
 				var curPage = makeNewHTML(hLineDiv);
 				newPage.appendChild(curPage);
 				// pageStack.push(newPage);
 				// newPage = curPage;
 			}
+			else if (cmp.type === "TABLE") {
+				var tableDiv = { tag: "table", options: { id: "table" + j + "Page" + i }, content: "" };
+				var curPage = makeNewHTML(tableDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+
+				var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
+				var curPage = makeNewHTML(tableDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+
+				for (var t = 0; t < cmp.tableContent.header.length; t++) {
+					var tableDiv = { tag: "th", options: { id: "tableHead" + j + "Page" + i, class: cmp.tableContent.header[t].class }, content: "" };
+					var curPage = makeNewHTML(tableDiv);
+					newPage.appendChild(curPage);
+					pageStack.push(newPage);
+					newPage = curPage;
+
+					for (var h = 0; h < cmp.tableContent.header[t].headerContent.length; h++) {
+						newPage = tableContentCreator(cmp.tableContent.header[t].headerContent[h], newPage, pageStack, i, j);
+					}
+
+					// newPage = tableContentCreator(cmp.tableContent.header[t].headerContent, newPage, pageStack, i, j);
+
+					newPage = pageStack.pop();
+				}
+
+				newPage = pageStack.pop();
+
+				for (var c = 0; c < cmp.tableContent.content[0].column.length; c++) {
+					var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
+					var curPage = makeNewHTML(tableDiv);
+					newPage.appendChild(curPage);
+					pageStack.push(newPage);
+					newPage = curPage;
+
+					for (var t = 0; t < cmp.tableContent.content.length; t++) {
+						var tableDiv = { tag: "td", options: { id: "tableData" + j + "Page" + i, class: cmp.tableContent.content[t].class }, content: "" };
+						var curPage = makeNewHTML(tableDiv);
+						newPage.appendChild(curPage);
+						pageStack.push(newPage);
+						newPage = curPage;
+
+						for (var cc = 0; cc < cmp.tableContent.content[t].column[c].length; cc++) {
+							newPage = tableContentCreator(cmp.tableContent.content[t].column[c][cc], newPage, pageStack, i, j);
+						}
+						// newPage = tableContentCreator(cmp.tableContent.content[t].column[c], newPage, pageStack, i, j);
+
+						newPage = pageStack.pop();
+					}
+
+					newPage = pageStack.pop();
+				}
+			}
+			else if (cmp.type === "ENDTABLE") {
+				newPage = pageStack.pop();
+			}
+
 		}
 	}
 
@@ -398,6 +459,101 @@ function parseBookFromJSON(inputBook, resURL = "") {
 
 	//finally, create the first page
 	makeNewPage();
+}
+
+function tableContentCreator(cmp, newPage, pageStack, i, j) {
+	if (cmp.content) //this replaces all instances of the random variables in the html with their randomized values
+	{
+		cmp.content = renderEqn(cmp.content);
+	}
+
+	if (cmp.type === "HTML") {
+		newPage.appendChild(makeNewHTML(cmp));
+	}
+	else if (cmp.type == "CHECKPOINT") {
+		var checkDiv = { tag: "div", options: { id: "check" + j + "Page" + i, class: "checkpoint" }, content: "" };
+		var curPage = makeNewHTML(checkDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "ENDCHECK") {
+		cmp.options = { class: "endcheckpoint", id: " " }
+		cmp.tag = "h2";
+		cmp.content = "   ";
+		newPage.appendChild(makeNewHTML(cmp));
+
+		newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
+	}
+	else if (cmp.type == "BLOCKCODE") {
+		var codeDiv = { tag: "div", options: { id: "blockCode" + j + "Page" + i, class: "blockCode" }, content: "" };
+		var curPage = makeNewHTML(codeDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "ENDBLOCKCODE") {
+		cmp.options = { class: "endBlockCode", id: " " };
+		cmp.tag = "p";
+		cmp.content = "   ";
+		newPage.appendChild(makeNewHTML(cmp));
+
+		newPage = pageStack.pop();
+	}
+	else if (cmp.type == "UL") {
+		var listDiv = { tag: "ul", options: { id: "list" + j + "Page" + i }, content: "" };
+		var curPage = makeNewHTML(listDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "OL") {
+		var listDiv = { tag: "ol", options: { id: "list" + j + "Page" + i }, content: "" };
+		var curPage = makeNewHTML(listDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "ENDLIST") {
+		newPage = pageStack.pop();//JSON.parse(JSON.stringify(pageStack.pop()));
+	}
+	else if (cmp.type == "LINK") {
+		var linkDiv = { tag: "a", options: { id: cmp.id, href: cmp.addr, class: "link" }, content: cmp.text };
+		newPage.appendChild(makeNewHTML(linkDiv));
+	}
+	else if (cmp.type === "answerBox") {
+		cmp.dataString = renderVariable(cmp.dataString);
+		var newAns = new answerBox(cmp.dataString, cmp.id, cmp.pageNum);
+		answers.push(newAns);
+		newAns.addContent(newPage);
+	}
+	else if (cmp.type === "video") {
+		cmp.src = resURL + cmp.src;
+		newPage.appendChild(makeNewMedia(cmp, "VIDEO"));
+	}
+	else if (cmp.type === "img") {
+		cmp.src = resURL + cmp.src;
+		newPage.appendChild(makeNewMedia(cmp, "IMG"));
+	}
+	else if (cmp.type === "multipleChoice") {
+		var newAns = new multipleChoice(cmp.dataString, cmp.id, cmp.pageNum);
+		answers.push(newAns);
+		newAns.addContent(newPage);
+		newPage.appendChild(makeNewHTML(cmp));
+		if (cmp.choices) {
+			for (var n = 0; n < cmp.choices.length; n++) {
+				var mc = cmp.choices[n];
+				mc.content = renderEqn(mc.content);
+				newPage.appendChild(makeNewHTML(mc));
+
+			}
+
+		}
+		//cmp.id = name of radio, dataString = correct selection 
+
+	}
+
+	return newPage;
 }
 
 /*;
