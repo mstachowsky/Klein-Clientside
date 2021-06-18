@@ -683,7 +683,7 @@ def parse(f, JSONString, idNum, pageNum):
 
                 for check in lineClassCheckAr:
                     if ":-" in check and "-:" in check:
-                        lineClassAr[lineClassCheckAr.index(check)] = "normalCell"
+                        lineClassAr[lineClassCheckAr.index(check)] = "centerCell"
                     elif ":-" in check:
                         lineClassAr[lineClassCheckAr.index(check)] = "leftCell"
                     elif "-:" in check:
