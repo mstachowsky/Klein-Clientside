@@ -695,7 +695,7 @@ def parse(f, JSONString, idNum, pageNum):
 
                 for header in lineAr:
                     JSONString += "{\"headerContent\":["
-                    JSONString = parseTable(header, JSONString, idNum, pageNum)
+                    JSONString = parseTable(header, JSONString, idNum, pageNum, True)
                     if JSONString.endswith(","):
                         JSONString = JSONString[0: len(JSONString) -1]
                     JSONString += "],\"class\":\"" + lineClassAr[lineAr.index(header)] + "\"},"
@@ -720,9 +720,9 @@ def parse(f, JSONString, idNum, pageNum):
                         rowArr = line.split("|")
                         JSONString += "["
                         if arrInd <= len(rowArr) - 1:
-                            JSONString = parseTable(rowArr[arrInd], JSONString, idNum, pageNum)
+                            JSONString = parseTable(rowArr[arrInd], JSONString, idNum, pageNum, False)
                         else:
-                            JSONString = parseTable("", JSONString, idNum, pageNum)
+                            JSONString = parseTable("", JSONString, idNum, pageNum, False)
                         if JSONString.endswith(","):
                             JSONString = JSONString[0: len(JSONString) -1]
                         JSONString += "],"
@@ -756,39 +756,39 @@ def parse(f, JSONString, idNum, pageNum):
     return JSONString
 
 # Function for tables
-def parseTable(line, JSONString, idNum, pageNum):
-    
-    #escape the backslashes and other special characters
-    line = backslashEsc(line,0)
-#    line = line.replace('\*','&#42') #asterisks in math
-#    line = line.replace('\\','\\\\')
-    
-    line = line.replace('"','\\"')
-    line = line.replace('\'','&#39')
-    line = line.replace(';','&#59')
-    line = line.replace(']','&#93')
-    line = line.replace('[','&#91')
-    
-    #handle inline tags
-    #Bolding first
-    if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
-        line = replaceEnclosing(line,"**","<b>","</b>")
-        line = replaceEnclosing(line,"__","<b>","</b>")
-        #now italics
-        line = replaceEnclosing(line,"*","<i>","</i>")
-        line = replaceEnclosing(line,"~~","<del>","</del>")
-    # Cant use this yet until block esc is implemented
-    # line = replaceEnclosing(line,"_","<i>","</i>")
-    # #now code, using Discord-like syntax
-    if not ("```" in line):
-        line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
-    #now inline links
-    line = inlineVideoeMd(line);
-    line = inlineImageMd(line);
-    line = inlineLink(line);
-    line = inlineLinkMd(line);
-    # uListSyntax = True;
-    # subListSyntax = True;
+def parseTable(line, JSONString, idNum, pageNum, header):
+    if not header:
+        #escape the backslashes and other special characters
+        line = backslashEsc(line,0)
+    #    line = line.replace('\*','&#42') #asterisks in math
+    #    line = line.replace('\\','\\\\')
+        
+        line = line.replace('"','\\"')
+        line = line.replace('\'','&#39')
+        line = line.replace(';','&#59')
+        line = line.replace(']','&#93')
+        line = line.replace('[','&#91')
+        
+        #handle inline tags
+        #Bolding first
+        if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
+            line = replaceEnclosing(line,"**","<b>","</b>")
+            line = replaceEnclosing(line,"__","<b>","</b>")
+            #now italics
+            line = replaceEnclosing(line,"*","<i>","</i>")
+            line = replaceEnclosing(line,"~~","<del>","</del>")
+        # Cant use this yet until block esc is implemented
+        # line = replaceEnclosing(line,"_","<i>","</i>")
+        # #now code, using Discord-like syntax
+        if not ("```" in line):
+            line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
+        #now inline links
+        line = inlineVideoeMd(line);
+        line = inlineImageMd(line);
+        line = inlineLink(line);
+        line = inlineLinkMd(line);
+        # uListSyntax = True;
+        # subListSyntax = True;
 
     #There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
     #of whether we are inside or outside of one.
