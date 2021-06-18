@@ -755,6 +755,7 @@ def parse(f, JSONString, idNum, pageNum):
         countLine += 1
     return JSONString
 
+# Function for tables
 def parseTable(line, JSONString, idNum, pageNum):
     
     #escape the backslashes and other special characters
