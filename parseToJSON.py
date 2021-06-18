@@ -42,18 +42,7 @@ JSONString = "{"
     This function replaces enclosing delimiters with HTML.  Like **bold** (two asterisks) replace with <b>bold</b>
 '''
 def replaceEnclosing(line,delims,beginTag,endTag):
-    lineAdd = ""
-    if delims == "*" and line.startswith("* "):
-        lineAr = line.replace("* ", "", 1).split(delims);
-        line = line.replace("* ", "", 1)
-        lineAdd = "* "
-    elif delims == "*" and line.startswith("..* "):
-        lineAr = line.replace("..* ", "", 1).split(delims);
-        line = line.replace("..* ", "", 1)
-        lineAdd = "..* "
-    else:
-        lineAr = line.split(delims);
-
+    lineAr = line.split(delims);
     if(len(lineAr) > 1): #if there is nothing to split, lineAr contains just one thing
         ind = line.find(delims) #if this is zero, then we need to adjust
         bldNum = 0
@@ -70,7 +59,7 @@ def replaceEnclosing(line,delims,beginTag,endTag):
     else:
         if(line.find(delims) != -1): #handle the case where the entire line is bolded
             line = beginTag + line + endTag
-    return lineAdd + line
+    return line
 
 '''
     This function replaces inline links with HTML links.  I can't think of an easier way to do this.
@@ -82,114 +71,18 @@ def replaceEnclosing(line,delims,beginTag,endTag):
 def inlineLink(line):
     startString = "&#91&#91&#91"
     endString = "&#93&#93&#93"
-    middleString = ":::"
-    while(line.find(startString) != -1 and line.find(endString) != -1 and line.find(middleString) != -1):
+    while(line.find(startString) != -1):
         #get the start location
         indxOfLink = line.find(startString);
         #get the ending bracket
         indxOfEnd = line.find(endString);
         #extract the link text: address:::text
         linkText = line[indxOfLink+len(startString):indxOfEnd];
-        linkAr = linkText.split(middleString);
+        linkAr = linkText.split(":::");
         linkAddr = linkAr[0];
         linkContent = linkAr[1];
         link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
         line = line.replace(startString+linkText+endString,link)
-    return line
-
-# gets the index of a given closed square bracket index
-def closeSquareBracketCheck(line, index):
-    closeIndex = -1
-    for count in range(index -1, 2, -1):
-        if(line[count-3] + line[count-2] + line[count-1] + line[count] == "&#93"):
-            closeIndex -= 1
-        elif(line[count-3] + line[count-2] + line[count-1] + line[count] == "&#91"):
-            closeIndex += 1
-
-        if(closeIndex == 0):
-            return count-3
-    return -1
-
-# gets the index of a given open square bracket index
-def openSquareBracketCheck(line, index):
-    openIndex = 1
-    for count in range(index + 4, len(line), 1):
-        if(line[count] + line[count+1] + line[count+2] + line[count+3] == "&#93"):
-            openIndex -= 1
-        elif(line[count] + line[count+1] + line[count+2] + line[count+3] == "&#91"):
-            openIndex += 1
-
-        if(openIndex == 0):
-            return count
-    return -1
-
-# gets the index of a given open bracket index
-def openBracketCheck(line, index):
-    openIndex = 1
-    for count in range(index + 5, len(line), 1):
-        if(line[count] == ")"):
-            openIndex -= 1
-        elif(line[count] == "("):
-            openIndex += 1
-
-        if(openIndex == 0):
-            return count
-    return -1
-
-# Markdown in line link text
-def inlineLinkMd(line):
-    startString = "&#91"
-    middleString = "&#93("
-    endString = ")"
-    while(line.find(startString) != -1 and line.find(middleString) != -1 and line.find(endString) != -1):
-        #get the middle location
-        indxOfMiddle = line.find(middleString);
-        #get the start location
-        indxOfText = closeSquareBracketCheck(line, indxOfMiddle);
-        #get the ending bracket
-        indxOfEnd = openBracketCheck(line, indxOfMiddle);
-        linkText = line[indxOfText+len(startString):indxOfEnd];
-        linkAr = linkText.split(middleString);
-        linkAddr = linkAr[1];
-        linkContent = linkAr[0];
-        link = '<a href = \\"' + linkAddr + '\\", target=\\"_blank\\", class=\\"inlineLink\\">'+linkContent+'<\\/a>'
-        line = line.replace(startString+linkText+endString,link)
-    return line
-
-# Markdown in line image text
-def inlineImageMd(line):
-    startString = "!&#91"
-    middleString = "&#93("
-    endString = ")"
-    while(line.find(startString) != -1 and line.find(middleString) != -1 and line.find(endString) != -1):
-        indxOfMiddle = line.find(middleString);
-        #get the start location
-        indxOfText = closeSquareBracketCheck(line, indxOfMiddle) -1;
-        #get the ending bracket
-        indxOfEnd = openBracketCheck(line, indxOfMiddle);
-        #extract the link text: address:::text
-        imageText = line[indxOfText+len(startString):indxOfEnd];
-        imageAr = imageText.split(middleString);
-        image = '<img src= \\"' + imageAr[1] + '\\" alt=\\"' + imageAr[0] + '\\">'
-        line = line.replace(startString+imageText+endString,image)
-    return line
-
-
-def inlineVideoeMd(line):
-    startString = "&#91!&#91"
-    firstMiddleString = "&#93("
-    secMiddleString = ")&#93("
-    endString = ")"
-    while(line.find(startString) != -1 and line.find(firstMiddleString)  and line.find(secMiddleString) != -1 and line.find(endString) != -1):
-        indxOfFirstMiddle = line.find(firstMiddleString);
-        indxOfSecondMiddle = line.find(secMiddleString);
-        #get the start location
-        indxOfText = line.find(startString);
-        #get the ending bracket
-        indxOfEnd = openBracketCheck(line, openSquareBracketCheck(line, indxOfText) + 4);
-        vidText = line[indxOfText:indxOfEnd + 1]
-        video = '<video width=\\"width\\" id=\\"' + line[indxOfText + 9:indxOfFirstMiddle] + '\\" controls=\\"controls\\" poster=\\"' + line[indxOfFirstMiddle + 5:indxOfSecondMiddle] + '\\" src=\\"' + line[indxOfSecondMiddle+6:indxOfEnd] + '\\"></video>'
-        line = line.replace(vidText, video, 1)
     return line
 
 
@@ -232,18 +125,6 @@ def parse(f, JSONString, idNum, pageNum):
     
     #The checkpoint environment is easy - everything inside gets a special style applied
     inCheckpoint = False;
-    inCode = False;
-    oList = False;
-    countList = 0;
-    uList = False;
-    uListSyntax = True;
-    oSub = False;
-    subList = False;
-    countSubList = 0;
-    subListSyntax = True;
-    oSubList = False;
-    maxTableRow = 0;
-
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
     #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
@@ -254,14 +135,8 @@ def parse(f, JSONString, idNum, pageNum):
         
 
     pageFile = ''
-
-    content = f.read()
-    content = content.splitlines()
-    countLine = 0
-
-    while countLine < len(content):
-        line = content[countLine]
-
+     
+    for line in f:
         #remove leading and trailing whitespace
         line = line.strip()
       
@@ -293,24 +168,13 @@ def parse(f, JSONString, idNum, pageNum):
        
         #handle inline tags
         #Bolding first
-        if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
-            line = replaceEnclosing(line,"**","<b>","</b>")
-            line = replaceEnclosing(line,"__","<b>","</b>")
-            #now italics
-            line = replaceEnclosing(line,"*","<i>","</i>")
-            line = replaceEnclosing(line,"~~","<del>","</del>")
-        # Cant use this yet until block esc is implemented
-        # line = replaceEnclosing(line,"_","<i>","</i>")
-        # #now code, using Discord-like syntax
-        if not ("```" in line):
-            line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
+        line = replaceEnclosing(line,"**","<b>","</b>")
+        #now italics
+        line = replaceEnclosing(line,"*","<i>","</i>")
+        #now code, using Discord-like syntax
+        line = replaceEnclosing(line,"```",'<span class=\\"inlineCode\\">',"</span>")
         #now inline links
-        line = inlineVideoeMd(line);
-        line = inlineImageMd(line);
         line = inlineLink(line);
-        line = inlineLinkMd(line);
-        uListSyntax = True;
-        subListSyntax = True;
         
         if "eqn:{" in line:
             line = line.replace('&#42', '*')
@@ -364,23 +228,7 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!endCheckpoint"):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
-
-            elif inCode == True or line.startswith("```"):
-                if line.startswith("```"):
-                    inCode = not inCode
-                line=line.replace("```","").strip();
-                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-                idNum = idNum+1
-
-            elif line.startswith("`") and line.endswith("`"):
-                line=line.replace("`","").strip();
-                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-                idNum = idNum+1
-
-            elif len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line)):
-                line = ""
-                JSONString += "{\"type\":\"HORIZLINE\",\"tag\":\"hr\",\"options\":{},\"content\":\"""\"},"
-
+                
             elif line.startswith("!ans"):
                 line = line.replace("!ans",'').strip()
                 lineAr = line.split()
@@ -446,173 +294,6 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!item"):
                 line = line.replace("!item","").strip()
                 JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif oSubList or line.startswith(".." + str(countSubList + 1) + ". "):
-                oSubList = True
-                if countSubList == 0:
-                    JSONString+="{\"type\":\"OL\"},"
-
-                if not line.startswith(".." + str(countSubList + 1) + ". "):
-                    oSubList = False
-                    countSubList = 0
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-                    countLine -= 1
-                else:
-                    countSubList += 1
-                    line = line.replace(".." + str(countSubList) + ". ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((subList) or line.startswith("..* ")) and not line.startswith("..+ ") and not line.startswith("..- "):
-                subListSyntax = False
-                if subList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    subList = True
-                
-                if not line.startswith("..* "):
-                    subList = False
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-                    countLine -= 1
-                else:
-                    line = line.replace("..* ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((subList) or line.startswith("..+ ")) and subListSyntax and not line.startswith("..- "):
-                subListSyntax = False
-                if subList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    subList = True
-                
-                if not line.startswith("..+ "):
-                    subList = False
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-                    countLine -= 1
-                else:
-                    line = line.replace("..+ ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((subList) or line.startswith("..- ")) and subListSyntax:
-                subListSyntax = False
-                if subList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    subList = True
-                
-                if not line.startswith("..- "):
-                    subList = False
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-                    countLine -= 1
-                else:
-                    line = line.replace("..- ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((uList and not oList) or line.startswith("* ")  or oSub) and not line.startswith("+ ") and not line.startswith("- "):
-                uListSyntax = False
-                if uList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    uList = True
-                
-                if not line.startswith("* "):
-                    if oList or line.startswith(str(countList + 1) + ". "):
-                        oList = True
-                        if countList == 0:
-                            JSONString+="{\"type\":\"OL\"},"
-
-                        if not line.startswith(str(countList + 1) + ". "):
-                            oList = False
-                            oSub = False
-                            countList = 0
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            uList = False
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            countLine -= 1
-                        else:
-                            oSub = True
-                            countList += 1
-                            line = line.replace(str(countList) + ". ","",1).strip()
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-                    else:
-                        uList = False
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        countLine -= 1
-                else:
-                    if oSub and oList:
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        oSub = False
-                        oList = False
-                    line = line.replace("* ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((uList and not oList) or line.startswith("+ ") or oSub) and uListSyntax and not line.startswith("- "):
-                uListSyntax = False
-                if uList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    uList = True
-                
-                if not line.startswith("+ "):
-                    if oList or line.startswith(str(countList + 1) + ". "):
-                        oList = True
-                        if countList == 0:
-                            JSONString+="{\"type\":\"OL\"},"
-
-                        if not line.startswith(str(countList + 1) + ". "):
-                            oSub = False
-                            oList = False
-                            countList = 0
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            uList = False
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            countLine -= 1
-                        else:
-                            oSub = True
-                            countList += 1
-                            line = line.replace(str(countList) + ". ","",1).strip()
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-                    else:
-                        uList = False
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        countLine -= 1
-                else:
-                    if oSub and oList:
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        oSub = False
-                        oList = False
-                    line = line.replace("+ ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-
-            elif ((uList and not oList) or line.startswith("- ") or oSub) and uListSyntax:
-                if uList == False:
-                    JSONString+="{\"type\":\"UL\"},"
-                    uList = True
-                
-                if not line.startswith("- "):
-                    if oList or line.startswith(str(countList + 1) + ". "):
-                        oList = True
-                        if countList == 0:
-                            JSONString+="{\"type\":\"OL\"},"
-
-                        if not line.startswith(str(countList + 1) + ". "):
-                            oList = False
-                            oSub = False
-                            countList = 0
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            uList = False
-                            JSONString+="{\"type\":\"ENDLIST\"},"
-                            countLine -= 1
-                        else:
-                            oSub = True
-                            countList += 1
-                            line = line.replace(str(countList) + ". ","",1).strip()
-                            JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
-                    else:
-                        uList = False
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        countLine -= 1
-                else:
-                    if oSub and oList:
-                        JSONString+="{\"type\":\"ENDLIST\"},"
-                        oSub = False
-                        oList = False
-                    line = line.replace("- ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"   
                 
             elif line.startswith("!list"):
                 line = line.replace("!list","").strip()
@@ -625,25 +306,6 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!endList"):
                 line = line.replace("!endList","").strip()
                 JSONString+="{\"type\":\"ENDLIST\"},"
-
-            elif oList or line.startswith(str(countList + 1) + ". "):
-                oList = True
-                if countList == 0:
-                    JSONString+="{\"type\":\"OL\"},"
-
-                if uList:
-                    uList = False
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-
-                if not line.startswith(str(countList + 1) + ". "):
-                    oList = False
-                    countList = 0
-                    JSONString+="{\"type\":\"ENDLIST\"},"
-                    countLine -= 1
-                else:
-                    countList += 1
-                    line = line.replace(str(countList) + ". ","",1).strip()
-                    JSONString+="{\"type\":\"HTML\",\"tag\":\"li\",\"options\":{},\"content\":\""+line+"\"},"
                 
             elif line.startswith("!code"):
                 line=line.replace("!code","").strip();
@@ -658,88 +320,6 @@ def parse(f, JSONString, idNum, pageNum):
                     linkText = linkText+" "+ln
                 JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
                 
-            elif content[countLine+1].replace(" ","").replace(":","").replace("|","").replace("-","") == "" and ("|-" in content[countLine+1].replace(" ", "") or "|:-" in content[countLine+1].replace(" ", "")):
-                JSONString += "{\"type\":\"TABLE\",\"tag\":\"table\",\"options\":{\"id\":\"ID" + str(idNum) + "\"},\"tableContent\":{\"header\":["
-                line = line.strip()
-                if line.startswith("|"):
-                    line = line[1:len(line)]
-
-                if line.endswith("|"):
-                    line = line[0:len(line) -1]
-                
-                lineAr = line.split("|")
-
-                lineClassCheck = content[countLine+1].replace(" ", "")
-
-                if lineClassCheck.startswith("|"):
-                    lineClassCheck = lineClassCheck[1:len(lineClassCheck)]
-
-                if lineClassCheck.endswith("|"):
-                    lineClassCheck = lineClassCheck[0:len(lineClassCheck) -1]
-
-                lineClassCheckAr = lineClassCheck.split("|")
-
-                lineClassAr = [""] * len(lineAr)
-
-                for check in lineClassCheckAr:
-                    if ":-" in check and "-:" in check:
-                        lineClassAr[lineClassCheckAr.index(check)] = "normalCell"
-                    elif ":-" in check:
-                        lineClassAr[lineClassCheckAr.index(check)] = "leftCell"
-                    elif "-:" in check:
-                        lineClassAr[lineClassCheckAr.index(check)] = "rightCell"
-                    else:
-                        lineClassAr[lineClassCheckAr.index(check)] = "normalCell"
-
-                maxTableRow = len(lineAr)
-
-                for header in lineAr:
-                    JSONString += "{\"headerContent\":["
-                    JSONString = parseTable(header, JSONString, idNum, pageNum)
-                    if JSONString.endswith(","):
-                        JSONString = JSONString[0: len(JSONString) -1]
-                    JSONString += "],\"class\":\"" + lineClassAr[lineAr.index(header)] + "\"},"
-                
-                JSONString = JSONString[0:len(JSONString)-1] + "],\"content\":["
-
-                countTraceBack = countLine
-                countLine += 2
-                countMax = 0
-                line = content[countLine]
-                for arrInd in range(0, maxTableRow):
-                    countLine = countTraceBack + 2
-                    line = content[countLine]
-                    JSONString += "{\"column\":["
-                    while "|" in line:
-                        line = line.strip()
-                        if line.startswith("|"):
-                            line = line[1:len(line)]
-
-                        if line.endswith("|"):
-                            line = line[0:len(line) -1]
-                        rowArr = line.split("|")
-                        JSONString += "["
-                        if arrInd <= len(rowArr) - 1:
-                            JSONString = parseTable(rowArr[arrInd], JSONString, idNum, pageNum)
-                        else:
-                            JSONString = parseTable("", JSONString, idNum, pageNum)
-                        if JSONString.endswith(","):
-                            JSONString = JSONString[0: len(JSONString) -1]
-                        JSONString += "],"
-                        countLine += 1
-                        line = content[countLine]
-                    if countLine >= countMax:
-                        countMax = countLine
-                    if JSONString.endswith(","):
-                        JSONString = JSONString[0: len(JSONString) -1]
-                    JSONString += "], \"class\":\"" + lineClassAr[arrInd] + "\"},"
-                
-                if JSONString.endswith(","):
-                    JSONString = JSONString[0: len(JSONString) -1]
-                
-                countLine = countMax - 1
-                JSONString += "]}},{\"type\":\"ENDTABLE\",\"tag\":\"table\",\"options\":{},\"tableContent\":\"\"},"
-
             else:
                 #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
                 if firstLine == False:
@@ -752,171 +332,6 @@ def parse(f, JSONString, idNum, pageNum):
                         idNum = idNum+1
                 else:
                     firstLine = False;
-        countLine += 1
-    return JSONString
-
-def parseTable(line, JSONString, idNum, pageNum):
-    
-    #escape the backslashes and other special characters
-    line = backslashEsc(line,0)
-#    line = line.replace('\*','&#42') #asterisks in math
-#    line = line.replace('\\','\\\\')
-    
-    line = line.replace('"','\\"')
-    line = line.replace('\'','&#39')
-    line = line.replace(';','&#59')
-    line = line.replace(']','&#93')
-    line = line.replace('[','&#91')
-    
-    #handle inline tags
-    #Bolding first
-    if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
-        line = replaceEnclosing(line,"**","<b>","</b>")
-        line = replaceEnclosing(line,"__","<b>","</b>")
-        #now italics
-        line = replaceEnclosing(line,"*","<i>","</i>")
-        line = replaceEnclosing(line,"~~","<del>","</del>")
-    # Cant use this yet until block esc is implemented
-    # line = replaceEnclosing(line,"_","<i>","</i>")
-    # #now code, using Discord-like syntax
-    if not ("```" in line):
-        line = replaceEnclosing(line,"`",'<span class=\\"inlineCode\\">',"</span>")
-    #now inline links
-    line = inlineVideoeMd(line);
-    line = inlineImageMd(line);
-    line = inlineLink(line);
-    line = inlineLinkMd(line);
-    # uListSyntax = True;
-    # subListSyntax = True;
-
-    #There are several environments that are nested.  Pages, checkpoints etc.  We need to keep track
-    #of whether we are inside or outside of one.
-    
-    
-    #The checkpoint environment is easy - everything inside gets a special style applied
-    inCheckpoint = False;
-    inCode = False;
-    oList = False;
-    countList = 0;
-    uList = False;
-    uListSyntax = True;
-    oSub = False;
-    subList = False;
-    countSubList = 0;
-    subListSyntax = True;
-    oSubList = False;
-
-    
-    #The Page environment is trickier.  We need to ensure that we don't write any components
-    #outside of a page (it can't be parsed, where would it display?) HOWEVER, we also need to make sure
-    #that we don't write the name of the page out once we start it, hence why there are two flags.
-    inPage = False;
-    firstLine = False;
-    
-        
-
-    pageFile = ''
-        
-    if inCode == True or line.startswith("```"):
-        if line.startswith("```"):
-            inCode = not inCode
-        line=line.replace("```","").strip();
-        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-        idNum = idNum+1
-
-    elif line.startswith("`") and line.endswith("`"):
-        line=line.replace("`","").strip();
-        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-        idNum = idNum+1
-
-    elif line.startswith("!ans"):
-        line = line.replace("!ans",'').strip()
-        lineAr = line.split()
-        line = line.replace(lineAr[-1], '')
-        line = line.replace('&#42', '*')
-        JSONString+="{\"type\":\"answerBox\",\"dataString\":\""+line+"\",\"id\":\""+lineAr[-1]+"\",\"pageNum\":\""+str(pageNum)+"\"},"
-        
-    elif line.startswith("!multipleChoice"):
-        radioId = 0
-        numOption = 0
-        line = line.replace("!multipleChoice", '')
-
-        lineAr = line.split()
-        radioId = lineAr[1] #name of radio button set lineAr[0] is the answer key
-        #JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\"},"
-        JSONString += "{\"type\":\"multipleChoice\",\"dataString\":\""+lineAr[0]+"\",\"id\":\""+radioId+"\",\"pageNum\":\""+str(pageNum)+"\" "
-        line = line.replace(radioId, '')
-        line = line.replace(lineAr[0], '')
-        line = line.strip()
-        if line.startswith(":"):
-            line = line.replace(":", '')
-            #JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-            JSONString += ",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\""
-        JSONString +=  ",\"choices\": [   "
-        idNum = idNum +1
-        
-    elif line.startswith("!option"):
-        line = line.replace("!option", '')
-        numOption +=1 
-        # JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
-        JSONString +="{\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
-
-        
-    elif line.startswith("!endMultipleChoice"):
-        JSONString = JSONString[:-1]
-        JSONString += " ]},"
-        
-    elif line.startswith("!video"):
-        line = line.replace("!video","").strip()
-        lineAr = line.split()
-        JSONString += "{\"type\":\"video\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
-        
-    elif line.startswith("!img"):
-        line = line.replace("!img","").strip()
-        lineAr = line.split()
-        JSONString += "{\"type\":\"img\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
-        
-    elif line.startswith("# "):
-        line = line.replace("#","").strip()
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"h1\",\"options\":{},\"content\":\""+line+"\"},"
-        
-    elif line.startswith("## "):
-        line = line.replace("##","").strip()
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"h2\",\"options\":{},\"content\":\""+line+"\"},"
-        
-    elif line.startswith("### "):
-        line = line.replace("###","").strip()
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"h3\",\"options\":{},\"content\":\""+line+"\"},"
-        
-    elif line.startswith("!brk"):
-        JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
-        
-    elif line.startswith("!code"):
-        line=line.replace("!code","").strip();
-        JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\",\"class\":\"code\"},\"content\":\""+line+"\"},"
-        idNum = idNum+1
-        
-    elif line.startswith("!link"):
-        line = line.replace("!link","").strip();
-        lineAr = line.split()
-        linkText = ""
-        for ln in lineAr[1:len(lineAr)-1]:
-            linkText = linkText+" "+ln
-        JSONString += "{\"type\":\"LINK\",\"addr\":\""+lineAr[0]+"\",\"text\":\""+linkText+"\",\"id\":\""+lineAr[len(lineAr)-1] + "\"},"
-
-    else:
-        #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
-        if firstLine == False:
-            #if the line, after stripping, is empty, add a break
-            if(line.strip() == ""):
-                JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\" \"},"
-                
-            else:
-                JSONString += "{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\"ID"+str(idNum)+"\"},\"content\":\""+line+"\"},"
-                idNum = idNum+1
-        else:
-            firstLine = False;
-    
     return JSONString
 
 
