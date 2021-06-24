@@ -202,9 +202,13 @@ def backslashEsc(line, index):
         line = line + ' '
         if line[location:location+2] == '\*':
             line = line[0:location] + '&#42' + line[location+2:-1]
+            return backslashEsc(line,index+4) 
+        elif line[location:location+2] == '\$':
+            line = line[0:location] + '\\\\&#36' + line[location+2:-1]
+            return backslashEsc(line,index+6)
         elif line[location:location+1] == '\\':
             line = line[0:location] + '\\\\' + line[location+1:-1]
-        return backslashEsc(line,index+3) 
+            return backslashEsc(line,index+2) 
     elif location == -1:
         return line
 
@@ -740,6 +744,46 @@ def parse(f, JSONString, idNum, pageNum):
                 countLine = countMax - 1
                 JSONString += "]}},{\"type\":\"ENDTABLE\",\"tag\":\"table\",\"options\":{},\"tableContent\":\"\"},"
 
+            elif "$$" in line:
+                mathCount = countLine
+                if line.find("$$", line.index("$$") + 1) == -1:
+                    fullLine = line.replace("\\\\","\\")
+                    mathCount += 1
+                    lineMath = content[mathCount]
+                    fullLine = fullLine + lineMath
+                    while not "$$" in lineMath:
+                        mathCount += 1
+                        lineMath = content[mathCount]
+                        fullLine = fullLine + lineMath
+                    fullLine = fullLine.replace("$$", "&#36&#36")
+                    content[mathCount] = fullLine
+                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False)
+                    countLine = mathCount
+                else:
+                    content[countLine] = line.replace("$$", "&#36&#36", 2)
+                    line = content[countLine]
+                    JSONString = parseTable(line, JSONString, idNum, pageNum, True)
+            
+            # Dont need to add this condition in parseTable because tables can only take single line text in each cell
+            elif "$" in line:
+                mathCount = countLine
+                if line.find("$", line.index("$") + 1) == -1:
+                    fullLine = line.replace("\\\\","\\")
+                    mathCount += 1
+                    lineMath = content[mathCount]
+                    fullLine = fullLine + lineMath
+                    while not "$" in lineMath:
+                        mathCount += 1
+                        lineMath = content[mathCount]
+                        fullLine = fullLine + lineMath
+                    fullLine = fullLine.replace("$", "&#36")
+                    content[mathCount] = fullLine
+                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False)
+                    countLine = mathCount
+                else:
+                    content[countLine] = line.replace("$", "&#36", 2)
+                    line = content[countLine]
+                    JSONString = parseTable(line, JSONString, idNum, pageNum, True)
             else:
                 #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
                 if firstLine == False:
