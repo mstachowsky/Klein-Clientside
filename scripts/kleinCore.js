@@ -208,7 +208,14 @@ function makeNewHTML(htmlNode) {
 		newHtml.setAttribute("value", htmlNode.options.value);
 
 
+	// if (htmlNode.content == "this is the dollar sign \\&#36") {
+	// 	test = document.createElement("SPAN");
+	// 	console.log(test)
+	// 	test.innerHTML = htmlNode.content;
+	// 	console.log("this is the dollar sign \\&#36")
+	// }
 	newHtml.innerHTML = htmlNode.content;
+
 	// if(htmlNode.tag === "hr"){
 	// 	var test = document.createElement(htmlNode.tag.toUpperCase());
 	// 	test.setAttribute('id',htmlNode.options.id);
