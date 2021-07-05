@@ -247,6 +247,7 @@ def parse(f, JSONString, idNum, pageNum):
     subListSyntax = True;
     oSubList = False;
     maxTableRow = 0;
+    qGroup = False;
 
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
@@ -274,6 +275,16 @@ def parse(f, JSONString, idNum, pageNum):
         if line.startswith("!addPage"):
             line = line + ' '
             pageDir = line[9:-1] #takes what ever is after the command 
+            if line.find('.pg') != -1: #.pg will be file extention for pages 
+                pageFile = open(pageDir, 'r')
+            else:
+                pageFile = open(pageDir + '.pg', 'r')
+                
+            JSONString = parse(pageFile, JSONString, idNum, pageNum)
+        
+        if line.startswith("!addQuestion"):
+            line = line + ' '
+            pageDir = line[13:-1] #takes what ever is after the command 
             if line.find('.pg') != -1: #.pg will be file extention for pages 
                 pageFile = open(pageDir, 'r')
             else:
@@ -323,6 +334,10 @@ def parse(f, JSONString, idNum, pageNum):
             JSONString += "\"variable\": ["
             #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
         
+        elif line.startswith("!assignmentVariables"):
+            JSONString += "\"variable\": ["
+            #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
+        
         elif line.startswith("!var"):
             line = line.replace('!var','').strip()
             lineAr = line.split(":")
@@ -335,9 +350,17 @@ def parse(f, JSONString, idNum, pageNum):
         elif line.startswith("!endBookVariables"):
             JSONString = JSONString[0:-1]
             JSONString += "],"
+        
+        elif line.startswith("!endAssignmentVariables"):
+            JSONString = JSONString[0:-1]
+            JSONString += "],"
             
         elif line.startswith("!Book"):
             line = line.replace('!Book','').strip()
+            JSONString += "\"bookName\":\"" + line + "\",\"pages\":["
+
+        elif line.startswith("!Assignment"):
+            line = line.replace('!Assignment','').strip()
             JSONString += "\"bookName\":\"" + line + "\",\"pages\":["
             
         elif line.startswith("!Page"):
@@ -349,6 +372,26 @@ def parse(f, JSONString, idNum, pageNum):
             JSONString+="{\"name\":\"" + line + "\",\"components\":["
             firstLine = True;
             
+        elif line.startswith("!qGroup"):
+            inPage = True;
+            qGroup = True;
+            line = line.replace('!qGroup','').strip()
+            pageNum = pageNum + 1;
+            if(line == ""):
+                line = "Question" + str(pageNum)
+            JSONString+="{\"name\":\"" + line + "\",\"type\":\"QUESTIONGROUP\",\"questions\":["
+            firstLine = True;
+
+        elif line.startswith("!Question"):
+            inPage = True;
+            line = line.replace('!Question','').strip()
+            if not qGroup:
+                pageNum = pageNum + 1;
+            if(line == ""):
+                line = "Question" + str(pageNum)
+            JSONString+="{\"name\":\"" + line + "\",\"components\":["
+            firstLine = True;
+
         elif line.startswith("!endPage"):
             inPage = False;
             #it just looks better to add an extra few blank lines at the bottom of the page
@@ -357,6 +400,21 @@ def parse(f, JSONString, idNum, pageNum):
             #Now, we added an extra comma, so we need to remove it
             JSONString = JSONString[:-1]
             JSONString+= "]},"
+        
+        elif line.startswith("!endQuestion"):
+            inPage = False;
+            #it just looks better to add an extra few blank lines at the bottom of the page
+            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
+            JSONString+="{\"type\":\"HTML\",\"tag\":\"br\",\"options\":{},\"content\":\"\"},"
+            #Now, we added an extra comma, so we need to remove it
+            JSONString = JSONString[:-1]
+            JSONString+= "]},"
+
+        elif line.startswith("!endQGroup"):
+            inPage = False;
+            qGroup = False;
+            JSONString = JSONString[:-1]
+            JSONString+="]},"
      
     
         if inPage == True:
@@ -368,6 +426,18 @@ def parse(f, JSONString, idNum, pageNum):
             elif line.startswith("!endCheckpoint"):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
+
+            elif line.startswith("!qText"):
+                JSONString+="{\"type\":\"QTEXT\"},"
+
+            elif line.startswith("!endQText"):
+                JSONString+="{\"type\":\"ENDQTEXT\"},"
+
+            elif line.startswith("!qInput"):
+                JSONString+="{\"type\":\"QINPUT\"},"
+
+            elif line.startswith("!endQInput"):
+                JSONString+="{\"type\":\"ENDQINPUT\"},"
 
             elif inCode == True or line.startswith("```"):
                 if line.startswith("```"):
@@ -415,8 +485,7 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.replace("!option", '')
                 numOption +=1 
                # JSONString +="{\"type\":\"HTML\",\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
-                JSONString +="{\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"              
-
+                JSONString +="{\"tag\":\"span\",\"options\":{\"id\":\""+str(numOption)+str(radioId)+"\",\"class\":\"span\",\"type\":\"radio\", \"name\":\""+radioId+"\", \"value\":\""+str(idNum)+"\"},\"content\":\""+line+"\"},"
                 
             elif line.startswith("!endMultipleChoice"):
                 JSONString = JSONString[:-1]
