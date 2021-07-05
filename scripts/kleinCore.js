@@ -296,8 +296,21 @@ function parseBookFromJSON(inputBook, resURL = "") {
 		contentRoot.appendChild(newPage);
 		//add content to the page
 
-		for (var j = 0; j < inputBook.pages[i].components.length; j++) {
-			var cmp = inputBook.pages[i].components[j];
+
+		if(inputBook.pages[i].type == "QUESTIONGROUP"){
+			var ran = Math.floor(Math.random() * (inputBook.pages[i].questions.length))
+			var forLen = inputBook.pages[i].questions[ran].components.length
+		}else{
+			var forLen = inputBook.pages[i].components.length
+		}
+
+		for (var j = 0; j < forLen; j++) {
+			if(inputBook.pages[i].type == "QUESTIONGROUP"){
+				var cmp = inputBook.pages[i].questions[ran].components[j];
+			}
+			else{
+				var cmp = inputBook.pages[i].components[j];
+			}
 
 			if (cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 			{
@@ -453,6 +466,26 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				}
 			}
 			else if (cmp.type === "ENDTABLE") {
+				newPage = pageStack.pop();
+			}
+			else if (cmp.type == "QTEXT") {
+				var questionDiv = { tag: "div", options: { id: "qText" + j + "Page" + i, class: "qText" }, content: "" };
+				var curPage = makeNewHTML(questionDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+			}
+			else if (cmp.type == "ENDQTEXT") {
+				newPage = pageStack.pop();
+			}
+			else if (cmp.type == "QINPUT") {
+				var questionDiv = { tag: "div", options: { id: "qInput" + j + "Page" + i, class: "qInput" }, content: "" };
+				var curPage = makeNewHTML(questionDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+			}
+			else if (cmp.type == "ENDQINPUT") {
 				newPage = pageStack.pop();
 			}
 
