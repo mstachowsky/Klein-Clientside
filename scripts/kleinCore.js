@@ -43,6 +43,7 @@ var feedBackPageShow = true;
 var feedShown  = [];
 var showFeedButton = true;
 var inputFeedShown = [];
+var mCBlank = true;
 
 // var feedPageNum = 0;
 
@@ -73,7 +74,6 @@ function howDidIDo() {
 	// console.log(answers)
 	//Checks if the book is an assignment or not to determine if it should add the feed back button
 	if(inputBookHDID.assignment == "true"){
-		// console.log(answers[0]);
 		// if(answers[1].type == "MC"){
 		// 	console.log("hello")
 		// }
@@ -138,29 +138,26 @@ function howDidIDo() {
 				// feedPageNum++;
 			}
 			// console.log(answers[i])
-
-			// if(answers[i].type == "MC"){
-			// 	console.log(document.getElementById(answers[i].dataString + answers[i].id))
-			// 	var mCCount = 1;
-			// 	var mCBlank = false;
-			// 	while(document.getElementById(answers[i].dataString + answers[i].id)){
-
-			// 	}
-
-			// }
 			
+			//Checks if any of the multiple choice options have been checked
+			if(answers[i].type == "MC"){
+				// console.log(document.getElementById(answers[i].dataString + answers[i].id))
+				var radioChecked = false;
+				var mCCount = 1;
+				while(document.getElementById(mCCount + answers[i].id) && !radioChecked){
+					if(document.getElementById(mCCount + answers[i].id).checked){
+						mCBlank = false;
+						radioChecked = true;
+					}
+					mCCount++;
+				}
+
+			}
+			
+			// console.log(mCBlank)
 
 			//Shows feedback only when the input isnt blank
-			// if(((answers[i].type == "MC") || (answers[i].type == "" && answers[i].AnsString == "")) && inputFeedShown[i]){
-			// 	var feedbackPageDiv = document.getElementById("fpg" + (i));
-			// 	feedbackPageDiv.style.display = 'none';
-			// }else if(inputFeedShown[i]){
-			// 	var feedbackPageDiv = document.getElementById("fpg" + (i));
-			// 	feedbackPageDiv.style.display = 'block';
-			// 	inputFeedShown[i] = false;
-			// }
-
-			if((answers[i].type == "" && answers[i].AnsString == "") && inputFeedShown[i]){
+			if(((answers[i].type == "MC" && !radioChecked) || (answers[i].type == "" && answers[i].AnsString == "")) && inputFeedShown[i]){
 				var feedbackPageDiv = document.getElementById("fpg" + (i));
 				feedbackPageDiv.style.display = 'none';
 			}else if(inputFeedShown[i]){
@@ -173,7 +170,7 @@ function howDidIDo() {
 		//Shows feedback button only after an input has been made
 		if(showFeedButton){
 			for(var i = 0; i < answers.length; i++){
-				if(answers[i].AnsString != "" && showFeedButton){
+				if(((answers[i].type == "" && answers[i].AnsString != "") || (answers[i].type == "MC" && !mCBlank)) && showFeedButton){
 					showFeedButton = false;
 					var selectRoot = document.getElementById('selectRow')
 					selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[pageButtons.buttons.length-1]));
@@ -191,8 +188,8 @@ function howDidIDo() {
 
 	//need to make it so the feedback button does not show up unless the user has inputed in one inputput field DONE
 	//need to make it so if the user attempted a question then makes the input blank by deleteing the answer the feedback does not disapear DONE
-	//need to figure out how to check of m/c is blank or not
-	//need to figure out how to make sure that the answers being delt with are for the current page being delt with (i)
+	//need to figure out how to check of m/c is blank or not DONE
+	//need to figure out how to make sure that the answers being delt with are for the current page being delt with (i) -> pageNum
 	//need to figure out how to add sub questions like a,b,c -> this is conected to pthe previous point
 	//also connected but need to figure out how to link feedback to specified inputs
 	
