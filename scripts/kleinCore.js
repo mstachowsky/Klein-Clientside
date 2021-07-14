@@ -37,6 +37,14 @@ var randVarMax = [];
 var variableVal = [];
 var decimals = [];
 var equation = [];
+var inputBookHDID;
+var feedPage;
+var feedBackPageShow = true;
+var feedShown  = [];
+var showFeedButton = true;
+var inputFeedShown = [];
+
+// var feedPageNum = 0;
 
 /*
 	There must be a single "How did I do" button, and that must be global
@@ -62,7 +70,132 @@ function howDidIDo() {
 		}
 	}
 
+	// console.log(answers)
+	//Checks if the book is an assignment or not to determine if it should add the feed back button
+	if(inputBookHDID.assignment == "true"){
+		// console.log(answers[0]);
+		// if(answers[1].type == "MC"){
+		// 	console.log("hello")
+		// }
+		// console.log(answers)
+		//This only happens once otherwise with would create multiple buttons everytime hdid was clicked
+		if(feedBackPageShow)
+		{
+			//Increases the page count, creates a feedback button (does not show it yet), and creates a new page div to append oll the feedback to
+			totPages++;
+			pageButtons.buttons.push(
+				{
+					type: 'button[id="' + totPages -1 + '"]',
+					content: "Feedback",
+					id: totPages -1,
+					opts: { onclick: function () { changePage(this) } }
+				}
+			)
+			var feedbackPage = document.createElement("DIV")
+			feedbackPage.setAttribute("class", "PAGE");
+			feedbackPage.setAttribute("id", "pg" + (totPages - 1));
+			var contentRoot = document.getElementById('contentPlace')
+			contentRoot.appendChild(feedbackPage);
+			var pageStack =[];
+			feedBackPageShow = false;
+			// var selectRoot = document.getElementById('selectRow')
+			// selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[pageButtons.buttons.length-1]));
+			//This array is used to determine if the feedback of a page has already been appended or not so it does not append feed back for a question multiple times
+			for(var i = 0; i < totPages - 1; i++){
+				feedShown[i] = true;
+				inputFeedShown[i] = true;
+			}
 
+		}
+		else{
+			//Creates a variable that is the feedback page div to work with and append feedback to
+			var feedbackPage = document.getElementById("pg" + (totPages - 1));
+		}
+
+		for(var i = 0; i < feedPage.length; i++){
+			//Checks if the feedback for page/question i has already been appended to prevent multiple copies of the same feedback
+			if(feedShown[i]){
+				//Creates another dive which is the feedback for each individual question to append the feedback too
+				//This is done so the feed back for unanswered questions can be hidden easily
+				var feedbackPageDiv = document.createElement("DIV")
+				feedbackPageDiv.setAttribute("class", "FEEDPAGE");
+				feedbackPageDiv.setAttribute("id", "fpg" + (i));
+				feedbackPage.appendChild(feedbackPageDiv);
+				//tableConetentCreator just renders JSON and appends it to feedbackPageDiv for each page/question i
+				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+				for(var j = 0; j < feedPage[i].length; j++){
+					//Checks if there is any JSON to render
+					if(feedPage[i][j]){
+						feedbfeedbackPageDivackPage = tableContentCreator(feedPage[i][j], feedbackPageDiv, pageStack, i, j)
+						// feedPage[i][j] = null;
+						feedShown[i] = false;
+					}
+				}
+				//Renders the score for question/page i
+				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"ID" + i},"content":"Score: " + inputBookHDID.pages[i].score}, feedbackPageDiv, pageStack, i, 0)
+				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+				// feedPageNum++;
+			}
+			// console.log(answers[i])
+
+			// if(answers[i].type == "MC"){
+			// 	console.log(document.getElementById(answers[i].dataString + answers[i].id))
+			// 	var mCCount = 1;
+			// 	var mCBlank = false;
+			// 	while(document.getElementById(answers[i].dataString + answers[i].id)){
+
+			// 	}
+
+			// }
+			
+
+			//Shows feedback only when the input isnt blank
+			// if(((answers[i].type == "MC") || (answers[i].type == "" && answers[i].AnsString == "")) && inputFeedShown[i]){
+			// 	var feedbackPageDiv = document.getElementById("fpg" + (i));
+			// 	feedbackPageDiv.style.display = 'none';
+			// }else if(inputFeedShown[i]){
+			// 	var feedbackPageDiv = document.getElementById("fpg" + (i));
+			// 	feedbackPageDiv.style.display = 'block';
+			// 	inputFeedShown[i] = false;
+			// }
+
+			if((answers[i].type == "" && answers[i].AnsString == "") && inputFeedShown[i]){
+				var feedbackPageDiv = document.getElementById("fpg" + (i));
+				feedbackPageDiv.style.display = 'none';
+			}else if(inputFeedShown[i]){
+				var feedbackPageDiv = document.getElementById("fpg" + (i));
+				feedbackPageDiv.style.display = 'block';
+				inputFeedShown[i] = false;
+			}
+		}
+
+		//Shows feedback button only after an input has been made
+		if(showFeedButton){
+			for(var i = 0; i < answers.length; i++){
+				if(answers[i].AnsString != "" && showFeedButton){
+					showFeedButton = false;
+					var selectRoot = document.getElementById('selectRow')
+					selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[pageButtons.buttons.length-1]));
+				}
+			}
+		}
+
+		//This shows the same page that the user was on when ever hdid was clicked
+		//For some reason comenting out this code makes the page blank
+		curPage++;
+		curPage--;
+		changePage({ id: curPage });
+
+	}
+
+	//need to make it so the feedback button does not show up unless the user has inputed in one inputput field DONE
+	//need to make it so if the user attempted a question then makes the input blank by deleteing the answer the feedback does not disapear DONE
+	//need to figure out how to check of m/c is blank or not
+	//need to figure out how to make sure that the answers being delt with are for the current page being delt with (i)
+	//need to figure out how to add sub questions like a,b,c -> this is conected to pthe previous point
+	//also connected but need to figure out how to link feedback to specified inputs
+	
 }
 
 function wait(ms) {
@@ -250,7 +383,29 @@ function makeNewMedia(mediaNode, type) {
 	calling on a function to mount it.
 */
 function parseBookFromJSON(inputBook, resURL = "") {
-	// console.log(inputBook);
+
+	//Creates a 2D where the first array is the the number of pages and the second array is the longest number of components in the pages
+	//This array is used to store the JSON for the a specified question/page
+	//An example would be the feedback for page 1 would be in feedPage[0][0-len]
+	feedPage = new Array(inputBook.pages.length);
+	var maxC = 0
+	for(var i = 0; i < inputBook.pages.length; i++){
+		if(inputBook.pages[i].type == "QUESTIONGROUP"){
+			for(j = 0; j <  inputBook.pages[i].questions.length; j++){
+				if(inputBook.pages[i].questions[j].components.length >= maxC)
+					maxC = inputBook.pages[i].questions[j].components.length
+			}
+		}else{
+			if (inputBook.pages[i].components.length >= maxC)
+				maxC = inputBook.pages[i].components.length;
+		} 
+	}
+
+	for(var f = 0; f < feedPage.length; f++){
+		feedPage[f] = new Array(maxC)
+	}
+	// console.log(feedPage);
+	// // console.log(inputBook);
 	var contentRoot = document.getElementById('contentPlace');
 	// console.log(contentRoot);
 	totPages = inputBook.pages.length; //used so that we can do next/back - you can't move to the next page beyond the last one
@@ -296,7 +451,7 @@ function parseBookFromJSON(inputBook, resURL = "") {
 		contentRoot.appendChild(newPage);
 		//add content to the page
 
-
+		//If a question group is used then the next forloop should go as long as the chosen question in the question group, otherwise it should go for as long as the current question
 		if(inputBook.pages[i].type == "QUESTIONGROUP"){
 			var ran = Math.floor(Math.random() * (inputBook.pages[i].questions.length))
 			var forLen = inputBook.pages[i].questions[ran].components.length
@@ -305,6 +460,7 @@ function parseBookFromJSON(inputBook, resURL = "") {
 		}
 
 		for (var j = 0; j < forLen; j++) {
+			//If the current page is one in a questiongroup then ot needs to be taken into account
 			if(inputBook.pages[i].type == "QUESTIONGROUP"){
 				var cmp = inputBook.pages[i].questions[ran].components[j];
 			}
@@ -402,6 +558,7 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				//cmp.id = name of radio, dataString = correct selection 
 
 			}
+			//Creates a horizontal line
 			else if (cmp.type === "HORIZLINE") {
 				var hLineDiv = { tag: "hr", options: { id: "horizLine" + j + "Page" + i }, content: "" };
 				var curPage = makeNewHTML(hLineDiv);
@@ -410,19 +567,24 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				// newPage = curPage;
 			}
 			else if (cmp.type === "TABLE") {
+				//Creates a general table tag to then append the following content in and style in css
 				var tableDiv = { tag: "table", options: { id: "table" + j + "Page" + i }, content: "" };
 				var curPage = makeNewHTML(tableDiv);
 				newPage.appendChild(curPage);
 				pageStack.push(newPage);
 				newPage = curPage;
 
+				//Creates a table row tag to then append the following content in
 				var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
 				var curPage = makeNewHTML(tableDiv);
 				newPage.appendChild(curPage);
 				pageStack.push(newPage);
 				newPage = curPage;
 
+				//The first table row tag is always the header so for as many headers there are each header is encosed in a table header tag then appended to the table row tag that will append the headers
 				for (var t = 0; t < cmp.tableContent.header.length; t++) {
+					//Created the table header tag, then renders the JSON that needs to be enclosed in that tag, then closes the tag by poping out of the stack
+					//This same logic is used when doing the other rows
 					var tableDiv = { tag: "th", options: { id: "tableHead" + j + "Page" + i, class: cmp.tableContent.header[t].class }, content: "" };
 					var curPage = makeNewHTML(tableDiv);
 					newPage.appendChild(curPage);
@@ -439,7 +601,7 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				}
 
 				newPage = pageStack.pop();
-
+				//This does the same thing it did for the header but inside a bigger for loop to go through all the columns
 				for (var c = 0; c < cmp.tableContent.content[0].column.length; c++) {
 					var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
 					var curPage = makeNewHTML(tableDiv);
@@ -488,10 +650,65 @@ function parseBookFromJSON(inputBook, resURL = "") {
 			else if (cmp.type == "ENDQINPUT") {
 				newPage = pageStack.pop();
 			}
+			else if (cmp.type == "FEEDBACK") {
+				// var feedDiv = { tag: "div", options: { id: "qInput" + j + "Page" + i, class: "qInput" }, content: "" };
+				//Goes through the next lines until the cmp type is ENDFEEDBACK and puts it into the feedPage array at the position corrisponding to the page/question the feedback is in, and the position the components were in, in the component array
+				j++;
+				if(inputBook.pages[i].type == "QUESTIONGROUP"){
+					cmp = inputBook.pages[i].questions[ran].components[j];
+				}
+				else{
+					cmp = inputBook.pages[i].components[j];
+				}
+
+				while(cmp.type != "ENDFEEDBACK"){
+					feedPage[i][j] = cmp;
+					j++;
+					if(inputBook.pages[i].type == "QUESTIONGROUP"){
+						cmp = inputBook.pages[i].questions[ran].components[j];
+					}
+					else{
+						cmp = inputBook.pages[i].components[j];
+					}
+				}
+			}
 
 		}
 	}
 
+	// if(inputBook.assignment == "true"){
+	// 	totPages++;
+	// 	pageButtons.buttons.push(
+	// 		{
+	// 			type: 'button[id="' + totPages -1 + '"]',
+	// 			content: "Feedback",
+	// 			id: totPages -1,
+	// 			opts: { onclick: function () { changePage(this) } }
+	// 		}
+	// 	)
+	// 	var feedbackPage = document.createElement("DIV")
+	// 	feedbackPage.setAttribute("class", "PAGE");
+	// 	feedbackPage.setAttribute("id", "pg" + (totPages - 1));
+	// 	contentRoot.appendChild(feedbackPage);
+	// 	for(var i = 0; i < feedPage.length; i++){
+	// 		// feedbackPage = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPage, pageStack, i, 0)
+	// 		// feedbackPage = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"ID" + i},"content":"Score: " + inputBook.pages[i].score}, feedbackPage, pageStack, i, 0)
+	// 		feedbackPage = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPage, pageStack, i, 0)
+	// 		for(var j = 0; j < feedPage[i].length; j++){
+	// 			if(feedPage[i][j]){
+	// 				feedbackPage = tableContentCreator(feedPage[i][j], feedbackPage, pageStack, i, j)
+	// 				// console.log(feedPage[i][j])
+	// 			}
+	// 		}
+
+	// 		feedbackPage = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPage, pageStack, i, 0)
+	// 		feedbackPage = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"ID" + i},"content":"Score: " + inputBook.pages[i].score}, feedbackPage, pageStack, i, 0)
+	// 		feedbackPage = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPage, pageStack, i, 0)
+	// 	}
+
+
+	// }
+	inputBookHDID = inputBook;
 	//mount the book's title, which should never change throughout an assignment
 	var headerRoot = document.getElementById("header");
 	var headDiv = { tag: "span", options: { id: cmp.id }, content: inputBook.bookName };
@@ -501,6 +718,7 @@ function parseBookFromJSON(inputBook, resURL = "") {
 	makeNewPage();
 }
 
+//This function is used to append JSON to a div given into the function as a parameter
 function tableContentCreator(cmp, newPage, pageStack, i, j) {
 	if (cmp.content) //this replaces all instances of the random variables in the html with their randomized values
 	{
@@ -590,7 +808,91 @@ function tableContentCreator(cmp, newPage, pageStack, i, j) {
 
 		}
 		//cmp.id = name of radio, dataString = correct selection 
+	}else if (cmp.type === "HORIZLINE") {
+		var hLineDiv = { tag: "hr", options: { id: "horizLine" + j + "Page" + i }, content: "" };
+		var curPage = makeNewHTML(hLineDiv);
+		newPage.appendChild(curPage);
+		// pageStack.push(newPage);
+		// newPage = curPage;
+	}
+	else if (cmp.type === "TABLE") {
+		var tableDiv = { tag: "table", options: { id: "table" + j + "Page" + i }, content: "" };
+		var curPage = makeNewHTML(tableDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
 
+		var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
+		var curPage = makeNewHTML(tableDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+
+		for (var t = 0; t < cmp.tableContent.header.length; t++) {
+			var tableDiv = { tag: "th", options: { id: "tableHead" + j + "Page" + i, class: cmp.tableContent.header[t].class }, content: "" };
+			var curPage = makeNewHTML(tableDiv);
+			newPage.appendChild(curPage);
+			pageStack.push(newPage);
+			newPage = curPage;
+
+			for (var h = 0; h < cmp.tableContent.header[t].headerContent.length; h++) {
+				newPage = tableContentCreator(cmp.tableContent.header[t].headerContent[h], newPage, pageStack, i, j);
+			}
+
+			// newPage = tableContentCreator(cmp.tableContent.header[t].headerContent, newPage, pageStack, i, j);
+
+			newPage = pageStack.pop();
+		}
+
+		newPage = pageStack.pop();
+
+		for (var c = 0; c < cmp.tableContent.content[0].column.length; c++) {
+			var tableDiv = { tag: "tr", options: { id: "tableRow" + j + "Page" + i }, content: "" };
+			var curPage = makeNewHTML(tableDiv);
+			newPage.appendChild(curPage);
+			pageStack.push(newPage);
+			newPage = curPage;
+
+			for (var t = 0; t < cmp.tableContent.content.length; t++) {
+				var tableDiv = { tag: "td", options: { id: "tableData" + j + "Page" + i, class: cmp.tableContent.content[t].class }, content: "" };
+				var curPage = makeNewHTML(tableDiv);
+				newPage.appendChild(curPage);
+				pageStack.push(newPage);
+				newPage = curPage;
+
+				for (var cc = 0; cc < cmp.tableContent.content[t].column[c].length; cc++) {
+					newPage = tableContentCreator(cmp.tableContent.content[t].column[c][cc], newPage, pageStack, i, j);
+				}
+				// newPage = tableContentCreator(cmp.tableContent.content[t].column[c], newPage, pageStack, i, j);
+
+				newPage = pageStack.pop();
+			}
+
+			newPage = pageStack.pop();
+		}
+	}
+	else if (cmp.type === "ENDTABLE") {
+		newPage = pageStack.pop();
+	}
+	else if (cmp.type == "QTEXT") {
+		var questionDiv = { tag: "div", options: { id: "qText" + j + "Page" + i, class: "qText" }, content: "" };
+		var curPage = makeNewHTML(questionDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "ENDQTEXT") {
+		newPage = pageStack.pop();
+	}
+	else if (cmp.type == "QINPUT") {
+		var questionDiv = { tag: "div", options: { id: "qInput" + j + "Page" + i, class: "qInput" }, content: "" };
+		var curPage = makeNewHTML(questionDiv);
+		newPage.appendChild(curPage);
+		pageStack.push(newPage);
+		newPage = curPage;
+	}
+	else if (cmp.type == "ENDQINPUT") {
+		newPage = pageStack.pop();
 	}
 
 	return newPage;
