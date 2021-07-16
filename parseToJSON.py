@@ -249,6 +249,7 @@ def parse(f, JSONString, idNum, pageNum):
     maxTableRow = 0;
     qGroup = False;
     assignment = False;
+    inVar = False;
 
     
     #The Page environment is trickier.  We need to ensure that we don't write any components
@@ -309,7 +310,7 @@ def parse(f, JSONString, idNum, pageNum):
        
         #handle inline tags
         #Bolding first
-        if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
+        if (not inVar) and (not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line)))):
             line = replaceEnclosing(line,"**","<b>","</b>")
             line = replaceEnclosing(line,"__","<b>","</b>")
             #now italics
@@ -332,10 +333,12 @@ def parse(f, JSONString, idNum, pageNum):
             line = line.replace('&#42', '*')
         
         if line.startswith("!bookVariables"):
+            inVar = True
             JSONString += "\"variable\": ["
             #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
         
         elif line.startswith("!assignmentVariables"):
+            inVar = True
             JSONString += "\"variable\": ["
             #JSONString += "{\"type\":\"randomVariable\",\"variable\":\""+lineAr[0] +"\",\"variableValMin\":\""+lineAr[1]+"\",\"variableValMax\":\""+lineAr[2] +"\"},"
         
@@ -349,10 +352,12 @@ def parse(f, JSONString, idNum, pageNum):
                 JSONString += "{\"name\":\""+lineAr[0].strip() +"\", \"equation\":\""+lineAr[1]+"\"},"
         
         elif line.startswith("!endBookVariables"):
+            inVar = False
             JSONString = JSONString[0:-1]
             JSONString += "],"
         
         elif line.startswith("!endAssignmentVariables"):
+            inVar = False
             JSONString = JSONString[0:-1]
             JSONString += "],"
             
@@ -443,6 +448,13 @@ def parse(f, JSONString, idNum, pageNum):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
 
+            elif line.startswith("!score"):
+                score = line.replace("!score", "").strip()
+                if score == "":
+                    JSONString+="{\"type\":\"SCORE\",\"score\":\"" + str(1) + "\"},"
+                else:
+                    JSONString+="{\"type\":\"SCORE\",\"score\":\"" + str(score) + "\"},"
+
             elif line.startswith("!feedback"):
                 JSONString+="{\"type\":\"FEEDBACK\"},"
                 if not (line.replace("!feedback","").strip() == ""):
@@ -463,8 +475,8 @@ def parse(f, JSONString, idNum, pageNum):
 
             elif line.startswith("!qInput"):
                 JSONString+="{\"type\":\"QINPUT\"},"
-                if not (line.replace("!Input","").strip() == ""):
-                    content[countLine] = line.replace("!Input","").strip()
+                if not (line.replace("!qInput","").strip() == ""):
+                    content[countLine] = line.replace("!qInput","").strip()
                     countLine -= 1
 
             elif line.startswith("!endQInput"):
@@ -915,7 +927,7 @@ def parseTable(line, JSONString, idNum, pageNum, header):
         
         #handle inline tags
         #Bolding first
-        if not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line))):
+        if (not inVar) and (not (len(line) >= 3 and (("*" * len(line) == line) or ("_" * len(line) == line) or ("-" * len(line) == line)))):
             line = replaceEnclosing(line,"**","<b>","</b>")
             line = replaceEnclosing(line,"__","<b>","</b>")
             #now italics
