@@ -14,6 +14,8 @@
 		Skipped ahead due to rapid development by K. Jiang:
 		
 		v0.9: Major changes.  Implemented randomized variables and multiple choice
+
+		v1: Implemented tables, and the Assignment directive
 */
 
 /*
@@ -39,11 +41,14 @@ var decimals = [];
 var equation = [];
 var inputBookHDID;
 var feedPage;
+var scoreCount = [];
 var feedBackPageShow = true;
 var feedShown  = [];
 var showFeedButton = true;
 var inputFeedShown = [];
 var mCBlank = true;
+var isFeedback = false;
+var scoreID = 0;
 
 // var feedPageNum = 0;
 
@@ -73,11 +78,8 @@ function howDidIDo() {
 
 	// console.log(answers)
 	//Checks if the book is an assignment or not to determine if it should add the feed back button
-	if(inputBookHDID.assignment == "true"){
-		// if(answers[1].type == "MC"){
-		// 	console.log("hello")
-		// }
-		// console.log(answers)
+	if(inputBookHDID.assignment == "true" && isFeedback){
+
 		//This only happens once otherwise with would create multiple buttons everytime hdid was clicked
 		if(feedBackPageShow)
 		{
@@ -98,10 +100,8 @@ function howDidIDo() {
 			contentRoot.appendChild(feedbackPage);
 			var pageStack =[];
 			feedBackPageShow = false;
-			// var selectRoot = document.getElementById('selectRow')
-			// selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[pageButtons.buttons.length-1]));
 			//This array is used to determine if the feedback of a page has already been appended or not so it does not append feed back for a question multiple times
-			for(var i = 0; i < totPages - 1; i++){
+			for(var i = 0; i < answers.length; i++){
 				feedShown[i] = true;
 				inputFeedShown[i] = true;
 			}
@@ -111,34 +111,51 @@ function howDidIDo() {
 			//Creates a variable that is the feedback page div to work with and append feedback to
 			var feedbackPage = document.getElementById("pg" + (totPages - 1));
 		}
-
+		
 		for(var i = 0; i < feedPage.length; i++){
+
+			if(feedShown[0]){
+				//Creates another div which is the feedback for each individual question to append the feedback too
+				//This is done so the feed back for unanswered questions can be hidden easily
+				var feedbackPageDiv = document.createElement("DIV");
+				feedbackPageDiv.setAttribute("class", "FEEDPAGE");
+				feedbackPageDiv.setAttribute("id", "fpg" + (scoreID));
+				feedbackPage.appendChild(feedbackPageDiv);
+			}
+
 			//Checks if the feedback for page/question i has already been appended to prevent multiple copies of the same feedback
 			if(feedShown[i]){
-				//Creates another dive which is the feedback for each individual question to append the feedback too
-				//This is done so the feed back for unanswered questions can be hidden easily
-				var feedbackPageDiv = document.createElement("DIV")
-				feedbackPageDiv.setAttribute("class", "FEEDPAGE");
-				feedbackPageDiv.setAttribute("id", "fpg" + (i));
-				feedbackPage.appendChild(feedbackPageDiv);
 				//tableConetentCreator just renders JSON and appends it to feedbackPageDiv for each page/question i
-				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
 				for(var j = 0; j < feedPage[i].length; j++){
 					//Checks if there is any JSON to render
 					if(feedPage[i][j]){
-						feedbfeedbackPageDivackPage = tableContentCreator(feedPage[i][j], feedbackPageDiv, pageStack, i, j)
+						feedbackPageDiv = tableContentCreator(feedPage[i][j], feedbackPageDiv, pageStack, i, j)
 						// feedPage[i][j] = null;
 						feedShown[i] = false;
 					}
+
+					if(feedPage[i][j] && !feedPage[i][j+1]){
+						var scoreDis = scoreCount.shift();
+						//Renders the score for question/page i
+						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"IDC" + scoreID},"content":"Score: " + scoreDis + "/" + scoreDis}, feedbackPageDiv, pageStack, i, 0)
+						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"IDI" + scoreID},"content":"Score: " + "0/" + scoreDis}, feedbackPageDiv, pageStack, i, 0)
+						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						scoreID++
+						//This is done so the feed back for unanswered questions can be hidden easily
+						var feedbackPageDiv = document.createElement("DIV");
+						feedbackPageDiv.setAttribute("class", "FEEDPAGE");
+						feedbackPageDiv.setAttribute("id", "fpg" + (scoreID));
+						feedbackPage.appendChild(feedbackPageDiv);
+						//tableConetentCreator just renders JSON and appends it to feedbackPageDiv for each page/question i
+					}
 				}
-				//Renders the score for question/page i
-				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
-				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"ID" + i},"content":"Score: " + inputBookHDID.pages[i].score}, feedbackPageDiv, pageStack, i, 0)
-				feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
 				// feedPageNum++;
 			}
 			// console.log(answers[i])
-			
+		}	
+
+		for(var i = 0; i < answers.length; i++){
 			//Checks if any of the multiple choice options have been checked
 			if(answers[i].type == "MC"){
 				// console.log(document.getElementById(answers[i].dataString + answers[i].id))
@@ -154,16 +171,30 @@ function howDidIDo() {
 
 			}
 			
-			// console.log(mCBlank)
-
+			var feedbackPageDiv = document.getElementById("fpg" + (i));
 			//Shows feedback only when the input isnt blank
 			if(((answers[i].type == "MC" && !radioChecked) || (answers[i].type == "" && answers[i].AnsString == "")) && inputFeedShown[i]){
-				var feedbackPageDiv = document.getElementById("fpg" + (i));
 				feedbackPageDiv.style.display = 'none';
 			}else if(inputFeedShown[i]){
-				var feedbackPageDiv = document.getElementById("fpg" + (i));
 				feedbackPageDiv.style.display = 'block';
 				inputFeedShown[i] = false;
+			}
+
+			// console.log(feedbackPageDiv)
+			// console.log(inputFeedShown)
+		}
+
+		for(var i = 0; i < answers.length; i++){
+			if(answers[i].checkAnswer()){
+				var cAns = document.getElementById("IDC" + (i));
+				cAns.style.display = 'block';
+				var iAns = document.getElementById("IDI" + (i));
+				iAns.style.display = 'none';
+			}else{
+				var cAns = document.getElementById("IDC" + (i));
+				cAns.style.display = 'none';
+				var iAns = document.getElementById("IDI" + (i));
+				iAns.style.display = 'block';
 			}
 		}
 
@@ -650,6 +681,8 @@ function parseBookFromJSON(inputBook, resURL = "") {
 			else if (cmp.type == "FEEDBACK") {
 				// var feedDiv = { tag: "div", options: { id: "qInput" + j + "Page" + i, class: "qInput" }, content: "" };
 				//Goes through the next lines until the cmp type is ENDFEEDBACK and puts it into the feedPage array at the position corrisponding to the page/question the feedback is in, and the position the components were in, in the component array
+				isFeedback = true;
+				feedPage[i][j] = {"type":"HTML","tag":"br","options":{},"content":""};
 				j++;
 				if(inputBook.pages[i].type == "QUESTIONGROUP"){
 					cmp = inputBook.pages[i].questions[ran].components[j];
@@ -657,7 +690,6 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				else{
 					cmp = inputBook.pages[i].components[j];
 				}
-
 				while(cmp.type != "ENDFEEDBACK"){
 					feedPage[i][j] = cmp;
 					j++;
@@ -668,6 +700,9 @@ function parseBookFromJSON(inputBook, resURL = "") {
 						cmp = inputBook.pages[i].components[j];
 					}
 				}
+			}
+			else if(cmp.type == "SCORE"){
+				scoreCount.push(cmp.score);
 			}
 
 		}
