@@ -448,6 +448,13 @@ def parse(f, JSONString, idNum, pageNum):
                 JSONString+="{\"type\":\"ENDCHECK\",\"tag\":\"hr\",\"options\":{},\"content\":\""+""+"\"},"
                 inCheckpoint = False
 
+            elif line.startswith("!score"):
+                score = line.replace("!score", "").strip()
+                if score == "":
+                    JSONString+="{\"type\":\"SCORE\",\"score\":\"" + str(1) + "\"},"
+                else:
+                    JSONString+="{\"type\":\"SCORE\",\"score\":\"" + str(score) + "\"},"
+
             elif line.startswith("!feedback"):
                 JSONString+="{\"type\":\"FEEDBACK\"},"
                 if not (line.replace("!feedback","").strip() == ""):
@@ -468,8 +475,8 @@ def parse(f, JSONString, idNum, pageNum):
 
             elif line.startswith("!qInput"):
                 JSONString+="{\"type\":\"QINPUT\"},"
-                if not (line.replace("!Input","").strip() == ""):
-                    content[countLine] = line.replace("!Input","").strip()
+                if not (line.replace("!qInput","").strip() == ""):
+                    content[countLine] = line.replace("!qInput","").strip()
                     countLine -= 1
 
             elif line.startswith("!endQInput"):
