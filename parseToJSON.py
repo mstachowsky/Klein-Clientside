@@ -283,6 +283,13 @@ def parse(f, JSONString, idNum, pageNum):
                 pageFile = open(pageDir + '.pg', 'r')
                 
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
+            countLine += 1
+            line = content[countLine]
+
+            #remove leading and trailing whitespace
+            line = line.strip()
+        
+            tagMatching(line, myStack, openingTags, closingTags)
         
         if line.startswith("!addQuestion"):
             line = line + ' '
@@ -293,6 +300,13 @@ def parse(f, JSONString, idNum, pageNum):
                 pageFile = open(pageDir + '.pg', 'r')
                 
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
+            countLine += 1
+            line = content[countLine]
+
+            #remove leading and trailing whitespace
+            line = line.strip()
+        
+            tagMatching(line, myStack, openingTags, closingTags)
          
         
         
@@ -353,12 +367,14 @@ def parse(f, JSONString, idNum, pageNum):
         
         elif line.startswith("!endBookVariables"):
             inVar = False
-            JSONString = JSONString[0:-1]
+            if not JSONString.endswith("["):
+                JSONString = JSONString[0:-1]
             JSONString += "],"
         
         elif line.startswith("!endAssignmentVariables"):
             inVar = False
-            JSONString = JSONString[0:-1]
+            if not JSONString.endswith("["):
+                JSONString = JSONString[0:-1]
             JSONString += "],"
             
         elif line.startswith("!Book"):
@@ -811,7 +827,7 @@ def parse(f, JSONString, idNum, pageNum):
 
                 for header in lineAr:
                     JSONString += "{\"headerContent\":["
-                    JSONString = parseTable(header, JSONString, idNum, pageNum, True)
+                    JSONString = parseTable(header, JSONString, idNum, pageNum, True, inVar)
                     if JSONString.endswith(","):
                         JSONString = JSONString[0: len(JSONString) -1]
                     JSONString += "],\"class\":\"" + lineClassAr[lineAr.index(header)] + "\"},"
@@ -836,9 +852,9 @@ def parse(f, JSONString, idNum, pageNum):
                         rowArr = line.split("|")
                         JSONString += "["
                         if arrInd <= len(rowArr) - 1:
-                            JSONString = parseTable(rowArr[arrInd], JSONString, idNum, pageNum, False)
+                            JSONString = parseTable(rowArr[arrInd], JSONString, idNum, pageNum, False, inVar)
                         else:
-                            JSONString = parseTable("", JSONString, idNum, pageNum, False)
+                            JSONString = parseTable("", JSONString, idNum, pageNum, False, inVar)
                         if JSONString.endswith(","):
                             JSONString = JSONString[0: len(JSONString) -1]
                         JSONString += "],"
@@ -869,12 +885,12 @@ def parse(f, JSONString, idNum, pageNum):
                         fullLine = fullLine + lineMath
                     fullLine = fullLine.replace("$$", "&#36&#36")
                     content[mathCount] = fullLine
-                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False)
+                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False, inVar)
                     countLine = mathCount
                 else:
                     content[countLine] = line.replace("$$", "&#36&#36", 2)
                     line = content[countLine]
-                    JSONString = parseTable(line, JSONString, idNum, pageNum, True)
+                    JSONString = parseTable(line, JSONString, idNum, pageNum, True, inVar)
             
             # Dont need to add this condition in parseTable because tables can only take single line text in each cell
             elif "$" in line:
@@ -890,12 +906,12 @@ def parse(f, JSONString, idNum, pageNum):
                         fullLine = fullLine + lineMath
                     fullLine = fullLine.replace("$", "&#36")
                     content[mathCount] = fullLine
-                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False)
+                    JSONString = parseTable(content[mathCount], JSONString, idNum, pageNum, False, inVar)
                     countLine = mathCount
                 else:
                     content[countLine] = line.replace("$", "&#36", 2)
                     line = content[countLine]
-                    JSONString = parseTable(line, JSONString, idNum, pageNum, True)
+                    JSONString = parseTable(line, JSONString, idNum, pageNum, True, inVar)
             else:
                 #only way for this is to be raw text.  Note: we still need to parse MathJax syntax!
                 if firstLine == False:
@@ -912,7 +928,7 @@ def parse(f, JSONString, idNum, pageNum):
     return JSONString
 
 # Function for tables
-def parseTable(line, JSONString, idNum, pageNum, header):
+def parseTable(line, JSONString, idNum, pageNum, header, inVar):
     if not header:
         #escape the backslashes and other special characters
         line = backslashEsc(line,0)
