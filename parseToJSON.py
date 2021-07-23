@@ -79,6 +79,7 @@ def replaceEnclosing(line,delims,beginTag,endTag):
     
     Links in the markdown are enclosed by three square brackets [[[like this]]].  After special character replacement, these become &#91 and &#93.  So we extract the link text from between those two substrings, create an HTML link, and replace the whole thing with that HTML.  Then we continue doing that until there are no more inline links on this line.
 '''    
+
 def inlineLink(line):
     startString = "&#91&#91&#91"
     endString = "&#93&#93&#93"
@@ -283,13 +284,14 @@ def parse(f, JSONString, idNum, pageNum):
                 pageFile = open(pageDir + '.pg', 'r')
                 
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
-            countLine += 1
-            line = content[countLine]
+            if countLine < len(content) -1:
+                countLine += 1
+                line = content[countLine]
 
-            #remove leading and trailing whitespace
-            line = line.strip()
+                #remove leading and trailing whitespace
+                line = line.strip()
         
-            tagMatching(line, myStack, openingTags, closingTags)
+                tagMatching(line, myStack, openingTags, closingTags)
         
         if line.startswith("!addQuestion"):
             line = line + ' '
@@ -300,13 +302,14 @@ def parse(f, JSONString, idNum, pageNum):
                 pageFile = open(pageDir + '.pg', 'r')
                 
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
-            countLine += 1
-            line = content[countLine]
+            if countLine < len(content) - 1:
+                countLine += 1
+                line = content[countLine]
 
-            #remove leading and trailing whitespace
-            line = line.strip()
+                #remove leading and trailing whitespace
+                line = line.strip()
         
-            tagMatching(line, myStack, openingTags, closingTags)
+                tagMatching(line, myStack, openingTags, closingTags)
          
         
         
