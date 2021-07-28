@@ -59,7 +59,9 @@ var scoreID = 0;
 	every answer and change the DOM.
 */
 function howDidIDo() {
+	console.log(answers)
 	for (var i = 0; i < answers.length; i++) {
+		console.log(curPage)
 		var yesBx = document.getElementById("AnswerCheck" + answers[i].ID);
 		if (yesBx) {
 			if (answers[i].pageNum == curPage) {
@@ -75,7 +77,10 @@ function howDidIDo() {
 			}
 		}
 	}
-
+	
+	// var d = document.getElementById("AnswerCheck" + answers[2].ID);
+	// d.innerHTML = " \u2705"
+	// console.log(d)
 	// console.log(answers)
 	//Checks if the book is an assignment or not to determine if it should add the feed back button
 	if(inputBookHDID.assignment == "true" && isFeedback){
