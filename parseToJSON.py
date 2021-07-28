@@ -282,9 +282,11 @@ def parse(f, JSONString, idNum, pageNum):
                 pageFile = open(pageDir, 'r')
             else:
                 pageFile = open(pageDir + '.pg', 'r')
-                
+            
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
-            if countLine < len(content) -1:
+            if not qGroup:
+                pageNum += 1
+            if qGroup:
                 countLine += 1
                 line = content[countLine]
 
@@ -292,6 +294,8 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.strip()
         
                 tagMatching(line, myStack, openingTags, closingTags)
+            # content[countLine] = ""
+            # line = ""
         
         if line.startswith("!addQuestion"):
             line = line + ' '
@@ -301,8 +305,11 @@ def parse(f, JSONString, idNum, pageNum):
             else:
                 pageFile = open(pageDir + '.pg', 'r')
                 
+            
             JSONString = parse(pageFile, JSONString, idNum, pageNum)
-            if countLine < len(content) - 1:
+            if not qGroup:
+                pageNum += 1
+            if qGroup:
                 countLine += 1
                 line = content[countLine]
 
@@ -310,6 +317,8 @@ def parse(f, JSONString, idNum, pageNum):
                 line = line.strip()
         
                 tagMatching(line, myStack, openingTags, closingTags)
+            # content[countLine] = ""
+            # line = ""
          
         
         
