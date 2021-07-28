@@ -59,9 +59,9 @@ var scoreID = 0;
 	every answer and change the DOM.
 */
 function howDidIDo() {
-	console.log(answers)
+	// console.log(answers)
 	for (var i = 0; i < answers.length; i++) {
-		console.log(curPage)
+		// console.log(curPage)
 		var yesBx = document.getElementById("AnswerCheck" + answers[i].ID);
 		if (yesBx) {
 			if (answers[i].pageNum == curPage) {
