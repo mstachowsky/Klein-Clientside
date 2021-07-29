@@ -49,6 +49,7 @@ var inputFeedShown = [];
 var mCBlank = true;
 var isFeedback = false;
 var scoreID = 0;
+var showScore = []
 
 // var feedPageNum = 0;
 
@@ -142,10 +143,15 @@ function howDidIDo() {
 					if(feedPage[i][j] && !feedPage[i][j+1]){
 						var scoreDis = scoreCount.shift();
 						//Renders the score for question/page i
-						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						if(showScore[scoreID]){
+							feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						}
 						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"IDC" + scoreID},"content":"Score: " + scoreDis + "/" + scoreDis}, feedbackPageDiv, pageStack, i, 0)
 						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"span","options":{"id":"IDI" + scoreID},"content":"Score: " + "0/" + scoreDis}, feedbackPageDiv, pageStack, i, 0)
-						feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						// feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						if(showScore[scoreID]){
+							feedbackPageDiv = tableContentCreator({"type":"HTML","tag":"br","options":{},"content":""}, feedbackPageDiv, pageStack, i, 0)
+						}
 						scoreID++
 						//This is done so the feed back for unanswered questions can be hidden easily
 						var feedbackPageDiv = document.createElement("DIV");
@@ -188,9 +194,14 @@ function howDidIDo() {
 			// console.log(feedbackPageDiv)
 			// console.log(inputFeedShown)
 		}
-
+		console.log(showScore)
 		for(var i = 0; i < answers.length; i++){
-			if(answers[i].checkAnswer()){
+			if(!showScore[i]){
+				var cAns = document.getElementById("IDC" + (i));
+				cAns.style.display = 'none';
+				var iAns = document.getElementById("IDI" + (i));
+				iAns.style.display = 'none';
+			}else if(answers[i].checkAnswer()){
 				var cAns = document.getElementById("IDC" + (i));
 				cAns.style.display = 'block';
 				var iAns = document.getElementById("IDI" + (i));
@@ -206,7 +217,7 @@ function howDidIDo() {
 		//Shows feedback button only after an input has been made
 		if(showFeedButton){
 			for(var i = 0; i < answers.length; i++){
-				if(((answers[i].type == "" && answers[i].AnsString != "") || (answers[i].type == "MC" && !mCBlank)) && showFeedButton){
+				if(((answers[i].type == "" && answers[i].AnsString != "") || (answers[i].type == "MC" && !mCBlank)) && showFeedButton && showScore[i]){
 					showFeedButton = false;
 					var selectRoot = document.getElementById('selectRow')
 					selectRoot.appendChild(makeNewPageButton(pageButtons.buttons[pageButtons.buttons.length-1]));
@@ -695,6 +706,8 @@ function parseBookFromJSON(inputBook, resURL = "") {
 				else{
 					cmp = inputBook.pages[i].components[j];
 				}
+
+				showScore.push(cmp.type != "ENDFEEDBACK")
 				while(cmp.type != "ENDFEEDBACK"){
 					feedPage[i][j] = cmp;
 					j++;
