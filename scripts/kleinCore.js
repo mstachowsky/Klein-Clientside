@@ -194,7 +194,7 @@ function howDidIDo() {
 			// console.log(feedbackPageDiv)
 			// console.log(inputFeedShown)
 		}
-		console.log(showScore)
+		// console.log(showScore)
 		for(var i = 0; i < answers.length; i++){
 			if(!showScore[i]){
 				var cAns = document.getElementById("IDC" + (i));
