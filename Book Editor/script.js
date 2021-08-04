@@ -779,6 +779,9 @@ function lock(){
         var page = document.getElementById("pageInputText" + i)
         page.contentEditable = false
     }
+
+    document.getElementById("variables").contentEditable = false
+    document.getElementById("outputContent").contentEditable = false
 }
 
 function unlock(){
@@ -787,6 +790,9 @@ function unlock(){
         var page = document.getElementById("pageInputText" + i)
         page.contentEditable = true
     }
+
+    document.getElementById("variables").contentEditable = true
+    document.getElementById("outputContent").contentEditable = true
 }
 
 function addVariable(){
@@ -890,6 +896,7 @@ function submitVariable(){
     var page = document.getElementById("variableFormPlace")
     var variableHolder = document.getElementById("variables")
     var variable = name + ":" + val
+    // console.log(variable)
     var varDiv = document.createElement("div")
     // varDiv.setAttribute("id", "variable" + numVariables)
     // numVariables++;
@@ -908,6 +915,7 @@ function submitRandomVariable(){
     var page = document.getElementById("variableFormPlace")
     var variableHolder = document.getElementById("variables")
     var variable = name + ":" + min + ":" + max + ":" + dec
+    // console.log(variable)
     var varDiv = document.createElement("div")
     // varDiv.setAttribute("id", "variable" + numVariables)
     // numVariables++;
@@ -927,6 +935,7 @@ function submitRandomVariable(){
 
 function variablePrint(){
     var variables = document.getElementById("variables").innerHTML
+    variables = variables.trim()
     if(variables.trim() == ""){
         return variables
     }
