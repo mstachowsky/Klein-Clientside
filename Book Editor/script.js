@@ -19,6 +19,12 @@ function newPage(){
     // pageNameIn.setAttribute("class", "pageNameInText");
     page.appendChild(pageNameIn);
 
+    var pageCol = document.createElement("button")
+    pageCol.innerHTML = "Collapse"
+    pageCol.setAttribute("onClick","collapse(" + pageNum + ")")
+    pageCol.setAttribute("class","collapseButton")
+    page.appendChild(pageCol)
+
     // page.appendChild(document.createElement("br"))
 
     var pageIn = document.createElement("div");
@@ -33,6 +39,25 @@ function newPage(){
     pageNum++;
 }
 
+function collapse(currPage){
+    var page = document.getElementById("pageInputText" + currPage);
+    
+    if(!(page.style.display)){
+        page.style.display = 'none'
+    }else if(page.style.display == 'none'){
+        page.style.display = 'block'
+    }else if(page.style.display == 'block'){
+        page.style.display = 'none'
+    }
+}
+
+function unCollapse(){
+    for(var i = 0; i < pageNum; i++){
+        var page = document.getElementById("pageInputText" + i);
+        page.style.display = 'block'
+    }
+}
+
 function removeLastPage(){
     if(pageNum > 0){
         var pages = document.getElementById("input");
@@ -42,6 +67,7 @@ function removeLastPage(){
 }
 
 function printBook(){
+    unCollapse()
     var content = ""
     var output = document.getElementById("outputContent");
     content += "!bookVariables<br><br>";
