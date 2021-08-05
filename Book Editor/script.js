@@ -203,6 +203,7 @@ function multipleChoice(){
 }
 
 function MCSubmit(){
+    document.getElementById("numOptions").focus()
     var form = document.getElementById("MCForm")
     var question = document.getElementById("MCQueston").value
     var id = document.getElementById("MCID").value
@@ -436,6 +437,7 @@ function ansBoxSub(abs, tol, text, pageInNum){
 
     if(abs){
         var val = document.getElementById("absValIn").value;
+        document.getElementById("absValIn").focus()
         var id = document.getElementById("absIDIn").value;
         var ab = "!ans numeric:" + val + ":absulute " + id
         // page.innerHTML = page.innerHTML + ab
@@ -444,12 +446,14 @@ function ansBoxSub(abs, tol, text, pageInNum){
     }else if(tol){
         var val = document.getElementById("tolValIn").value;
         var id = document.getElementById("tolIDIn").value;
+        var id = document.getElementById("tolIDIn").focus()
         var tol = document.getElementById("toltolIn").value;
         var ab = "!ans numeric:" + val + ":" + tol + " " + id
         // page.innerHTML = page.innerHTML + ab
         // page.removeChild(document.getElementById("ABForm"));
     }else if(text){
         var textIn = document.getElementById("textIn").value;
+        document.getElementById("textIn").focus()
         var id = document.getElementById("textIDIn").value;
         var ab = "!ans " + textIn + " " + id
         // page.innerHTML = page.innerHTML + ab
@@ -523,6 +527,7 @@ function submitTable(){
     //     var page = document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.parentElement.id.slice(-1));
     // }
     var form = document.getElementById("tableForm")
+    document.getElementById("colIn").focus()
     var cols = parseInt(document.getElementById("colIn").value)
     var rows = parseInt(document.getElementById("rowIn").value)
     var table = "|"
@@ -614,6 +619,7 @@ function submitImage(){
     //     var page = document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.parentElement.id.slice(-1));
     // }
     var form = document.getElementById("imgForm")
+    document.getElementById("altIn").focus()
     var alt = document.getElementById("altIn").value
     var img = document.getElementById("imgIn").value
 
@@ -705,6 +711,7 @@ function submitVideo(){
     // }
 
     var alt = document.getElementById("altVidIn").value;
+    document.getElementById("altVidIn").focus()
     var thum = document.getElementById("thumIn").value;
     var vid = document.getElementById("vidIn").value;
     var form = document.getElementById("vidForm")
@@ -777,6 +784,7 @@ function submitLink(){
     // }else{
     //     var page = document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.parentElement.id.slice(-1));
     // }
+    document.getElementById("linkTextIn").focus()
     var form = document.getElementById("linkForm")
 
     var text = document.getElementById("linkTextIn").value
