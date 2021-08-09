@@ -119,11 +119,22 @@ function addCheckpoint(){
     // }
     // var page = document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.id.slice(-1));
     // page.innerHTML = page.innerHTML + "!checkpoint<br><br>!endCheckpoint"
-    var div = document.createElement("div")
-    div.innerHTML = "!checkpoint<br><br>!endCheckpoint"
-    var range = window.getSelection().getRangeAt(0);
-    range.deleteContents()
-    range.insertNode(div)
+    var selection= window.getSelection().getRangeAt(0);
+    var selectedText = selection.extractContents();
+    var div= document.createElement("div");
+    div.innerHTML = "!checkpoint<br>"
+    div.appendChild(selectedText);
+    div.innerHTML = div.innerHTML + "!endCheckpoint"
+    if(noForm && isInPage(window.getSelection().anchorNode)){
+        selection.insertNode(div);
+    }
+
+
+    // var div = document.createElement("div")
+    // div.innerHTML = "!checkpoint<br><br>!endCheckpoint"
+    // var range = window.getSelection().getRangeAt(0);
+    // range.deleteContents()
+    // range.insertNode(div)
     // console.log(window.getSelection())
 }
 
