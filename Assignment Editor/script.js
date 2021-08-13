@@ -4,6 +4,8 @@ var replaceStack = [];
 var numVariables = 0;
 var numH1 = 0;
 var noForm = true
+
+//Look at Book Editor for comments as most code is the same
 function newPage(){
     var page = document.createElement("div");
     page.setAttribute("class", "pageBlock");
@@ -95,23 +97,33 @@ function printBook(){
         var page = document.getElementById("page" + i)
         if(page.classList.contains("questionGroup")){
             var pageArr = page.getElementsByTagName("div")
+            console.log(pageArr)
             content += "!qGroup " + document.getElementById("qGroupNameIn" + i).value + "<br>"
             for(var j = 0; j < pageArr.length; j++){
-                content += "!Question<br>"
-                var pageContent = pageArr[j].outerHTML
-                pageContent = parse(pageContent);
-                content += pageContent
-                content +="!endQuestion<br>"
+                if(pageArr[j].id.startsWith("pageInputText")){
+                    content += "!Question<br>"
+                    var pageContent = pageArr[j].outerHTML
+                    pageContent = parse(pageContent);
+                    var replaceStackCopy = [...replaceStack]
+                    // console.log([...replaceStack])
+                    while(replaceStackCopy.length > 0){
+                        pageContent = pageContent.replace(replaceStackCopy.shift(), replaceStackCopy.shift());
+                    }
+                    content += pageContent
+                    content +="!endQuestion<br>"
+                }
+
             }
             content += "!endQGroup<br>"
         }else{
             content += "!Question " + document.getElementById("pageNameIn" + i).value + "<br>"
             var pageContent = document.getElementById("pageInputText" + i).outerHTML
             pageContent = parse(pageContent);
-            // console.log(pageContent)
-            // while(replaceStack.length > 0){
-            //     pageContent = pageContent.replace(replaceStack.shift(), replaceStack.shift());
-            // }
+            var replaceStackCopy = [...replaceStack]
+            // console.log([...replaceStack])
+            while(replaceStackCopy.length > 0){
+                pageContent = pageContent.replace(replaceStackCopy.shift(), replaceStackCopy.shift());
+            }
     
             content += pageContent
             content += "!endQuestion<br>"
@@ -719,12 +731,12 @@ function submitImage(){
 
     var imgPrint = "![" + alt + "](" + img + ")"
 
-    // var imgHtml = document.createElement("img")
-    // imgHtml.setAttribute("src",img)
-    // imgHtml.setAttribute("alt",alt)
+    var imgHtml = document.createElement("img")
+    imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
+    imgHtml.setAttribute("alt",alt)
 
-    // replaceStack.push(imgHtml.outerHTML)
-    // replaceStack.push(imgPrint)
+    replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(imgPrint)
 
     // page.innerHTML = page.innerHTML + imgPrint
     // // page.appendChild(imgHtml)
@@ -732,7 +744,7 @@ function submitImage(){
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(document.createTextNode(imgPrint))
+    range.insertNode(imgHtml)
     unlock()
 }
 
@@ -810,13 +822,21 @@ function submitVideo(){
     var vid = document.getElementById("vidIn").value;
     var form = document.getElementById("vidForm")
 
-    var vidText = "[![" + alt + "(" + thum + ")](" + vid + ")";
+    var vidText = "[![" + alt + "](" + thum + ")](" + vid + ")";
     // page.innerHTML = page.innerHTML + vidText
     // page.removeChild(document.getElementById("vidForm"))
+
+    var imgHtml = document.createElement("img")
+    imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
+    imgHtml.setAttribute("alt",alt)
+
+    replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(vidText)
+
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(document.createTextNode(vidText))
+    range.insertNode(imgHtml)
     unlock()
 
 }

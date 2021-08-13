@@ -3,7 +3,10 @@ var boldCheck = true;
 var replaceStack = [];
 var numVariables = 0;
 var numH1 = 0;
+//Used to keep track when a form is used
 var noForm = true
+
+//Creates new page by appending elements
 function newPage(){
     var page = document.createElement("div");
     page.setAttribute("class", "pageBlock");
@@ -39,6 +42,7 @@ function newPage(){
     pageNum++;
 }
 
+//Collapses the pages with page number currPage
 function collapse(currPage){
     var page = document.getElementById("pageInputText" + currPage);
     
@@ -51,6 +55,7 @@ function collapse(currPage){
     }
 }
 
+//Goes through all the pages and changes their dispaly to block
 function unCollapse(){
     for(var i = 0; i < pageNum; i++){
         var page = document.getElementById("pageInputText" + i);
@@ -58,6 +63,7 @@ function unCollapse(){
     }
 }
 
+//Removes the last page
 function removeLastPage(){
     if(pageNum > 0){
         var pages = document.getElementById("input");
@@ -74,15 +80,15 @@ function printBook(){
     content += variablePrint()
     content += "!endBookVariables<br>";
     content += "!Book " + document.getElementById("bookNameIn").value + "<br>";
-    var pages = document.getElementsByClassName("pageBlock")
     for(var i = 0; i < pageNum; i++){
         content += "!Page " + document.getElementById("pageNameIn" + i).value + "<br>"
         var pageContent = document.getElementById("pageInputText" + i).outerHTML
         pageContent = parse(pageContent);
-        // console.log(pageContent)
-        // while(replaceStack.length > 0){
-        //     pageContent = pageContent.replace(replaceStack.shift(), replaceStack.shift());
-        // }
+        var replaceStackCopy = [...replaceStack]
+        // console.log([...replaceStack])
+        while(replaceStackCopy.length > 0){
+            pageContent = pageContent.replace(replaceStackCopy.shift(), replaceStackCopy.shift());
+        }
 
         content += pageContent
         content += "!endPage<br>"
@@ -108,9 +114,12 @@ function parse(pageContent){
     pageContent = pageContent.replaceAll("</h2>", "");
     pageContent = pageContent.replaceAll("<h3>", "### ");
     pageContent = pageContent.replaceAll("</h3>", "");
+    // pageContent = pageContent.replaceAll("data-vscid=\"","");
+    // <a href="link.com">text</a>
     return pageContent;
 }
 
+//Surrounds highlighted text with the checkpoint syntax
 function addCheckpoint(){
     // if(document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.id.slice(-1))){
     //     var page = document.getElementById("pageInputText" + window.getSelection().anchorNode.parentElement.id.slice(-1));
@@ -636,12 +645,12 @@ function submitImage(){
 
     var imgPrint = "![" + alt + "](" + img + ")"
 
-    // var imgHtml = document.createElement("img")
-    // imgHtml.setAttribute("src",img)
-    // imgHtml.setAttribute("alt",alt)
+    var imgHtml = document.createElement("img")
+    imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
+    imgHtml.setAttribute("alt",alt)
 
-    // replaceStack.push(imgHtml.outerHTML)
-    // replaceStack.push(imgPrint)
+    replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(imgPrint)
 
     // page.innerHTML = page.innerHTML + imgPrint
     // // page.appendChild(imgHtml)
@@ -649,7 +658,7 @@ function submitImage(){
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(document.createTextNode(imgPrint))
+    range.insertNode(imgHtml)
     unlock()
 }
 
@@ -727,13 +736,21 @@ function submitVideo(){
     var vid = document.getElementById("vidIn").value;
     var form = document.getElementById("vidForm")
 
-    var vidText = "[![" + alt + "(" + thum + ")](" + vid + ")";
+    var vidText = "[![" + alt + "](" + thum + ")](" + vid + ")";
     // page.innerHTML = page.innerHTML + vidText
     // page.removeChild(document.getElementById("vidForm"))
+
+    var imgHtml = document.createElement("img")
+    imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
+    imgHtml.setAttribute("alt",alt)
+
+    replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(vidText)
+
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(document.createTextNode(vidText))
+    range.insertNode(imgHtml)
     unlock()
 
 }
@@ -802,18 +819,19 @@ function submitLink(){
     var link = document.getElementById("linkIn").value
 
     var inLineLink = "[" + text + "](" + link + ")"
+    // var div = document.createElement("div")
+
     // var linkHtml = document.createElement("a")
     // linkHtml.setAttribute("href",link)
     // linkHtml.innerHTML = text
 
-    // replaceStack.push(linkHtml.outerHTML)
-    // replaceStack.push(inLineLink)
+    // div.appendChild(linkHtml)
     
-    // page.removeChild(linkHtml)
-    // page.innerHTML = page.innerHTML + inLineLink
+
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
+    // range.insertNode(linkHtml)
     range.insertNode(document.createTextNode(inLineLink))
     unlock()
 }
@@ -1052,6 +1070,7 @@ function variablePrint(){
 
 // }
 
+//Checks if thechild node is from a page
 function isInPage(child){
     var node = child
     // console.log(node)
@@ -1065,8 +1084,4 @@ function isInPage(child){
     }
 
     return false;
-}
-
-function test(){
-    console.log(window.getSelection().getRangeAt(0).insertNode(document.createTextNode("heklo")))
 }
