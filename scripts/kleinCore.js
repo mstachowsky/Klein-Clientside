@@ -232,13 +232,6 @@ function howDidIDo() {
 		changePage({ id: curPage });
 
 	}
-
-	//need to make it so the feedback button does not show up unless the user has inputed in one inputput field DONE
-	//need to make it so if the user attempted a question then makes the input blank by deleteing the answer the feedback does not disapear DONE
-	//need to figure out how to check of m/c is blank or not DONE
-	//need to figure out how to make sure that the answers being delt with are for the current page being delt with (i) -> pageNum
-	//need to figure out how to add sub questions like a,b,c -> this is conected to pthe previous point
-	//also connected but need to figure out how to link feedback to specified inputs
 	
 }
 
