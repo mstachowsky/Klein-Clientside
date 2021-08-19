@@ -553,7 +553,7 @@ function ansBoxSub(abs, tol, text, pageInNum){
         document.getElementById("absValIn").focus()
         var id = document.getElementById("absIDIn").value;
         var score = document.getElementById("absScoreIn").value
-        var ab = "!ans numeric:" + val + ":absulute " + id + "<br>!score " + score + "<br>!feedback<br>!endFeedback"
+        var ab = "!ans numeric:" + val + ":absolute " + id + "<br>!score " + score + "<br>!feedback<br>!endFeedback"
         // page.innerHTML = page.innerHTML + ab
         // page.removeChild(document.getElementById("ABForm"));
         // page.removeChild(form);
@@ -721,17 +721,28 @@ function image(){
 }
 
 function submitImage(){
+    //Currently uses placeholders to fill in the image then the replaceStack stack to repace the html with mardown syntac when printed
     var form = document.getElementById("imgForm")
     document.getElementById("altIn").focus()
     var alt = document.getElementById("altIn").value
     var img = document.getElementById("imgIn").value
 
+    //Creates the markdown syntax
     var imgPrint = "![" + alt + "](" + img + ")"
 
+    //Initially this would be used to keep track of the path to the image then the image would be used instead of the place holder but there was not enough time in the work term to implement this idea
+    bookPath = "../bookRoot/" + document.getElementById("bookNameIn").value + "/res/"
+    var src = bookPath + img
+    console.log(src)
+
+    //Uses a place holder for the image to give the user a sense of how their image would look in the book
     var imgHtml = document.createElement("img")
-    imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
+    imgHtml.setAttribute("src", src)
+    // imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
     imgHtml.setAttribute("alt",alt)
 
+
+    //Appends the repacements to be replaced when printed
     replaceStack.push(imgHtml.outerHTML)
     replaceStack.push(imgPrint)
 
@@ -812,17 +823,38 @@ function submitVideo(){
     // page.innerHTML = page.innerHTML + vidText
     // page.removeChild(document.getElementById("vidForm"))
 
-    var imgHtml = document.createElement("img")
-    imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
-    imgHtml.setAttribute("alt",alt)
 
-    replaceStack.push(imgHtml.outerHTML)
+
+    //Initially this would be used to keep track of the path to the image then the image would be used instead of the place holder but there was not enough time in the work term to implement this idea
+    bookPath = "../bookRoot/" + document.getElementById("bookNameIn").value + "/res/"
+    var src = bookPath + vid
+    var poster = bookPath + thum
+    console.log(src)
+
+    //Uses a place holder for the image to give the user a sense of how their image would look in the book
+    var vidHtml = document.createElement("video")
+    vidHtml.setAttribute("src", src)
+    vidHtml.setAttribute("controls", "controls")
+    vidHtml.setAttribute("poster", poster)
+    vidHtml.setAttribute("alt",alt)
+
+    // //Same idea as the image where currently there is a place holder but in later versions it would use a path to the video
+    // var imgHtml = document.createElement("img")
+    // imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
+    // imgHtml.setAttribute("alt",alt)
+
+    // var vidHtml = document.createElement("video")
+    // vidHtml.setAttribute("src", )
+
+    // replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(vidHtml.outerHTML)
     replaceStack.push(vidText)
 
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(imgHtml)
+    // range.insertNode(imgHtml)
+    range.insertNode(vidHtml)
     unlock()
 
 }

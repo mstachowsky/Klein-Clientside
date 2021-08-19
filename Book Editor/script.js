@@ -88,8 +88,9 @@ function printBook(){
     content += "!bookVariables<br><br>";
     content += variablePrint()
     content += "!endBookVariables<br>";
-    // var bookArr = document.getElementById("bookNameIn").value.split("/")
-    content += "!Book " + document.getElementById("bookNameIn").value + "<br>";
+    var bookArr = document.getElementById("bookNameIn").value.split("/")
+    // content += "!Book " + document.getElementById("bookNameIn").value + "<br>";
+    content += "!Book " + bookArr[bookArr.length - 1] + "<br>";
     //Goes through the pages to add the content
     for(var i = 0; i < pageNum; i++){
         content += "!Page " + document.getElementById("pageNameIn" + i).value + "<br>"
@@ -97,6 +98,7 @@ function printBook(){
         pageContent = parse(pageContent);
         //Goes through a a copy of the stack not to remove elements of the original and then goes through it replacing all the elements 
         var replaceStackCopy = [...replaceStack]
+        console.log(replaceStackCopy)
         while(replaceStackCopy.length > 0){
             pageContent = pageContent.replace(replaceStackCopy.shift(), replaceStackCopy.shift());
         }
@@ -445,7 +447,7 @@ function ansBoxSub(abs, tol, text, pageInNum){
         var val = document.getElementById("absValIn").value;
         document.getElementById("absValIn").focus()
         var id = document.getElementById("absIDIn").value;
-        var ab = "!ans numeric:" + val + ":absulute " + id
+        var ab = "!ans numeric:" + val + ":absolute " + id
         // page.innerHTML = page.innerHTML + ab
         // page.removeChild(document.getElementById("ABForm"));
         // page.removeChild(form);
@@ -616,14 +618,14 @@ function submitImage(){
     var imgPrint = "![" + alt + "](" + img + ")"
 
     //Initially this would be used to keep track of the path to the image then the image would be used instead of the place holder but there was not enough time in the work term to implement this idea
-    // bookPath = "../bookRoot/" + document.getElementById("bookNameIn").value + "/res/"
-    // var src = bookPath + img
-    // console.log(src)
+    bookPath = "../bookRoot/" + document.getElementById("bookNameIn").value + "/res/"
+    var src = bookPath + img
+    console.log(src)
 
     //Uses a place holder for the image to give the user a sense of how their image would look in the book
     var imgHtml = document.createElement("img")
-    // imgHtml.setAttribute("src", src)
-    imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
+    imgHtml.setAttribute("src", src)
+    // imgHtml.setAttribute("src","https://papers.co/wp-content/uploads/papers.co-nk50-tree-nature-solo-nature-green-red-1-wallpaper-300x300.jpg")
     imgHtml.setAttribute("alt",alt)
 
 
@@ -709,21 +711,37 @@ function submitVideo(){
     // page.removeChild(document.getElementById("vidForm"))
 
 
-    //Same idea as the image where currently there is a place holder but in later versions it would use a path to the video
-    var imgHtml = document.createElement("img")
-    imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
-    imgHtml.setAttribute("alt",alt)
+
+    //Initially this would be used to keep track of the path to the image then the image would be used instead of the place holder but there was not enough time in the work term to implement this idea
+    bookPath = "../bookRoot/" + document.getElementById("bookNameIn").value + "/res/"
+    var src = bookPath + vid
+    var poster = bookPath + thum
+    console.log(src)
+
+    //Uses a place holder for the image to give the user a sense of how their image would look in the book
+    var vidHtml = document.createElement("video")
+    vidHtml.setAttribute("src", src)
+    vidHtml.setAttribute("controls", "controls")
+    vidHtml.setAttribute("poster", poster)
+    vidHtml.setAttribute("alt",alt)
+
+    // //Same idea as the image where currently there is a place holder but in later versions it would use a path to the video
+    // var imgHtml = document.createElement("img")
+    // imgHtml.setAttribute("src","https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270")
+    // imgHtml.setAttribute("alt",alt)
 
     // var vidHtml = document.createElement("video")
     // vidHtml.setAttribute("src", )
 
-    replaceStack.push(imgHtml.outerHTML)
+    // replaceStack.push(imgHtml.outerHTML)
+    replaceStack.push(vidHtml.outerHTML)
     replaceStack.push(vidText)
 
     var range = window.getSelection().getRangeAt(0);
     range.deleteContents()
     form.parentNode.removeChild(form)
-    range.insertNode(imgHtml)
+    // range.insertNode(imgHtml)
+    range.insertNode(vidHtml)
     unlock()
 
 }
