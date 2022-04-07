@@ -25,61 +25,8 @@ if not os.path.isdir(devRoot):
 if not os.path.isdir(bookRoot):
 	print('making bookroot = ', bookRoot)
 	os.makedirs(bookRoot)
-
-#  Creating book development directory
-##try:
-##    bookDevDir = os.path.join(devRoot, f'{bookName}_dev')
-##    os.makedirs(bookDevDir)
-##except:
-##    sys.exit(f"{bookDevDir} already exists.")
-
-#  Creating parse file - NEEDS TO BE UPDATED WITH PROPER FILE EXTENSION
-##with open(os.path.join(bookDevDir, "parse.bat"), 'x') as parseFile:
-##    # platform specific content
-##    if(platform.system() == 'Windows'):
-##
-##        # Changes the / to \ to match the parse formatting and adjusts the bookName to match the format
-##        if "/" in bookName:
-##            parseBookNameDir = bookName.replace("/", "\\")
-##            parseBookNameArr = bookName.split("/")
-##            parseBookName = parseBookNameArr[len(parseBookNameArr)-1]
-##            numFileUp = len(parseBookNameArr)-1
-##        else:
-##            numFileUp = 0
-##            parseBookNameDir = bookName
-##            parseBookName = bookName
-##
-##        parseFileContent = '@ECHO OFF \n python ..\parseToJSON.py' + fr' \{ parseBookName }' +'\n move *.bk ' + fr'{ bookRoot }\{ parseBookNameDir }'
-##        numFileUpReplace = "..\\"
-##
-##        for numReplaces in range(numFileUp):
-##            numFileUpReplace = numFileUpReplace +  "..\\"
-##
-##        parseFileContent = parseFileContent.replace('..\\', numFileUpReplace)
-##
-##    else:
-##        parseFileContent = f'python "{ scriptPath }/parseToJSON.py" "/{ bookName }" move *.bk "{ bookRoot }/book1" > dev/null'
-##    parseFile.write(parseFileContent)
-
-#  Creating markdown book file
-# Changes the / to \ or \\ to match the parse formatting and changes the bookName to match the format
-##if "/" in bookName:
-##    mdBookNameArr = bookName.split("/")
-##    mdBookName = mdBookNameArr[len(mdBookNameArr)-1]
-##    mdBookDevDir = bookDevDir.replace("/", "\\\\")
-##else:
-##    mdBookName = bookName
-##    mdBookDevDir = bookDevDir
-##
-##with open(os.path.join(mdBookDevDir, f'{mdBookName}.md'), 'x') as bookFile:
-##    bookFile.write(f'!Book {mdBookName}' + '\n' + '!Page newPage' + '\n' + '!endPage')
-
-#  Creating book directory
-##try:
+	
 bookDir = os.path.join(bookRoot, f'{bookName}_dev')
-##    os.makedirs(bookDir)
-##except:
-##    sys.exit(f"{bookDir} already exists.")
 try:
 	resDir = os.path.join(bookDir, 'res')
 	os.makedirs(resDir)
