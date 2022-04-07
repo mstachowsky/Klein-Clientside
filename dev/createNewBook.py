@@ -8,7 +8,6 @@ import re
 config = configparser.ConfigParser()
 try:
 	config.read('/home/mike/klein/dev/config.ini')
-	devRoot = config['Paths']['devRoot']
 	bookRoot = config['Paths']['bookRoot']
 	htmlRoot = config['Paths']['htmlPath']
 except:
@@ -19,9 +18,6 @@ bookName = sys.argv[1]
 scriptPath = os.path.split(sys.argv[0])[0]
 
 #  Creating root directories if they do not already exist
-if not os.path.isdir(devRoot):
-	print('making devroot = ', devRoot)
-	os.makedirs(devRoot)
 if not os.path.isdir(bookRoot):
 	print('making bookroot = ', bookRoot)
 	os.makedirs(bookRoot)
