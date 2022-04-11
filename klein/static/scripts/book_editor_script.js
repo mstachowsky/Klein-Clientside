@@ -147,7 +147,8 @@ function printBook() {
 		},
 		body: contentMD
 	};
-	
+	//send md file to django application through POST request. 
+	//use the response to determine whether to warn the user of a duplicate, or redirect page to preview of book file.
 	fetch('http://129.97.174.26:5000/bookEditor/', options)
 		.then(res => res.text())
 		.then(text => {
@@ -207,6 +208,7 @@ function parse(pageContent) {
 	return pageContent;
 }
 
+//Makes all the replacements to markdown syntax
 function parseMD(pageContent) {
 	console.log("pageContentMD = " + pageContent)
 	pageContent = pageContent.replaceAll("<b>", "**");
@@ -736,7 +738,6 @@ function submitImage() {
 		body: formData // formData handles content type and boundaries, so headers is unnecessary.
 	};
 	fetch('http://129.97.174.26:5000/bookEditor/', options)
-	// fetch('http://172.31.218.109:5000/bookEditor/', options)
 		.then(res => {
 			//Currently uses placeholders to fill in the image then the replaceStack stack to repace the html with mardown syntac when printed
 			var form = document.getElementById("imgForm")
@@ -874,7 +875,6 @@ function submitVideo() {
 		body: formDataVideo
 	};
 	fetch('http://129.97.174.26:5000/bookEditor/', options)
-	// fetch('http://172.31.218.109:5000/bookEditor/', options)
 		.then(res => {
 			var alt = document.getElementById("altVidIn").value;
 			document.getElementById("altVidIn").focus()
