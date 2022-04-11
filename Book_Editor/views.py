@@ -13,12 +13,12 @@ BOOK_ROOT = "/klein/static/BOOKS/"
 BASE_DIR = PROJECT_PATH + BOOK_ROOT
 
 # Create your views here.
-# This method will convert the string sent through a POST request into human readable text,	
-# Then, after checking the filename is not duplicate, or null,
-# if the filename is a duplicate, then after returning a HttpResponse, if the string in the POST request has an <overwrite>
+# This method will convert the string sent through a POST request into human readable text.
+# Then, after checking the filename is not duplicate, or null, if the filename is a duplicate, 
+# it will return a HttpResponse. If the string in the subsequent POST request has an <overwrite>
 # tag, then the method will overwrite the md file.
-# Then, the method will convert the
-# MD file into a .bk file, and place both md and bk files into a sub folder.
+# Finally, after the user decides to print the book file, the method will convert the 
+# MD file into a .bk file and place both md and bk files into a sub folder.
 # This method will also handle image/video files in the form of a formData, sent through a POST request,
 # by writing the files in the static folder of Klein.
 def index(request):
@@ -29,7 +29,8 @@ def index(request):
 			str = str.split("<bookName>", 1)[0]
 			
 			l = str.split("\n")
-
+			
+			# save img/video tags and their names for transport.
 			img = []
 			for element in l:
 				if "img" in element or "video" in element:
@@ -77,7 +78,8 @@ def index(request):
 	#renders the html page 
 	return render(request, 'book_editor_index.html')
 
-# This method creates the bk file, and moves said bk file, to the corresponding subfolder.	
+# This method creates the bk file, and moves said bk file, to the corresponding subfolder.
+# It also moves the images and videos into their respective subfolder, using the img tags, and their names.
 # Then, it returns a HttpResponse, confirming its actions or giving an exception.
 def parseToJSON(name, base_dir, img):
 	try:
