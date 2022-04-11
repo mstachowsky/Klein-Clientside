@@ -147,8 +147,8 @@ function printBook() {
 		},
 		body: contentMD
 	};
+	
 	fetch('http://129.97.174.26:5000/bookEditor/', options)
-	//fetch('http://172.31.218.109:5000/bookEditor/', options)
 		.then(res => res.text())
 		.then(text => {
 			console.log("text = " + text);
@@ -163,14 +163,11 @@ function printBook() {
 						body: contentMD + "<overwrite>"
 					}
 					fetch('http://129.97.174.26:5000/bookEditor/', options)
-					// fetch('http://172.31.218.109:5000/bookEditor/', options)
 						.then(res => res.text())
 						.then(text => {
 							alert(text)
-							var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
 							var name = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));
-							// var win = window.open('http://172.31.218.109:5000/klein/?book=' + name + "_dev/" + msg + '.bk&resURL=' + name + '_dev/', '_blank');
-							//win.focus();
+							var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
 						});
 				} else {
 					alert("Action canceled.");
@@ -178,10 +175,8 @@ function printBook() {
 			} else if (text == "[ERROR]: klein/views.py : Your Assignment needs a title!") {
 				alert(text)
 			} else if (text.includes("[SUCCESS]")) {
-				var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
 				var name = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));
-				// var win = window.open('http://172.31.218.109:5000/klein/?book=' + name + "_dev/" + msg + '.bk&resURL=' + name + '_dev/', '_blank');
-				//win.focus();
+				var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
 			}
 		})
 		.catch(error => alert(error));
