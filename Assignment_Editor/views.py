@@ -14,7 +14,10 @@ BASE_DIR = PROJECT_PATH + BOOK_ROOT
 
 # Create your views here.
 # This method will convert the string sent through a POST request into human readable text, 
-# Then, after checking the filename is not duplicate, or null, the method will convert the 
+# Then, after checking the filename is not duplicate, or null, 
+# if the filename is a duplicate, then after returning a HttpResponse, if the string in the POST request has an <overwrite>
+# tag, then the method will overwrite the md file.
+# Then, the method will convert the 
 # MD file into a .bk file, and place both md and bk files into a sub folder.
 # This method will also handle image/video files in the form of a formData, sent through a POST request,
 # by writing the files in the static folder of Klein.
