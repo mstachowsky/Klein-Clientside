@@ -215,8 +215,9 @@ function printBook() {
 		},
 		body: contentMD
 	};
+	//send md file to django application through POST request. 
+	//use the response to determine whether to warn the user of a duplicate, or redirect page to preview of book file.
 	fetch('http://129.97.174.26:5000/assignmentEditor/', options)
-	// fetch('http://172.31.218.126:5000/assignmentEditor/', options)
 		.then(res => res.text())
 		.then(text => {
 			console.log("text = " + text);
@@ -231,15 +232,12 @@ function printBook() {
 						body: contentMD + "<overwrite>"
 					}
 					fetch('http://129.97.174.26:5000/assignmentEditor/', options)
-					//fetch('http://172.31.218.126:5000/assignmentEditor/', options)
 						.then(res => res.text())
 						.then(text => {
 							alert(text)
 							var name = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));
 							var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
 							console.log("name = " + name);
-							// var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + "_dev/" + msg + '.bk&resURL=res/', '_blank');
-							//win.focus();
 						});
 				} else {
 					alert("Action canceled.");
@@ -247,11 +245,9 @@ function printBook() {
 			} else if (text == "[ERROR]: klein/views.py : Your Assignment needs a title!") {
 				alert(text)
 			} else {
-				//var win = window.open('http://129.97.174.26:5000/klein/?book=' + msg + '.bk&resURL=', '_blank');
 				var name = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));
-				console.log("name = " + name);
 				var win = window.open('http://129.97.174.26:5000/klein/?book=' + name + '_dev/' + msg + '.bk&resURL=' + name + '_dev/', '_blank');
-				//win.focus();
+				console.log("name = " + name);
 			}
 		})
 		.catch(error => alert(error));
@@ -279,6 +275,7 @@ function parse(pageContent) {
 	return pageContent;
 }
 
+//Makes all the replacements to markdown syntax
 function parseMD(pageContent) {
 	pageContent = pageContent.replaceAll("<b>", "**");
 	pageContent = pageContent.replaceAll("</b>", "**");
