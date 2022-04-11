@@ -1132,6 +1132,7 @@ def parse(f, JSONString, idNum, pageNum):
 
                 lineAr = line.split()
 
+                # the JSONstring used omits the width and the height of the video.
                 # JSONString += "{\"type\":\"video\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
                 JSONString += "{\"type\":\"video\",\"id\":\""+lineAr[0]+"\",\"src\":\"" + lineAr[1] + "\"},"
                 
@@ -1142,6 +1143,7 @@ def parse(f, JSONString, idNum, pageNum):
 
                 lineAr = line.split()
 
+                # the JSONstring used omits the width and the height of the image.
                 # JSONString += "{\"type\":\"img\",\"src\":\""+lineAr[0]+"\",\"width\":\""+lineAr[1]+"\",\"height\":\""+lineAr[2]+"\",\"id\":\"" + lineAr[3] + "\"},"
                 JSONString += "{\"type\":\"img\",\"id\":\""+lineAr[0]+"\",\"src\":\"" + lineAr[1] + "\"},"
 
