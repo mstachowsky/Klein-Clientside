@@ -13,6 +13,14 @@ BOOK_ROOT = "/klein/static/BOOKS/"
 BASE_DIR = PROJECT_PATH + BOOK_ROOT
 
 # Create your views here.
+# This method will convert the string sent through a POST request into human readable text,	
+# Then, after checking the filename is not duplicate, or null,
+# if the filename is a duplicate, then after returning a HttpResponse, if the string in the POST request has an <overwrite>
+# tag, then the method will overwrite the md file.
+# Then, the method will convert the
+# MD file into a .bk file, and place both md and bk files into a sub folder.
+# This method will also handle image/video files in the form of a formData, sent through a POST request,
+# by writing the files in the static folder of Klein.
 def index(request):
 	if request.method == 'POST':
 		if request.content_type == 'text/plain':
@@ -69,6 +77,8 @@ def index(request):
 	#renders the html page 
 	return render(request, 'book_editor_index.html')
 
+# This method creates the bk file, and moves said bk file, to the corresponding subfolder.	
+# Then, it returns a HttpResponse, confirming its actions or giving an exception.
 def parseToJSON(name, base_dir, img):
 	try:
 		os.system('python3 ' + SUBFOLDER_PATH + ' ' + name)
@@ -85,6 +95,7 @@ def parseToJSON(name, base_dir, img):
 		response = HttpResponse("[EXCEPTION] - bookEditor/views.py : Exception Occured with parseToJSON", content_type='text/plain')
 		return response;
 
+# This method parses through the string sent by Assignment Editor, by removing certain tags or replacing with newline characters.
 def parse(request):
 	str = request.body.decode(encoding='UTF-8')
 	str = re.sub(r'<div(.*?)">', '', str)
@@ -97,10 +108,12 @@ def parse(request):
 	str = re.sub(r'&(.*?);', '', str)
 	return str
 
+# This method overwrites any file (i.e. the md file) into the chosen file path.
 def overwriteFile(file_path, str):
 	with open(file_path, 'w+') as outfile:
 		outfile.write(str)
 
+# This method writes the file(i.e. images/videos) in chunks into a chosen file path.
 def handle_uploaded_file(f, name):
 	with open(BASE_DIR + 'res/' + name, 'wb+') as destination:
 		for chunk in f.chunks():
