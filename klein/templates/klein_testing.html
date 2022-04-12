@@ -1,0 +1,63 @@
+﻿{% load static %}
+
+<html>
+<head>
+	<!-- Mathjax: -->
+	<script>
+		MathJax = {
+		  tex: {
+			inlineMath: [['$', '$'], ['\\(', '\\)']]
+		  },
+		  svg: {
+			fontCache: 'global'
+		  },
+		  startup: {
+			typeset: false
+		  }
+		};
+</script>
+	<script id="MathJax-script"
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+	</script>
+	
+	<!-- End of MathJax -->
+	
+	<link rel="stylesheet" type="text/css" href="{% static 'css/kleinStyle.css' %}">
+</head>
+<body style ="overflow-y: auto;">
+<div id="header" class="header"></div>
+<div id="contentPlace" class="main"></div>
+	<div class ="sidebar">
+		<div class="btn-group" id="selectRow"></div>
+		<div class="HDID" id = "HDID"></div> <!--How did I do (HDID)-->
+	</div>
+<p>
+
+<script src="http://code.jquery.com/jquery-3.5.0.min.js"></script>
+
+{% csrf_token %}
+<script src="{% static 'scripts/answerableComponent.js' %}"></script>
+<script src="{% static 'scripts/kleinCore.js' %}"></script>
+<script src="{% static 'scripts/math.js' %}"></script>
+<script src="{% static 'scripts/answerCheck.js' %}"></script>
+
+<script src="{% static 'scripts/CSRF_token.js' %}"></script>
+
+<script>
+
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	let url = urlParams.get("book");
+	let resURL = urlParams.get("resURL");
+	// let resURL = "";	
+	// example url -> http://127.0.0.1:8000/klein/?book=../static/BOOKS/Lab_2_ArduinoPower.bk
+	console.log(url);
+	let filePath = "../static/BOOKS/";
+	url = filePath + url;
+	resURL = filePath + resURL;
+	var text2 = {};
+	fetch(url).then(res => res.json()).then((out)=>{parseBookFromJSON(out,resURL)})
+	</script>
+</p>
+</body>
+</html>>
