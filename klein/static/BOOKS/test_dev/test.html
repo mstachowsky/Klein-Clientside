@@ -1,0 +1,57 @@
+<head>
+	<!-- Mathjax: -->
+	<script>
+		MathJax = {
+		  tex: {
+			inlineMath: [['$', '$'], ['\\(', '\\)']]
+		  },
+		  svg: {
+			fontCache: 'global'
+		  },
+		  startup: {
+			typeset: false
+		  }
+		};
+</script>
+	<script id="MathJax-script"
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+	</script>
+	
+	<!-- End of MathJax -->
+	
+	<link rel="stylesheet" type="text/css" href="../../css/kleinStyle.css">
+</head>
+<body>
+	<div id="header" class="header"></div>
+	<div id="contentPlace" class = "main" ></div>
+	<div class ="sidebar">
+		<div  class="btn-group" id="selectRow"></div>
+		<div class="HDID" id = "HDID"></div> <!--How did I do (HDID)-->
+	</div>
+	<script src="../../scripts/answerableComponent.js"></script>
+	<script src = "../../scripts/kleinCore.js"></script>
+	<script src = "../../scripts/math.js"></script>
+	<script>
+	
+        let url = './test.bk';
+	fetch(url).then(res => res.json()).then(out => {parseBookFromJSON(out)})
+	</script>
+</body>
+
+<!-- 
+@license
+
+Licensed under the GNU GPLv3 License (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy
+of the License at
+
+https://www.gnu.org/licenses/gpl-3.0.en.html
+
+Any libraries written by third parties are provided under a license that is identical to or compatible with the License on this project.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+ -->
