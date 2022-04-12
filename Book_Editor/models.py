@@ -1,0 +1,1 @@
+# necessary for Django project
