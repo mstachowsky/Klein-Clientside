@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="editor">
+        <div class="leftContent">
+            <div class="menuBar">
+                <div class="bookTitle"></div>
+                <div class="bookName">
+                    <label>Bookname: </label>
+                    <input type="text" id="bookNameIn">
+                </div>
+                <div class="menuItems">
+                    <ul>
+                        <li><button onclick="newPage()">New Page</button></li>
+                        <li><button onclick="removeLastPage()">Remove Last Page</button></li>
+                        <li><button onclick="document.execCommand('formatBlock', false, 'h1');">H1</button></li>
+                        <li><button onclick="document.execCommand('formatBlock', false, 'h2');">H2</button></li>
+                        <li><button onclick="document.execCommand('formatBlock', false, 'h3');">H3</button></li>
+                        <li><button onclick="document.execCommand('undo')">Undo</button></li>
+                        <li><button onclick="document.execCommand('redo')">Redo</button></li>
+                        <li><button onclick="document.execCommand('bold')">Bold</button></li>
+                        <li><button onclick="document.execCommand('italic')">Italics</button></li>
+                        <li><button onclick="document.execCommand('insertHorizontalRule')">Horizontal Line</button></li>
+                        <li><button onclick="addCheckpoint()">Add Checkpoint</button></li>
+                        <li><button onclick="document.execCommand('insertUnorderedList')">Unordered List</button></li>
+                        <li><button onclick="document.execCommand('insertOrderedList')">Ordered List</button></li>
+                        <li><button onclick="multipleChoice()">Multiple Choice Question</button></li>
+                        <li><button onclick="answerBox()">Answer Box</button></li>
+                        <li><button onclick="inLink()">Link</button></li>
+                        <li><button onclick="image()">Image</button></li>
+                        <li><button onclick="video()">Video</button></li>
+                        <li><button onclick="table()">Table</button></li>
+                        <!-- <li><button onclick="printBook()">Print book</button></li> -->
+                    </ul>
+                </div>
+            </div>
+            <div class="pages">
+                <div id="input">
+                </div>
+                <div id="output" class = "output">
+                    <div class="outputTop">
+                        <label class="outputLabel">Output</label> <button onclick="printBook()">Print Book</button>
+                    </div>
+                    <div class="outputText" contenteditable="true" id="outputContent"></div>
+                </div>
+            </div>
+        </div>
+        <div class="variableMenu">
+            <div class="variableButtons">
+                <ul>
+                    <li><button onclick="addVariable()">Add Variable</button></li>
+                    <li><button onclick="addRandomVariable()">Add Random Variable</button></li>
+                    <!-- <li><button onclick="removeLastVariable()">Remove Last Variable</button></li> -->
+                </ul>
+            </div>
+            <div id="variableFormPlace">
+
+            </div>
+            <label>Variables</label>
+            <div id="variables" class="variables" contenteditable="true">
+
+            </div>
+        </div>
+    </div>
+    <script>newPage()</script>
+</body>
+</html>
